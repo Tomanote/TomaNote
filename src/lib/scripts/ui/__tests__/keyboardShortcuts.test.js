@@ -1,267 +1,457 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { KeyboardShortcuts } from "../keyboardShortcuts.js";
 
-function makeKeyboardShortcuts() {
-  const ks = new KeyboardShortcuts({ debug: false });
-  global.window = {
-    tabManager: { saveTabs: vi.fn() },
-    commandPalette: { toggle: vi.fn() },
-  };
-  return ks;
+function makeKS() {
+  return new KeyboardShortcuts({ debug: false });
+}
+
+function mockDoc(overrides = {}) {
+  const mockRadio = overrides.radio ?? { checked: false, closest: vi.fn() };
+  const mockPalette = overrides.palette ?? { hasAttribute: vi.fn(), showModal: vi.fn(), close: vi.fn() };
+  const mockModal = overrides.modal ?? { hasAttribute: vi.fn(), showModal: vi.fn(), close: vi.fn() };
+  const mockCheckbox = overrides.checkbox ?? { checked: false, dispatchEvent: vi.fn() };
+  const mockTabs = overrides.tabs ?? Array.from({ length: 5 }, () => ({ checked: false }));
+
+  const getElementById = vi.fn((id) => {
+    if (id === "commandPalette") return mockPalette;
+    if (id === "info-notepad") return mockModal;
+    if (id === "tn-open-options") return mockCheckbox;
+    return null;
+  });
+
+  const querySelector = vi.fn((sel) => {
+    if (sel === '.tab-list input[type="radio"]:checked') return mockRadio;
+    if (sel === 'label[contenteditable="true"]') return null;
+    if (sel === "dialog#info-notepad") return mockModal;
+    return null;
+  });
+
+  const querySelectorAll = vi.fn((sel) => {
+    if (sel === '.tab-list input[type="radio"]') return mockTabs;
+    return [];
+  });
+
+  Object.assign(document, {
+    getElementById,
+    querySelector,
+    querySelectorAll,
+    dispatchEvent: vi.fn(),
+    hasFocus: () => true,
+  });
+
+  return { mockRadio, mockPalette, mockModal, mockCheckbox, mockTabs };
 }
 
 describe("KeyboardShortcuts", () => {
-  let keyboardShortcuts;
-  let addEventListenerSpy;
-  let dispatchEventSpy;
-  let getElementByIdSpy;
-  let querySelectorSpy;
+  let ks;
 
   beforeEach(() => {
-    addEventListenerSpy = vi.spyOn(document, "addEventListener");
-    dispatchEventSpy = vi.spyOn(document, "dispatchEvent");
-    getElementByIdSpy = vi.spyOn(document, "getElementById");
-    querySelectorSpy = vi.spyOn(document, "querySelector");
-
     global.CustomEvent = class CustomEvent {
-      constructor(type, options) {
-        this.type = type;
-        this.detail = options?.detail;
-      }
+      constructor(type) { this.type = type; }
     };
-
-    keyboardShortcuts = makeKeyboardShortcuts();
+    global.window = {
+      matchMedia: vi.fn().mockReturnValue({ matches: true }),
+      tabManager: { createTab: vi.fn(), saveTabs: vi.fn(), pinTab: vi.fn(), unpinTab: vi.fn(), deleteTabElement: vi.fn() },
+      commandPalette: { toggle: vi.fn(), isOpen: false },
+      editorSettings: { applyWidth: vi.fn() },
+      keyboardShortcutsHelp: { toggle: vi.fn() },
+    };
+    mockDoc();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
+  // ─── CONSTRUCTOR ───
   describe("constructor", () => {
-    it("It must initialize with default options", () => {
-      const ks = new KeyboardShortcuts();
-      expect(ks.options.debug).toBe(true);
+    it("defaults debug to true", () => {
+      expect(new KeyboardShortcuts().options.debug).toBe(true);
     });
 
-    it("You must merge custom options", () => {
-      const ks = new KeyboardShortcuts({ debug: false });
-      expect(ks.options.debug).toBe(false);
+    it("merges custom options", () => {
+      expect(new KeyboardShortcuts({ debug: false }).options.debug).toBe(false);
     });
   });
 
-  describe("init", () => {
-    it("It must initialize correctly on the desktop", async () => {
-      await keyboardShortcuts.init();
-
-      expect(keyboardShortcuts.isDesktop).toBe(true);
-      expect(addEventListenerSpy).toHaveBeenCalledWith("keydown", expect.any(Function));
+  // ─── INIT ───
+  describe("init()", () => {
+    it("registers a keydown listener on desktop with capture", async () => {
+      const spy = vi.spyOn(document, "addEventListener");
+      ks = makeKS();
+      await ks.init();
+      expect(spy).toHaveBeenCalledWith("keydown", expect.any(Function), { capture: true });
     });
 
-    it("Should not add a listener to touch devices.", async () => {
-      const originalOtouchstart = window.ontouchstart;
-      window.ontouchstart = true;
-
-      const touchKs = new KeyboardShortcuts({ debug: false });
-      await touchKs.init();
-
-      expect(addEventListenerSpy).not.toHaveBeenCalled();
-
-      window.ontouchstart = originalOtouchstart;
+    it("skips init on touch devices (coarse pointer)", async () => {
+      window.matchMedia = vi.fn().mockReturnValue({ matches: false });
+      ks = makeKS();
+      await ks.init();
+      expect(vi.spyOn(document, "addEventListener")).not.toHaveBeenCalled();
     });
 
-    it("Retorna this para chaining", async () => {
-      const result = await keyboardShortcuts.init();
-      expect(result).toBe(keyboardShortcuts);
-    });
-
-    it("Registra listener para setupCommandPaletteShortcut", async () => {
-      await keyboardShortcuts.init();
-
-      const keydownCalls = addEventListenerSpy.mock.calls.filter((c) => c[0] === "keydown");
-      expect(keydownCalls.length).toBeGreaterThanOrEqual(1);
+    it("returns this for chaining", async () => {
+      ks = makeKS();
+      const result = await ks.init();
+      expect(result).toBe(ks);
     });
   });
 
-  describe("setupEscapeKeyHandler - Command Palette abierto", () => {
-    it("Ignora ESC si command palette está abierto", async () => {
-      await keyboardShortcuts.init();
+  // ─── REGISTRATION ───
+  describe("registerShortcut()", () => {
+    beforeEach(async () => { ks = makeKS(); await ks.init(); });
 
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
-
-      const mockPalette = {
-        hasAttribute: vi.fn().mockReturnValue(true),
-      };
-      getElementByIdSpy.mockImplementation((id) => {
-        if (id === "commandPalette") return mockPalette;
-        return null;
+    it("applies defaults for non-system shortcuts", () => {
+      expect(ks.shortcuts[2]).toMatchObject({
+        scope: "global", preventDefault: true, skipWhenInputFocused: true,
       });
-      querySelectorSpy.mockReturnValue(null);
+    });
 
-      keydownHandler({ key: "Escape" });
-
-      expect(mockPalette.hasAttribute).toHaveBeenCalledWith("open");
-      expect(dispatchEventSpy).not.toHaveBeenCalled();
+    it("stores custom config", () => {
+      expect(ks.shortcuts[1]).toMatchObject({
+        key: "k", label: "Ctrl+K", description: "Command Palette", category: "navigation", scope: "system",
+      });
     });
   });
 
-  describe("setupEscapeKeyHandler - Modal de settings abierto", () => {
-    it("Ignora ESC si el modal de settings está abierto", async () => {
-      await keyboardShortcuts.init();
+  // ─── matchesKey ───
+  describe("matchesKey()", () => {
+    beforeEach(async () => { ks = makeKS(); await ks.init(); });
 
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
+    const e = (key, opts = {}) => ({ key, ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, location: 0, ...opts });
+    const s = (key, mods = {}) => ({ key, modifiers: { ctrl: undefined, alt: undefined, shift: undefined, meta: undefined, ...mods } });
 
-      const mockPalette = { hasAttribute: vi.fn().mockReturnValue(false) };
-      const mockModal = { hasAttribute: vi.fn().mockReturnValue(true) };
+    it("matches simple key", () => {
+      expect(ks.matchesKey(e("z"), s("z"))).toBe(true);
+    });
 
-      getElementByIdSpy.mockImplementation((id) => {
-        if (id === "commandPalette") return mockPalette;
-        if (id === "info-notepad") return mockModal;
-        return null;
-      });
-      querySelectorSpy.mockReturnValue(null);
+    it("matches Ctrl+K correctly", () => {
+      expect(ks.matchesKey(e("k", { ctrlKey: true }), s("k", { ctrl: true, alt: false, shift: false, meta: false }))).toBe(true);
+    });
 
-      keydownHandler({ key: "Escape" });
+    it("rejects when ctrlKey is false but modifier requires true", () => {
+      expect(ks.matchesKey(e("k"), s("k", { ctrl: true }))).toBe(false);
+    });
 
-      expect(mockModal.hasAttribute).toHaveBeenCalledWith("open");
-      expect(dispatchEventSpy).not.toHaveBeenCalled();
+    it("matches Alt+N with left Alt", () => {
+      expect(ks.matchesKey(e("n", { altKey: true, location: 1 }), s("n", { alt: true, ctrl: false, shift: false, meta: false }))).toBe(true);
+    });
+
+    it("accepts Alt+N regardless of location (left/right Alt)", () => {
+      expect(ks.matchesKey(e("n", { altKey: true, location: 2 }), s("n", { alt: true, ctrl: false, shift: false, meta: false }))).toBe(true);
+    });
+
+    it("rejects when extra modifier is pressed", () => {
+      expect(ks.matchesKey(e("n", { altKey: true, ctrlKey: true, location: 1 }), s("n", { alt: true, ctrl: false, shift: false, meta: false }))).toBe(false);
     });
   });
 
-  describe("setupEscapeKeyHandler - Edición de nombre activa", () => {
-    it("Sale del modo edición y guarda pestañas", async () => {
-      await keyboardShortcuts.init();
+  // ─── isModalOpen ───
+  describe("isModalOpen()", () => {
+    beforeEach(async () => { ks = makeKS(); await ks.init(); });
 
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
+    it("detects command palette open", () => {
+      window.commandPalette.isOpen = true;
+      expect(ks.isModalOpen()).toBe(true);
+    });
 
-      const mockPalette = { hasAttribute: vi.fn().mockReturnValue(false) };
-      const mockModal = { hasAttribute: vi.fn().mockReturnValue(false) };
-      const mockLabel = {
-        removeAttribute: vi.fn(),
-        isContentEditable: true,
-        contains: vi.fn(),
-      };
+    it("detects settings modal open", () => {
+      const modal = document.getElementById("info-notepad");
+      modal.hasAttribute = vi.fn(() => true);
+      expect(ks.isModalOpen()).toBe(true);
+    });
 
-      getElementByIdSpy.mockImplementation((id) => {
-        if (id === "commandPalette") return mockPalette;
-        if (id === "info-notepad") return mockModal;
-        return null;
-      });
-      querySelectorSpy.mockImplementation((sel) => {
-        if (sel === 'label[contenteditable="true"]') return mockLabel;
-        return null;
-      });
-
-      keydownHandler({ key: "Escape" });
-
-      expect(mockLabel.removeAttribute).toHaveBeenCalledWith("contenteditable");
-      expect(global.window.tabManager.saveTabs).toHaveBeenCalled();
+    it("returns false when no modals open", () => {
+      window.commandPalette.isOpen = false;
+      expect(ks.isModalOpen()).toBe(false);
     });
   });
 
-  describe("setupEscapeKeyHandler - Pestaña activa abierta", () => {
-    it("Desmarca el radio y dispatch tabsChanged", async () => {
-      const dispatchCalls = [];
-      document.dispatchEvent = vi.fn((event) => dispatchCalls.push(event));
-      await keyboardShortcuts.init();
+  // ─── isInputFocused ───
+  describe("isInputFocused()", () => {
+    beforeEach(async () => { ks = makeKS(); await ks.init(); });
 
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
+    it("true on INPUT", () => {
+      const el = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: el, configurable: true });
+      expect(ks.isInputFocused()).toBe(true);
+    });
 
-      const mockPalette = { hasAttribute: vi.fn().mockReturnValue(false) };
-      const mockModal = { hasAttribute: vi.fn().mockReturnValue(false) };
-      const mockRadio = { checked: true };
+    it("true on TEXTAREA", () => {
+      const el = document.createElement("textarea");
+      Object.defineProperty(document, "activeElement", { value: el, configurable: true });
+      expect(ks.isInputFocused()).toBe(true);
+    });
 
-      getElementByIdSpy.mockImplementation((id) => {
-        if (id === "commandPalette") return mockPalette;
-        if (id === "info-notepad") return mockModal;
-        return null;
-      });
-      querySelectorSpy.mockImplementation((sel) => {
+    it("false on contenteditable (editor shortcuts pass through)", () => {
+      const el = document.createElement("div");
+      el.setAttribute("contenteditable", "true");
+      Object.defineProperty(el, "isContentEditable", { value: true });
+      Object.defineProperty(document, "activeElement", { value: el, configurable: true });
+      expect(ks.isInputFocused()).toBe(false);
+    });
+
+    it("false on plain div", () => {
+      const el = document.createElement("div");
+      Object.defineProperty(el, "isContentEditable", { value: false });
+      Object.defineProperty(document, "activeElement", { value: el, configurable: true });
+      expect(ks.isInputFocused()).toBe(false);
+    });
+
+    it("false when no activeElement", () => {
+      Object.defineProperty(document, "activeElement", { value: null, configurable: true });
+      expect(ks.isInputFocused()).toBe(false);
+    });
+  });
+
+  // ─── ESCAPE HANDLER ───
+  describe("handleEscape()", () => {
+    beforeEach(async () => {
+      document.querySelector = vi.fn((sel) => {
         if (sel === 'label[contenteditable="true"]') return null;
-        if (sel === '.tab-list input[type="radio"]:checked') return mockRadio;
+        if (sel === '.tab-list input[type="radio"]:checked') return { checked: true };
         return null;
       });
+      ks = makeKS();
+      await ks.init();
+    });
 
-      keydownHandler({ key: "Escape" });
+    it("ignores ESC when palette is open", () => {
+      window.commandPalette.isOpen = true;
+      ks.handleEscape({ key: "Escape" });
+      expect(document.dispatchEvent).not.toHaveBeenCalled();
+    });
 
-      expect(mockRadio.checked).toBe(false);
-      const tabsChangedEvent = dispatchCalls.find((e) => e.type === "tabsChanged");
-      expect(tabsChangedEvent).toBeTruthy();
+    it("ignores ESC when settings modal is open", () => {
+      document.getElementById("info-notepad").hasAttribute = vi.fn(() => true);
+      ks.handleEscape({ key: "Escape" });
+      expect(document.dispatchEvent).not.toHaveBeenCalled();
+    });
+
+    it("exits tab name editing", () => {
+      const lbl = { removeAttribute: vi.fn(), isContentEditable: true };
+      document.querySelector = vi.fn((sel) => {
+        if (sel === 'label[contenteditable="true"]') return lbl;
+        if (sel === '.tab-list input[type="radio"]:checked') return null;
+        return null;
+      });
+      ks.handleEscape({ key: "Escape" });
+      expect(lbl.removeAttribute).toHaveBeenCalledWith("contenteditable");
+      expect(window.tabManager.saveTabs).toHaveBeenCalled();
+    });
+
+    it("closes active tab when no modals or editing", () => {
+      ks.handleEscape({ key: "Escape" });
+      expect(document.dispatchEvent).toHaveBeenCalledWith(expect.objectContaining({ type: "tabsChanged" }));
     });
   });
 
-  describe("setupEscapeKeyHandler - Nada abierto", () => {
-    it("No hace nada si no hay nada abierto", async () => {
-      await keyboardShortcuts.init();
+  // ─── ALT SHORTCUTS (integration via handleKeydown) ───
+  describe("Alt shortcuts via handleKeydown()", () => {
+    let preventDefault;
 
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
-
-      getElementByIdSpy.mockReturnValue(null);
-      querySelectorSpy.mockReturnValue(null);
-
-      keydownHandler({ key: "Escape" });
-
-      expect(dispatchEventSpy).not.toHaveBeenCalled();
-    });
-
-    it("Ignora teclas que no son Escape", async () => {
-      await keyboardShortcuts.init();
-
-      const call = addEventListenerSpy.mock.calls.find((c) => c[0] === "keydown");
-      const keydownHandler = call[1];
-
-      keydownHandler({ key: "Enter" });
-
-      expect(dispatchEventSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("setupCommandPaletteShortcut", () => {
-    function getCtrlKHandler(addEventListenerSpy) {
-      const keydownCalls = addEventListenerSpy.mock.calls.filter((c) => c[0] === "keydown");
-      return keydownCalls[1]?.[1];
+    function fire(key, mods = {}) {
+      ks.handleKeydown({
+        key,
+        altKey: true, ctrlKey: false, shiftKey: false, metaKey: false, location: 1,
+        preventDefault,
+        ...mods,
+      });
     }
 
-    it("Ctrl+K abre el command palette", async () => {
-      await keyboardShortcuts.init();
-      const ctrlKHandler = getCtrlKHandler(addEventListenerSpy);
+    beforeEach(async () => {
+      preventDefault = vi.fn();
 
-      ctrlKHandler({ key: "k", ctrlKey: true, preventDefault: vi.fn() });
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { checked: true, closest: vi.fn() };
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+      document.querySelectorAll = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]') return Array.from({ length: 5 }, () => ({ checked: false }));
+        return [];
+      });
 
-      expect(global.window.commandPalette.toggle).toHaveBeenCalled();
+      ks = makeKS();
+      await ks.init();
     });
 
-    it("Ctrl+K llama preventDefault", async () => {
-      await keyboardShortcuts.init();
-      const ctrlKHandler = getCtrlKHandler(addEventListenerSpy);
-
-      const mockEvent = { key: "k", ctrlKey: true, preventDefault: vi.fn() };
-      ctrlKHandler(mockEvent);
-
-      expect(mockEvent.preventDefault).toHaveBeenCalled();
+    it("Alt+N creates a new tab", () => {
+      fire("n");
+      expect(window.tabManager.createTab).toHaveBeenCalled();
+      expect(preventDefault).toHaveBeenCalled();
     });
 
-    it("Ctrl+K sin commandPalette no lanza error", async () => {
-      global.window.commandPalette = undefined;
-      await keyboardShortcuts.init();
-      const ctrlKHandler = getCtrlKHandler(addEventListenerSpy);
-
-      expect(() => {
-        ctrlKHandler({ key: "k", ctrlKey: true, preventDefault: vi.fn() });
-      }).not.toThrow();
+    it("Alt+W closes active tab", () => {
+      const radio = { checked: true };
+      document.querySelector = vi.fn().mockReturnValue(radio);
+      fire("w");
+      expect(radio.checked).toBe(false);
+      expect(document.dispatchEvent).toHaveBeenCalled();
     });
 
-    it("No activa con Ctrl+K si ctrlKey es false", async () => {
-      await keyboardShortcuts.init();
-      const ctrlKHandler = getCtrlKHandler(addEventListenerSpy);
+    it("Alt+, goes to previous tab", () => {
+      const tabs = [{ checked: false }, { checked: true }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
+        return null;
+      });
+      fire(",");
+      expect(tabs[0].checked).toBe(true);
+    });
 
-      ctrlKHandler({ key: "k", ctrlKey: false, preventDefault: vi.fn() });
+    it("Alt+. goes to next tab", () => {
+      const tabs = [{ checked: false }, { checked: true }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
+        return null;
+      });
+      fire(".");
+      expect(tabs[2].checked).toBe(true);
+    });
 
-      expect(global.window.commandPalette.toggle).not.toHaveBeenCalled();
+    it("Alt+1 jumps to tab 1", () => {
+      const tabs = [{ checked: false }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      fire("1");
+      expect(tabs[0].checked).toBe(true);
+    });
+
+    it("Alt+5 does nothing if only 3 tabs", () => {
+      const tabs = [{ checked: false }, { checked: false }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      const origChecked = tabs.map((t) => t.checked);
+      fire("5");
+      expect(tabs.map((t) => t.checked)).toEqual(origChecked);
+    });
+
+    it("Alt+S opens settings modal", () => {
+      fire("s");
+      expect(document.getElementById("info-notepad").showModal).toHaveBeenCalled();
+    });
+
+    it("Alt+P pins tab", () => {
+      const tabEl = { classList: { contains: vi.fn().mockReturnValue(false) } };
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { closest: vi.fn().mockReturnValue(tabEl) };
+        return null;
+      });
+      fire("p");
+      expect(window.tabManager.pinTab).toHaveBeenCalledWith(tabEl);
+    });
+
+    it("Alt+P unpins tab when already pinned", () => {
+      const tabEl = { classList: { contains: vi.fn().mockReturnValue(true) } };
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { closest: vi.fn().mockReturnValue(tabEl) };
+        return null;
+      });
+      fire("p");
+      expect(window.tabManager.unpinTab).toHaveBeenCalledWith(tabEl);
+    });
+
+    it("Alt+E toggles editor width", () => {
+      localStorage.setItem("editorWidth", "default");
+      fire("e");
+      expect(window.editorSettings.applyWidth).toHaveBeenCalledWith("stretch");
+    });
+
+    it("Alt+/ opens help overlay", () => {
+      fire("/");
+      expect(window.keyboardShortcutsHelp.toggle).toHaveBeenCalled();
+    });
+
+    it("Alt+Backspace deletes active tab", () => {
+      const tabEl = {};
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { closest: vi.fn().mockReturnValue(tabEl) };
+        return null;
+      });
+      fire("Backspace");
+      expect(window.tabManager.deleteTabElement).toHaveBeenCalledWith(tabEl);
+    });
+
+    it("Alt+T renames active tab", () => {
+      const editButton = { click: vi.fn() };
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { closest: vi.fn().mockReturnValue({ querySelector: vi.fn().mockReturnValue(editButton) }) };
+        return null;
+      });
+      fire("t");
+      expect(editButton.click).toHaveBeenCalled();
+    });
+  });
+
+  // ─── SCOPE / GUARD ───
+  describe("scope and guards", () => {
+    let preventDefault;
+
+    beforeEach(async () => {
+      preventDefault = vi.fn();
+      ks = makeKS();
+      await ks.init();
+    });
+
+    it("blocks Alt+N when command palette is open", () => {
+      window.commandPalette.isOpen = true;
+      ks.handleKeydown({ key: "n", altKey: true, ctrlKey: false, shiftKey: false, metaKey: false, location: 1, preventDefault });
+      expect(window.tabManager.createTab).not.toHaveBeenCalled();
+    });
+
+    it("allows Ctrl+K even when palette is open (system scope)", () => {
+      window.commandPalette.isOpen = true;
+      ks.handleKeydown({ key: "k", ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0, preventDefault });
+      expect(window.commandPalette.toggle).toHaveBeenCalled();
+    });
+
+    it("blocks Alt+N when input is focused", () => {
+      const input = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: input, configurable: true });
+      ks.handleKeydown({ key: "n", altKey: true, ctrlKey: false, shiftKey: false, metaKey: false, location: 1, preventDefault });
+      expect(window.tabManager.createTab).not.toHaveBeenCalled();
+    });
+
+    it("allows Ctrl+K even when input is focused", () => {
+      const input = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: input, configurable: true });
+      ks.handleKeydown({ key: "k", ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0, preventDefault });
+      expect(window.commandPalette.toggle).toHaveBeenCalled();
+    });
+
+    it("blocks all shortcuts when document does not have focus", () => {
+      const focusSpy = vi.spyOn(document, "hasFocus").mockReturnValue(false);
+      ks.handleKeydown({ key: "n", altKey: true, ctrlKey: false, shiftKey: false, metaKey: false, location: 1, preventDefault });
+      expect(window.tabManager.createTab).not.toHaveBeenCalled();
+      focusSpy.mockRestore();
+    });
+  });
+
+  // ─── getShortcutsByCategory ───
+  describe("getShortcutsByCategory()", () => {
+    it("returns only shortcuts with label and category", async () => {
+      ks = makeKS();
+      await ks.init();
+      const list = ks.getShortcutsByCategory();
+      expect(list.length).toBeGreaterThan(0);
+      list.forEach((s) => {
+        expect(s.label).toBeTruthy();
+        expect(s.category).toBeTruthy();
+      });
+    });
+  });
+
+  // ─── destroy ───
+  describe("destroy()", () => {
+    it("removes event listener and clears shortcuts", async () => {
+      const removeSpy = vi.spyOn(document, "removeEventListener");
+      ks = makeKS();
+      await ks.init();
+      const handler = ks.boundHandler;
+      ks.destroy();
+      expect(removeSpy).toHaveBeenCalledWith("keydown", handler, { capture: true });
+      expect(ks.shortcuts).toHaveLength(0);
     });
   });
 });

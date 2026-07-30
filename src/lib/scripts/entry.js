@@ -132,6 +132,7 @@ async function initializeBasicComponents() {
   await initializeCommandPalette();
   await initializeFloatingNavPosition();
   await initializeEditorSettings();
+  await initializeKeyboardShortcutsHelp();
 }
 
 async function initializeTabsSystem() {
@@ -245,6 +246,22 @@ async function initializeKeyboardShortcuts() {
     return window.keyboardShortcuts;
   } catch (error) {
     console.error("❌ Error inicializando KeyboardShortcuts:", error);
+  }
+}
+
+async function initializeKeyboardShortcutsHelp() {
+  try {
+    const { KeyboardShortcutsHelp } = await import("../../features/keyboard-shortcuts-help/keyboard-shortcuts-help.js");
+
+    window.keyboardShortcutsHelp = new KeyboardShortcutsHelp({
+      debug: true,
+    });
+
+    await window.keyboardShortcutsHelp.init();
+
+    return window.keyboardShortcutsHelp;
+  } catch (error) {
+    console.error("❌ Error inicializando KeyboardShortcutsHelp:", error);
   }
 }
 
