@@ -1,7 +1,7 @@
 {
   "name": "notepad-astro",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "scripts": {
     "sync:roadmap": "node scripts/sync-roadmap-locales.cjs",
     "changelog": "node scripts/generate-changelog.cjs",
