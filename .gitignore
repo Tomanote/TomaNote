@@ -137,6 +137,7 @@ dist
 # Agent instructions (local only)
 AGENTS.md
 AI_CONTEXT.md
+HUMAN_CONTEXT.md
 
 # Windows artifact
 nul

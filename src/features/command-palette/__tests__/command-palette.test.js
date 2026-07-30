@@ -535,7 +535,7 @@ describe("CommandPalette", () => {
   describe("handleKeyNavigation", () => {
     it("should close on Escape", () => {
       commandPalette.isOpen = true;
-      const event = { key: "Escape", preventDefault: vi.fn() };
+      const event = { key: "Escape", preventDefault: vi.fn(), stopPropagation: vi.fn() };
       commandPalette.handleKeyNavigation(event);
       expect(commandPalette.isOpen).toBe(false);
     });
@@ -737,7 +737,7 @@ describe("CommandPalette", () => {
 
       commandPalette.handleSearch("shopping");
 
-      const escEvent = { key: "Escape", preventDefault: vi.fn() };
+      const escEvent = { key: "Escape", preventDefault: vi.fn(), stopPropagation: vi.fn() };
       commandPalette.handleKeyNavigation(escEvent);
 
       expect(mockRadio.checked).toBe(false);

@@ -29,9 +29,31 @@
     {
       "id": "current",
       "type": "current",
+      "versionNumber": "0.5.1",
+      "date": "2026-07-30",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          { "summary": "Refactor de atajos de teclado", "description": "Sistema centralizado de atajos con registro por clases, verificación de modificadores (Ctrl/Alt/Shift/Meta), guards por ámbito (system/global) y detección automática de escritorio." },
+          { "summary": "Superposición de ayuda de teclado", "description": "Nueva superposición interactiva que lista todos los atajos del teclado agrupados por categoría (Pestañas, Navegación, Editor). Accesible vía botón en la barra lateral o Alt+/." },
+          { "summary": "Navegación del modal de configuración", "description": "Mejora en la navegación del modal de ajustes — Enter/Space salta al contenido de la pestaña, Escape regresa a la barra lateral, las flechas ya no se interceptan dentro de controles de formulario." },
+          { "summary": "Corrección Command Palette", "description": "Escape en el command palette ya no se propaga al sistema global, previniendo el cierre accidental de pestañas." }
+        ],
+        "en": [
+          { "summary": "Keyboard shortcuts refactor", "description": "Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards (system/global), and automatic desktop detection." },
+          { "summary": "Keyboard shortcuts help overlay", "description": "New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/." },
+          { "summary": "Settings modal navigation", "description": "Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls." },
+          { "summary": "Command Palette fix", "description": "Escape in the command palette no longer propagates to the global shortcut system, preventing accidental tab closing." }
+        ]
+      }
+    },
+    {
+      "id": "prev-050",
+      "type": "previous",
       "versionNumber": "0.5.0",
       "date": "2026-07-19",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [
@@ -53,12 +75,14 @@
       }
     },
     {
-      "id": "prev",
-      "type": "previous",
+      "id": "old-044",
+      "type": "old",
       "versionNumber": "0.4.4",
       "date": "2026-07-15",
       "isCurrent": false,
       "isNext": false,
+      "isOld": true,
+      "showInTab": false,
       "items": {
         "es": [
           { "summary": "Actualización de dependencias", "description": "Dependencias críticas actualizadas mediante dependabot: Vite y grupo de dependencias npm_and_yarn" },

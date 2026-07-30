@@ -170,6 +170,7 @@ export class CommandPalette {
   handleKeyNavigation(e) {
     if (e.key === "Escape") {
       e.preventDefault();
+      e.stopPropagation();
       this.close();
       return;
     }
