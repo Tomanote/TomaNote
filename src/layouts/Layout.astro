@@ -27,6 +27,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       })();
     </script>
 
+    {/* === Strict Content Security Policy (CSP) === */}
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self';" /> -->
+
     {/* === BASIC META TAGS === */}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
