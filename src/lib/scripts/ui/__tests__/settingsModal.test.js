@@ -39,13 +39,15 @@ describe("SettingsModal", () => {
     mockNavItems = [
       {
         dataset: { tab: "about" },
-        classList: { remove: vi.fn(), add: vi.fn() },
+        classList: { remove: vi.fn(), add: vi.fn(), contains: vi.fn((cls) => cls === "nav-item") },
         addEventListener: vi.fn(),
+        focus: vi.fn(),
       },
       {
         dataset: { tab: "appearance" },
-        classList: { remove: vi.fn(), add: vi.fn() },
+        classList: { remove: vi.fn(), add: vi.fn(), contains: vi.fn((cls) => cls === "nav-item") },
         addEventListener: vi.fn(),
+        focus: vi.fn(),
       },
     ];
 
@@ -60,6 +62,9 @@ describe("SettingsModal", () => {
       },
     ];
 
+    const mockContentDiv = document.createElement("div");
+    mockContentDiv.contains = vi.fn().mockReturnValue(true);
+
     mockModal = {
       querySelectorAll: vi.fn((selector) => {
         if (selector === ".nav-item") return mockNavItems;
@@ -68,10 +73,14 @@ describe("SettingsModal", () => {
       }),
       querySelector: vi.fn((selector) => {
         if (selector === "#about-tab") return mockTabs[0];
+        if (selector === "#appearance-tab") return mockTabs[1];
         if (selector === '[data-tab="about"]') return mockNavItems[0];
+        if (selector === ".nav-item.active") return mockNavItems[0];
+        if (selector === ".settings-content") return mockContentDiv;
         if (selector === "form") return mockForm;
         return null;
       }),
+      contains: vi.fn().mockReturnValue(true),
       addEventListener: vi.fn(),
       close: vi.fn(),
     };
@@ -300,29 +309,133 @@ describe("SettingsModal", () => {
     });
   });
 
-  describe("setupDialogClosePrevention", () => {
-    it("should register cancel event listener on modal", async () => {
+  describe("setupKeyboardNav", () => {
+    it("should register keydown event listener on modal", async () => {
       settingsModal = new SettingsModal({ debug: false });
       await settingsModal.init();
 
       expect(mockModal.addEventListener).toHaveBeenCalledWith(
-        "cancel",
+        "keydown",
         expect.any(Function),
       );
     });
 
-    it("should prevent default on cancel event", async () => {
+    it("should call switchTab on ArrowDown when nav-item focused", async () => {
       settingsModal = new SettingsModal({ debug: false });
       await settingsModal.init();
 
-      const cancelHandler = mockModal.addEventListener.mock.calls.find(
-        (call) => call[0] === "cancel",
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
       )[1];
 
-      const mockEvent = { preventDefault: vi.fn() };
-      cancelHandler(mockEvent);
+      Object.defineProperty(document, "activeElement", {
+        value: mockNavItems[0],
+        configurable: true,
+      });
 
-      expect(mockEvent.preventDefault).toHaveBeenCalled();
+      const event = { key: "ArrowDown", preventDefault: vi.fn() };
+      expect(() => keydownHandler(event)).not.toThrow();
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+
+    it("should not call switchTab on ArrowDown when nav-item not focused", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      Object.defineProperty(document, "activeElement", {
+        value: document.createElement("div"),
+        configurable: true,
+      });
+
+      const event = { key: "ArrowDown", preventDefault: vi.fn() };
+      expect(() => keydownHandler(event)).not.toThrow();
+      expect(event.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it("should not switch tab on unrelated keys", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      Object.defineProperty(document, "activeElement", {
+        value: mockNavItems[0],
+        configurable: true,
+      });
+
+      const event = { key: "a", preventDefault: vi.fn() };
+      expect(() => keydownHandler(event)).not.toThrow();
+      expect(event.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it("should focus first content element on Enter when nav-item focused", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      Object.defineProperty(document, "activeElement", {
+        value: mockNavItems[0],
+        configurable: true,
+      });
+
+      const focusSpy = vi.fn();
+      mockTabs[0].querySelectorAll = vi.fn().mockReturnValue([{ focus: focusSpy }]);
+
+      const event = { key: "Enter", preventDefault: vi.fn() };
+      keydownHandler(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it("should focus first content element on Space when nav-item focused", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      Object.defineProperty(document, "activeElement", {
+        value: mockNavItems[0],
+        configurable: true,
+      });
+
+      const focusSpy = vi.fn();
+      mockTabs[0].querySelectorAll = vi.fn().mockReturnValue([{ focus: focusSpy }]);
+
+      const event = { key: " ", preventDefault: vi.fn() };
+      keydownHandler(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it("should return focus to nav-item on Escape from content", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      const contentEl = document.createElement("input");
+      Object.defineProperty(document, "activeElement", {
+        value: contentEl,
+        configurable: true,
+      });
+
+      const event = { key: "Escape", preventDefault: vi.fn() };
+      keydownHandler(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockNavItems[0].focus).toHaveBeenCalled();
     });
 
     it("should not crash when modal is null", async () => {
