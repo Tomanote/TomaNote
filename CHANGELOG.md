@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.1] - July 30, 2026
+
+### Added
+- Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards (system/global), and automatic desktop detection.
+- New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/.
+- Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls.
+- Escape in the command palette no longer propagates to the global shortcut system, preventing accidental tab closing.
+
 ## [0.5.0] - July 19, 2026
 
 ### Added
@@ -14,16 +22,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - All buttons now have smart tooltips with sidebar-aware positioning.
 - 455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities.
 
-## [0.4.4] - July 15, 2026
+### Previous Versions
 
-### Added
+<details>
+<summary>[0.4.4] - July 15, 2026</summary>
+
 - Critical dependencies updated via dependabot: Vite and npm_and_yarn dependency group
 - Style adjustments required after the latest Vite update to maintain visual compatibility
 - Resolved CVE-2026-33532 vulnerability and related issues via npm overrides
 - About, Terms and Privacy pages now render in the user's language via useTranslations()
 - Removed duplicate contextMenu.js, replaced hardcoded Spanish strings with i18n keys, fixed language flash on settings tabs
 
-### Previous Versions
+</details>
 
 <details>
 <summary>[0.4.3] - June 10, 2026</summary>
