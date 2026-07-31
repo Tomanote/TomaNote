@@ -45,6 +45,15 @@
     }
   }
 
+  .nav-item,
+  .save-button {
+    &:focus-visible {
+      outline: 3px solid var(--tn-color-text);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
   .sidebar-footer {
     margin-top: 1rem;
   }
