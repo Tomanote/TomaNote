@@ -112,6 +112,13 @@ describe("KeyboardShortcuts", () => {
         key: "k", label: "Ctrl+K", description: "Command Palette", category: "navigation", scope: "system",
       });
     });
+
+    it("stores location restriction for top-row keys and undefined otherwise", () => {
+      expect(ks.shortcuts.find((s) => s.key === "1")).toMatchObject({ location: 0 });
+      expect(ks.shortcuts.find((s) => s.key === ",")).toMatchObject({ location: 0 });
+      expect(ks.shortcuts.find((s) => s.key === ".")).toMatchObject({ location: 0 });
+      expect(ks.shortcuts.find((s) => s.key === "n").location).toBeUndefined();
+    });
   });
 
   // ─── matchesKey ───
@@ -143,6 +150,18 @@ describe("KeyboardShortcuts", () => {
 
     it("rejects when extra modifier is pressed", () => {
       expect(ks.matchesKey(e("n", { altKey: true, ctrlKey: true, location: 1 }), s("n", { alt: true, ctrl: false, shift: false, meta: false }))).toBe(false);
+    });
+
+    it("accepts key when shortcut has no location restriction", () => {
+      expect(ks.matchesKey(e("1", { altKey: true, location: 3 }), s("1"))).toBe(true);
+    });
+
+    it("matches when location matches shortcut restriction", () => {
+      expect(ks.matchesKey(e("1", { altKey: true, location: 0 }), { ...s("1"), location: 0 })).toBe(true);
+    });
+
+    it("rejects numpad key when shortcut restricts to top row (location 0)", () => {
+      expect(ks.matchesKey(e("1", { altKey: true, location: 3 }), { ...s("1"), location: 0 })).toBe(false);
     });
   });
 
@@ -297,7 +316,7 @@ describe("KeyboardShortcuts", () => {
         if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
         return null;
       });
-      fire(",");
+      fire(",", { location: 0 });
       expect(tabs[0].checked).toBe(true);
     });
 
@@ -308,14 +327,14 @@ describe("KeyboardShortcuts", () => {
         if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
         return null;
       });
-      fire(".");
+      fire(".", { location: 0 });
       expect(tabs[2].checked).toBe(true);
     });
 
     it("Alt+1 jumps to tab 1", () => {
       const tabs = [{ checked: false }, { checked: false }];
       document.querySelectorAll = vi.fn().mockReturnValue(tabs);
-      fire("1");
+      fire("1", { location: 0 });
       expect(tabs[0].checked).toBe(true);
     });
 
@@ -323,8 +342,38 @@ describe("KeyboardShortcuts", () => {
       const tabs = [{ checked: false }, { checked: false }, { checked: false }];
       document.querySelectorAll = vi.fn().mockReturnValue(tabs);
       const origChecked = tabs.map((t) => t.checked);
-      fire("5");
+      fire("5", { location: 0 });
       expect(tabs.map((t) => t.checked)).toEqual(origChecked);
+    });
+
+    it("Alt+1 from numpad does NOT jump to tab", () => {
+      const tabs = [{ checked: false }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      const origChecked = tabs.map((t) => t.checked);
+      fire("1", { location: 3 });
+      expect(tabs.map((t) => t.checked)).toEqual(origChecked);
+    });
+
+    it("Alt+, from numpad decimal does NOT go to previous tab", () => {
+      const tabs = [{ checked: false }, { checked: true }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
+        return null;
+      });
+      fire(",", { location: 3 });
+      expect(tabs.map((t) => t.checked)).toEqual([false, true, false]);
+    });
+
+    it("Alt+. from numpad decimal does NOT go to next tab", () => {
+      const tabs = [{ checked: false }, { checked: true }, { checked: false }];
+      document.querySelectorAll = vi.fn().mockReturnValue(tabs);
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return tabs[1];
+        return null;
+      });
+      fire(".", { location: 3 });
+      expect(tabs.map((t) => t.checked)).toEqual([false, true, false]);
     });
 
     it("Alt+S opens settings modal", () => {

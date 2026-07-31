@@ -37,6 +37,7 @@ export class KeyboardShortcuts {
     this.shortcuts.push({
       key: config.key,
       modifiers: config.modifiers || {},
+      location: config.location ?? undefined,
       handler: config.handler,
       scope: config.scope || "global",
       preventDefault: config.preventDefault !== false,
@@ -82,6 +83,7 @@ export class KeyboardShortcuts {
 
   matchesKey(e, s) {
     if (e.key !== s.key) return false;
+    if (s.location !== undefined && e.location !== s.location) return false;
     const m = s.modifiers;
 
     if (m.ctrl !== undefined && e.ctrlKey !== m.ctrl) return false;
@@ -176,6 +178,7 @@ export class KeyboardShortcuts {
     this.registerShortcut({
       key: ",",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
+      location: 0,
       label: "Alt+,",
       description: "Previous tab",
       category: "tabs",
@@ -194,6 +197,7 @@ export class KeyboardShortcuts {
     this.registerShortcut({
       key: ".",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
+      location: 0,
       label: "Alt+.",
       description: "Next tab",
       category: "tabs",
@@ -213,6 +217,7 @@ export class KeyboardShortcuts {
       this.registerShortcut({
         key: String(i),
         modifiers: { alt: true, ctrl: false, shift: false, meta: false },
+        location: 0,
         label: `Alt+${i}`,
         description: `Jump to tab #${i}`,
         category: "tabs",
