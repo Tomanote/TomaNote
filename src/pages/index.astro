@@ -34,12 +34,13 @@ import KeyboardShortcutsHelp from "../features/keyboard-shortcuts-help/keyboard-
 
 <script>
   import { initNotepad } from "../lib/scripts/entry.js";
+  import { devLogger } from "../lib/scripts/utils/devLogger.js";
 
   // Inicializar de forma segura con timeout
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       initNotepad().catch((error) => {
-        console.error("Error en sistema modular:", error);
+        devLogger.error("Error en sistema modular:", error);
       });
     }, 100); // Pequeño delay para asegurar que el DOM está listo
   });

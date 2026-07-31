@@ -1,6 +1,8 @@
 // src/lib/scripts/ui/keyboardShortcuts.js
 // Desktop keyboard shortcut system with centralized registry
 
+import { devLogger } from "../utils/devLogger.js";
+
 export class KeyboardShortcuts {
   constructor(options = {}) {
     this.options = {
@@ -372,7 +374,7 @@ export class KeyboardShortcuts {
 
   log(...args) {
     if (this.options.debug) {
-      console.log("[KeyboardShortcuts]", ...args);
+      devLogger.log("[KeyboardShortcuts]", ...args);
     }
   }
 }

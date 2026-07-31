@@ -1,6 +1,7 @@
 // src/lib/scripts/ui/tabDragDrop.js
 // Drag and drop system for tabs using SortableJS
 import Sortable from "sortablejs";
+import { devLogger } from "../utils/devLogger.js";
 
 export class TabDragDrop {
   constructor(options = {}) {
@@ -187,7 +188,7 @@ export class TabDragDrop {
 
   log(...args) {
     if (this.options.debug) {
-      console.log("[TabDragDrop]", ...args);
+      devLogger.log("[TabDragDrop]", ...args);
     }
   }
 }

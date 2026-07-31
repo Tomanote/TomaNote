@@ -1,3 +1,5 @@
+import { devLogger } from "../utils/devLogger.js";
+
 export class ThemeManager {
   constructor() {
     this.themes = [
@@ -64,7 +66,7 @@ export class ThemeManager {
         localStorage.setItem("notepadTheme", this.currentTheme);
       }
     } catch (error) {
-      console.warn("⚠️  Error cargando tema:", error);
+      devLogger.warn("⚠️  Error cargando tema:", error);
       this.currentTheme = "dark";
     }
   }
@@ -256,7 +258,7 @@ export class ThemeManager {
 
   switchTheme(themeId) {
     if (!this.themes.some((t) => t.id === themeId)) {
-      console.warn(`⚠️  Tema "${themeId}" no válido`);
+      devLogger.warn(`⚠️  Tema "${themeId}" no válido`);
       return;
     }
 

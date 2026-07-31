@@ -1,4 +1,6 @@
 // src/lib/scripts/ui/settingsModal.js
+import { devLogger } from "../utils/devLogger.js";
+
 export class SettingsModal {
   constructor(options = {}) {
     this.options = {
@@ -14,7 +16,7 @@ export class SettingsModal {
     this.modal = document.getElementById("info-notepad");
     if (!this.modal) {
       if (this.options.debug) {
-        console.error("[SettingsModal] Modal not found");
+        devLogger.error("[SettingsModal] Modal not found");
       }
       return this;
     }
@@ -24,7 +26,7 @@ export class SettingsModal {
     this.setupKeyboardNav();
 
     if (this.options.debug) {
-      console.log("[SettingsModal] Initialized successfully");
+      devLogger.log("[SettingsModal] Initialized successfully");
     }
 
     return this;

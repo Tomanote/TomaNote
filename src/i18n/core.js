@@ -2,6 +2,7 @@
 // Interanational central system for modules JS
 import es from "../locales/es.json";
 import en from "../locales/en.json";
+import { devLogger } from "../lib/scripts/utils/devLogger.js";
 
 class I18nManager {
   constructor() {
@@ -31,7 +32,7 @@ class I18nManager {
       const fallback = this.translations["es"]?.[key];
       if (fallback !== undefined) return fallback;
 
-      console.warn(`[i18n] Missing translation: "${key}"`);
+      devLogger.warn(`[i18n] Missing translation: "${key}"`);
       return key;
     };
 
