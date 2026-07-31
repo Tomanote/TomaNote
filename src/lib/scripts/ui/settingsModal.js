@@ -1,4 +1,6 @@
 // src/lib/scripts/ui/settingsModal.js
+import { devLogger } from "../utils/devLogger.js";
+
 export class SettingsModal {
   constructor(options = {}) {
     this.options = {
@@ -14,7 +16,7 @@ export class SettingsModal {
     this.modal = document.getElementById("info-notepad");
     if (!this.modal) {
       if (this.options.debug) {
-        console.error("[SettingsModal] Modal not found");
+        devLogger.error("[SettingsModal] Modal not found");
       }
       return this;
     }
@@ -24,7 +26,7 @@ export class SettingsModal {
     this.setupKeyboardNav();
 
     if (this.options.debug) {
-      console.log("[SettingsModal] Initialized successfully");
+      devLogger.log("[SettingsModal] Initialized successfully");
     }
 
     return this;
@@ -96,8 +98,8 @@ export class SettingsModal {
       const activeEl = document.activeElement;
       const isNavFocused = activeEl && activeEl.classList.contains("nav-item");
 
-      const currentActive = this.modal.querySelector(".nav-item.active");
-      let currentIndex = currentActive ? Array.from(navItems).indexOf(currentActive) : 0;
+      let currentIndex = isNavFocused ? Array.from(navItems).indexOf(activeEl) : 0;
+      if (currentIndex < 0) currentIndex = 0;
 
       // Arrow keys: navigate nav-items only when a nav-item is focused
       if (isNavFocused) {

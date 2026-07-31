@@ -33,12 +33,16 @@ function syncRoadmapLocales() {
     es: {
       "roadmap.badge.current": "ACTUAL",
       "roadmap.badge.next": "PRÓXIMO",
-      "roadmap.badge.previous": "ANTERIOR"
+      "roadmap.badge.previous": "ANTERIOR",
+      "roadmap.viewChangelog": "Ver changelog completo →",
+      "roadmap.changelog-link": "https://github.com/Tomanote/TomaNote/blob/master/CHANGELOG.md"
     },
     en: {
       "roadmap.badge.current": "CURRENT",
       "roadmap.badge.next": "NEXT",
-      "roadmap.badge.previous": "PREVIOUS"
+      "roadmap.badge.previous": "PREVIOUS",
+      "roadmap.viewChangelog": "View full changelog →",
+      "roadmap.changelog-link": "https://github.com/Tomanote/TomaNote/blob/master/CHANGELOG.md"
     }
   };
 

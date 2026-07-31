@@ -578,6 +578,41 @@ describe("Floating menu tooltip translations (context-menu keys)", () => {
   });
 });
 
+describe("Roadmap changelog keys", () => {
+  let i18n;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    resetI18n();
+    vi.resetModules();
+    const module = await import("../core.js");
+    i18n = module.i18n;
+  });
+
+  const keys = ["roadmap.viewChangelog", "roadmap.changelog-link"];
+
+  ["es", "en"].forEach((lang) => {
+    keys.forEach((key) => {
+      it(`t("${key}") must exist and return a non-empty string in ${lang}`, () => {
+        mockNavigatorLanguage(lang === "es" ? "es-CO" : "en-US");
+        i18n.init();
+        const result = i18n.t(key);
+        expect(result).toBeTruthy();
+        expect(result.length).toBeGreaterThan(0);
+        expect(result).not.toBe(key);
+      });
+    });
+  });
+
+  it('roadmap.changelog-link must point to the Tomanote repo', () => {
+    mockNavigatorLanguage("en-US");
+    i18n.init();
+    const link = i18n.t("roadmap.changelog-link");
+    expect(link).toContain("Tomanote/TomaNote");
+    expect(link).not.toContain("Mixxy-Studio");
+  });
+});
+
 describe("I18nManager - Optional Chaining y null safety", () => {
   let i18n;
 

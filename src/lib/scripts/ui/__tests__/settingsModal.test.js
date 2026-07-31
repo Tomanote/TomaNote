@@ -338,6 +338,24 @@ describe("SettingsModal", () => {
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
+    it("should navigate from the focused nav-item index, not the active one", async () => {
+      settingsModal = new SettingsModal({ debug: false });
+      await settingsModal.init();
+
+      const keydownHandler = mockModal.addEventListener.mock.calls.find(
+        (call) => call[0] === "keydown",
+      )[1];
+
+      Object.defineProperty(document, "activeElement", {
+        value: mockNavItems[1],
+        configurable: true,
+      });
+
+      const event = { key: "ArrowUp", preventDefault: vi.fn() };
+      keydownHandler(event);
+      expect(mockNavItems[0].focus).toHaveBeenCalled();
+    });
+
     it("should not call switchTab on ArrowDown when nav-item not focused", async () => {
       settingsModal = new SettingsModal({ debug: false });
       await settingsModal.init();

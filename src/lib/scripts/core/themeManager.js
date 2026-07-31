@@ -1,3 +1,5 @@
+import { devLogger } from "../utils/devLogger.js";
+
 export class ThemeManager {
   constructor() {
     this.themes = [
@@ -64,7 +66,7 @@ export class ThemeManager {
         localStorage.setItem("notepadTheme", this.currentTheme);
       }
     } catch (error) {
-      console.warn("⚠️  Error cargando tema:", error);
+      devLogger.warn("⚠️  Error cargando tema:", error);
       this.currentTheme = "dark";
     }
   }
@@ -168,6 +170,9 @@ export class ThemeManager {
     // Establecer el radio button activo según el tema actual
     this.updateAppearanceTabUI();
 
+    // Prevenir auto-scroll del modal al hacer clic en los labels (patch mobile)
+    this.preventLabelAutoScroll(themeRadios);
+
     // Agregar event listeners a los radio buttons
     themeRadios.forEach((radio) => {
       radio.addEventListener("change", (e) => {
@@ -181,6 +186,18 @@ export class ThemeManager {
     // Escuchar cambios de tema para actualizar la UI
     window.addEventListener("themeChanged", (e) => {
       this.updateAppearanceTabUI();
+    });
+  }
+
+  preventLabelAutoScroll(radios) {
+    radios.forEach((radio) => {
+      const label = document.querySelector(`label[for="${radio.id}"]`);
+      if (!label) return;
+      label.addEventListener("click", (e) => {
+        e.preventDefault();
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change", { bubbles: true }));
+      });
     });
   }
 
@@ -241,7 +258,7 @@ export class ThemeManager {
 
   switchTheme(themeId) {
     if (!this.themes.some((t) => t.id === themeId)) {
-      console.warn(`⚠️  Tema "${themeId}" no válido`);
+      devLogger.warn(`⚠️  Tema "${themeId}" no válido`);
       return;
     }
 

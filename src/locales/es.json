@@ -221,5 +221,7 @@
   "roadmap.prev-050.4.summary": "Tooltips inteligentes",
   "roadmap.prev-050.4.description": "Todos los botones ahora tienen tooltips con posicionamiento inteligente según la barra lateral.",
   "roadmap.prev-050.5.summary": "Cobertura de tests",
-  "roadmap.prev-050.5.description": "455 tests pasando — cobertura expandida para configuración del editor, command palette, menú flotante y utilidades."
+  "roadmap.prev-050.5.description": "455 tests pasando — cobertura expandida para configuración del editor, command palette, menú flotante y utilidades.",
+  "roadmap.viewChangelog": "Ver changelog completo →",
+  "roadmap.changelog-link": "https://github.com/Tomanote/TomaNote/blob/master/CHANGELOG.md"
 }

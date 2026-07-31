@@ -1,6 +1,8 @@
 // src/features/keyboard-shortcuts-help/keyboard-shortcuts-help.js
 // Keyboard shortcuts help overlay
 
+import { devLogger } from "../../lib/scripts/utils/devLogger.js";
+
 export class KeyboardShortcutsHelp {
   constructor(options = {}) {
     this.options = {
@@ -116,7 +118,7 @@ export class KeyboardShortcutsHelp {
 
   log(...args) {
     if (this.options.debug) {
-      console.log("[KeyboardShortcutsHelp]", ...args);
+      devLogger.log("[KeyboardShortcutsHelp]", ...args);
     }
   }
 }
