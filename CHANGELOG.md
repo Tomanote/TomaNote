@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/.
 - Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls.
 - Escape in the command palette no longer propagates to the global shortcut system, preventing accidental tab closing.
+- Theme color radio buttons restored to the tab order inside the settings modal.
+- Arrow keys navigate from the focused settings sidebar item.
+- Focus-visible rings added for the navigation bar, save and font-size labels.
+- Alt+number shortcuts no longer trigger from the numeric keypad.
+- Editor no longer auto-scrolls when changing the font size on mobile.
+- New tabs now apply the saved font size.
+- The 'View full changelog' link points back to the correct URL.
+- Console logs are now restricted to development builds to keep the production bundle clean.
 
 ## [0.5.0] - July 19, 2026
 
