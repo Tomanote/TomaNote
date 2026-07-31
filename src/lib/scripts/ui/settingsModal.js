@@ -96,8 +96,8 @@ export class SettingsModal {
       const activeEl = document.activeElement;
       const isNavFocused = activeEl && activeEl.classList.contains("nav-item");
 
-      const currentActive = this.modal.querySelector(".nav-item.active");
-      let currentIndex = currentActive ? Array.from(navItems).indexOf(currentActive) : 0;
+      let currentIndex = isNavFocused ? Array.from(navItems).indexOf(activeEl) : 0;
+      if (currentIndex < 0) currentIndex = 0;
 
       // Arrow keys: navigate nav-items only when a nav-item is focused
       if (isNavFocused) {
