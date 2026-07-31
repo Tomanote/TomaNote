@@ -133,6 +133,30 @@ describe("EditorSettings", () => {
         expect.any(Function),
       );
     });
+
+    it("should wire preventLabelAutoScroll on font size radios", () => {
+      const radio = {
+        id: "option-medium-text",
+        checked: false,
+        addEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      };
+      const label = { addEventListener: vi.fn() };
+      document.querySelectorAll = vi.fn(() => [radio]);
+      document.querySelector = vi.fn(() => label);
+
+      editorSettings.setupFontSizeListener();
+
+      const clickHandler = label.addEventListener.mock.calls.find((c) => c[0] === "click")[1];
+      const mockEvent = { preventDefault: vi.fn() };
+      clickHandler(mockEvent);
+
+      expect(mockEvent.preventDefault).toHaveBeenCalled();
+      expect(radio.checked).toBe(true);
+      expect(radio.dispatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "change", bubbles: true }),
+      );
+    });
   });
 
   describe("preventLabelAutoScroll", () => {

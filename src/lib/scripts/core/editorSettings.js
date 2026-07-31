@@ -67,6 +67,8 @@ export class EditorSettings {
     const fontSizeRadios = document.querySelectorAll('input[name="options-font-size"]');
     if (!fontSizeRadios.length) return;
 
+    this.preventLabelAutoScroll(fontSizeRadios);
+
     fontSizeRadios.forEach((radio) => {
       radio.addEventListener("change", () => {
         const selected = Array.from(fontSizeRadios).find((r) => r.checked);
