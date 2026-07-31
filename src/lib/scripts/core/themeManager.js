@@ -168,6 +168,9 @@ export class ThemeManager {
     // Establecer el radio button activo según el tema actual
     this.updateAppearanceTabUI();
 
+    // Prevenir auto-scroll del modal al hacer clic en los labels (patch mobile)
+    this.preventLabelAutoScroll(themeRadios);
+
     // Agregar event listeners a los radio buttons
     themeRadios.forEach((radio) => {
       radio.addEventListener("change", (e) => {
@@ -181,6 +184,18 @@ export class ThemeManager {
     // Escuchar cambios de tema para actualizar la UI
     window.addEventListener("themeChanged", (e) => {
       this.updateAppearanceTabUI();
+    });
+  }
+
+  preventLabelAutoScroll(radios) {
+    radios.forEach((radio) => {
+      const label = document.querySelector(`label[for="${radio.id}"]`);
+      if (!label) return;
+      label.addEventListener("click", (e) => {
+        e.preventDefault();
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change", { bubbles: true }));
+      });
     });
   }
 
