@@ -334,6 +334,50 @@ describe("TabManager - createTabElement", () => {
 
     expect(tabManager.tabList.appendChild).toHaveBeenCalled();
   });
+
+  it("Aplica ajustes guardados (stretch, bg, font-size) a la nueva pestaña", () => {
+    localStorageMock.getItem.mockImplementation((key) => {
+      if (key === "editorWidth") return "stretch";
+      if (key === "editorBackground") return "underline";
+      if (key === "fontSize") return "medium";
+      return undefined;
+    });
+
+    const tabData = { id: "body-tab-1", name: "Nota", content: "", isPinned: false, emoji: null };
+    const element = tabManager.createTabElement(tabData);
+
+    const innerDiv = element.querySelector(".tab-list__item--content > div");
+    const contentDiv = element.querySelector(".tab-list__item--content");
+    expect(innerDiv.classList.contains("stretch")).toBe(true);
+    expect(contentDiv.classList.contains("bg-underline")).toBe(true);
+    expect(contentDiv.classList.contains("medium-text")).toBe(true);
+  });
+
+  it("No aplica clases si localStorage no tiene ajustes", () => {
+    localStorageMock.getItem.mockReturnValue(undefined);
+
+    const tabData = { id: "body-tab-1", name: "Nota", content: "", isPinned: false, emoji: null };
+    const element = tabManager.createTabElement(tabData);
+
+    const innerDiv = element.querySelector(".tab-list__item--content > div");
+    const contentDiv = element.querySelector(".tab-list__item--content");
+    expect(innerDiv.classList.contains("stretch")).toBe(false);
+    expect(contentDiv.classList.contains("bg-underline")).toBe(false);
+    expect(contentDiv.classList.contains("medium-text")).toBe(false);
+  });
+
+  it("Ignora tamaño de fuente inválido", () => {
+    localStorageMock.getItem.mockImplementation((key) => {
+      if (key === "fontSize") return "huge";
+      return undefined;
+    });
+
+    const tabData = { id: "body-tab-1", name: "Nota", content: "", isPinned: false, emoji: null };
+    const element = tabManager.createTabElement(tabData);
+
+    const contentDiv = element.querySelector(".tab-list__item--content");
+    expect(contentDiv.classList.contains("huge-text")).toBe(false);
+  });
 });
 
 describe("TabManager - reorderTabs", () => {

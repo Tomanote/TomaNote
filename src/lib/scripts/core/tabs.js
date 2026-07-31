@@ -302,6 +302,11 @@ export class TabManager {
       if (savedBg && typeof savedBg === "string" && savedBg !== "flat" && savedBg !== "null") {
         contentDiv.classList.add(`bg-${savedBg}`);
       }
+
+      const savedFontSize = localStorage.getItem("fontSize");
+      if (savedFontSize && ["base", "medium", "large"].includes(savedFontSize)) {
+        contentDiv.classList.add(`${savedFontSize}-text`);
+      }
     }
 
     return tabElement;

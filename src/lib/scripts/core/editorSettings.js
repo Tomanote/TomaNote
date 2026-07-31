@@ -117,6 +117,7 @@ export class EditorSettings {
   updateLineSpacing(sizeValue) {
     const fontSizePx = FONT_SIZE_PX[sizeValue] || FONT_SIZE_PX.base;
     const lineSpacing = fontSizePx * LINE_HEIGHT;
+    localStorage.setItem("fontSize", sizeValue);
     document.documentElement.style.setProperty("--tn-paper-line-spacing", `${lineSpacing}px`);
   }
 

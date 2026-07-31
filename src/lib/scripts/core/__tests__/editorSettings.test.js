@@ -282,6 +282,11 @@ describe("EditorSettings", () => {
   });
 
   describe("updateLineSpacing", () => {
+    it("should persist fontSize to localStorage", () => {
+      editorSettings.updateLineSpacing("medium");
+      expect(localStorage.setItem).toHaveBeenCalledWith("fontSize", "medium");
+    });
+
     it("should calculate line spacing for base font size", () => {
       editorSettings.updateLineSpacing("base");
       expect(document.documentElement.style.setProperty).toHaveBeenCalledWith(
