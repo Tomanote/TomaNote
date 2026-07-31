@@ -220,5 +220,7 @@
   "roadmap.prev-050.4.summary": "Smart tooltips",
   "roadmap.prev-050.4.description": "All buttons now have smart tooltips with sidebar-aware positioning.",
   "roadmap.prev-050.5.summary": "Test coverage",
-  "roadmap.prev-050.5.description": "455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities."
+  "roadmap.prev-050.5.description": "455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities.",
+  "roadmap.viewChangelog": "View full changelog →",
+  "roadmap.changelog-link": "https://github.com/Tomanote/TomaNote/blob/master/CHANGELOG.md"
 }
