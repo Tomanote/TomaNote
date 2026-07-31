@@ -1,3 +1,5 @@
+import { devLogger } from "../utils/devLogger.js";
+
 export class FloatingNavPosition {
   constructor() {
     this.navElement = null;
@@ -13,7 +15,7 @@ export class FloatingNavPosition {
     this.updatePosition();
     this.setupEventListeners();
 
-    console.log("[FloatingNavPosition] Initialized");
+    devLogger.log("[FloatingNavPosition] Initialized");
     return this;
   }
 

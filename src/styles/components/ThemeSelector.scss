@@ -41,6 +41,12 @@
         outline-offset: 2px;
         border-radius: 10px;
       }
+
+      &:has(input:focus-visible) {
+        outline: 3px solid var(--tn-color-text);
+        outline-offset: 2px;
+        border-radius: 10px;
+      }
     }
   }
 }

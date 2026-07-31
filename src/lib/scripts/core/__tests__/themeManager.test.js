@@ -297,6 +297,30 @@ describe("ThemeManager - setupAppearanceTab", () => {
     expect(mockRadio1.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
     expect(mockRadio2.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
+
+  it("Previene auto-scroll al hacer click en los labels de tema", () => {
+    const mockRadio = {
+      id: "theme-color-dark",
+      checked: false,
+      addEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+    const mockLabel = { addEventListener: vi.fn() };
+    document.querySelectorAll = vi.fn(() => [mockRadio]);
+    document.querySelector = vi.fn(() => mockLabel);
+
+    themeManager.setupAppearanceTab();
+
+    const clickHandler = mockLabel.addEventListener.mock.calls.find((c) => c[0] === "click")[1];
+    const mockEvent = { preventDefault: vi.fn() };
+    clickHandler(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockRadio.checked).toBe(true);
+    expect(mockRadio.dispatchEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "change", bubbles: true })
+    );
+  });
 });
 
 describe("ThemeManager - updateAppearanceTabUI", () => {

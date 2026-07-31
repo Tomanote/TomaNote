@@ -1,6 +1,8 @@
 // src/features/command-palette/command-palette.js
 // Command Palette - Global search and navigation
 
+import { devLogger } from "../../lib/scripts/utils/devLogger.js";
+
 export class CommandPalette {
   constructor(options = {}) {
     this.options = {
@@ -320,7 +322,7 @@ export class CommandPalette {
 
   log(...args) {
     if (this.options.debug) {
-      console.log("[CommandPalette]", ...args);
+      devLogger.log("[CommandPalette]", ...args);
     }
   }
 }

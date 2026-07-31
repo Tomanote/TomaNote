@@ -2,12 +2,12 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.1-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
 
-[Live Demo](https://tomanote.app) | [Report a Bug](https://github.com/Mixxy-Studio/TomaNote/issues) | [Request a Feature](https://github.com/Mixxy-Studio/TomaNote/issues)
+[Live Demo](https://tomanote.app) | [Report a Bug](https://github.com/Tomanote/TomaNote/issues) | [Request a Feature](https://github.com/Tomanote/TomaNote/issues)
 
 [!["Buy Me A Coffee"](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/dftp930)
 
@@ -20,27 +20,27 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.0
+## 🚀 What's new — v0.5.1
 
-This release focuses on editor customization, a modern command palette, and major layout improvements.
+This release revamps keyboard navigation with a centralized shortcut system, adds a shortcuts help overlay, and ships a batch of accessibility and mobile fixes.
 
-### ⚙️ Editor settings
-New Appearance tab with editor width control and paper background color customization.
+### ⌨️ Keyboard shortcuts system
+Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards, and automatic desktop detection.
 
-### 🔍 Command palette
-Global search with Spotlight-style UI — search notes by title or content instantly.
+### 🗺️ Shortcuts help overlay
+New interactive overlay listing all keyboard shortcuts grouped by category. Accessible via the sidebar button or `Alt+/`.
 
-### 📱 Responsive layout
-Left sidebar on desktop, bottom navigation bar on mobile, floating menu reorganized as a right sidebar.
+### 🧭 Settings modal navigation
+Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls.
 
-### 🎨 Theme system
-CSS variables applied consistently across UI components including command palette and previews.
-
-### 📏 Tooltips
-All buttons now have smart tooltips with sidebar-aware positioning.
+### 🔧 Hotfixes
+- Theme color radios restored to tab order; arrow keys navigate from the focused sidebar item; visible focus rings added.
+- Alt+number shortcuts no longer trigger from the numpad.
+- New tabs now apply the saved font size; no more auto-scroll on mobile.
+- Console logs gated to development builds; changelog link restored.
 
 ### 🧪 Test coverage
-455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities.
+508 tests passing.
 
 ## 🛠️ Tech Stack
 
@@ -60,7 +60,7 @@ All buttons now have smart tooltips with sidebar-aware positioning.
 
 ```bash
 # Clone the repo
-git clone https://github.com/Mixxy-Studio/TomaNote.git
+git clone https://github.com/Tomanote/TomaNote.git
 
 # Install dependencies
 npm install

@@ -67,6 +67,8 @@ export class EditorSettings {
     const fontSizeRadios = document.querySelectorAll('input[name="options-font-size"]');
     if (!fontSizeRadios.length) return;
 
+    this.preventLabelAutoScroll(fontSizeRadios);
+
     fontSizeRadios.forEach((radio) => {
       radio.addEventListener("change", () => {
         const selected = Array.from(fontSizeRadios).find((r) => r.checked);
@@ -115,6 +117,7 @@ export class EditorSettings {
   updateLineSpacing(sizeValue) {
     const fontSizePx = FONT_SIZE_PX[sizeValue] || FONT_SIZE_PX.base;
     const lineSpacing = fontSizePx * LINE_HEIGHT;
+    localStorage.setItem("fontSize", sizeValue);
     document.documentElement.style.setProperty("--tn-paper-line-spacing", `${lineSpacing}px`);
   }
 

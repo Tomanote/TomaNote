@@ -3,6 +3,7 @@
 
 import { FormattingUtils } from "../utils/formatting.js";
 import { detectEmojiInText, getRandomPinEmoji } from "../utils/emojiDetector.js";
+import { devLogger } from "../utils/devLogger.js";
 
 export class FloatingMenu {
   constructor(options = {}) {
@@ -385,7 +386,7 @@ export class FloatingMenu {
 
   log(...args) {
     if (this.options.debug) {
-      console.log("[FloatingMenu]", ...args);
+      devLogger.log("[FloatingMenu]", ...args);
     }
   }
 }

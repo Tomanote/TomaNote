@@ -1,9 +1,11 @@
 // src/lib/scripts/entry.js
 // Secure modular entry point for Notepad
+import { devLogger } from "./utils/devLogger.js";
+
 export async function initNotepad() {
   // Security check: only run in browser
   if (typeof window === "undefined" || typeof document === "undefined") {
-    console.warn("⚠️  Entorno no compatible (SSR o Node.js), omitiendo...");
+    devLogger.warn("⚠️  Entorno no compatible (SSR o Node.js), omitiendo...");
     return;
   }
 
@@ -229,7 +231,7 @@ async function initializeFloatingMenu() {
 
     return window.floatingMenu;
   } catch (error) {
-    console.error("❌ Error inicializando FloatingMenu:", error);
+    devLogger.error("❌ Error inicializando FloatingMenu:", error);
   }
 }
 
@@ -245,7 +247,7 @@ async function initializeKeyboardShortcuts() {
 
     return window.keyboardShortcuts;
   } catch (error) {
-    console.error("❌ Error inicializando KeyboardShortcuts:", error);
+    devLogger.error("❌ Error inicializando KeyboardShortcuts:", error);
   }
 }
 
@@ -261,7 +263,7 @@ async function initializeKeyboardShortcutsHelp() {
 
     return window.keyboardShortcutsHelp;
   } catch (error) {
-    console.error("❌ Error inicializando KeyboardShortcutsHelp:", error);
+    devLogger.error("❌ Error inicializando KeyboardShortcutsHelp:", error);
   }
 }
 
@@ -277,7 +279,7 @@ async function initializeTabDragDrop() {
 
     return window.tabDragDrop;
   } catch (error) {
-    console.error("❌ Error inicializando TabDragDrop:", error);
+    devLogger.error("❌ Error inicializando TabDragDrop:", error);
   }
 }
 
@@ -293,7 +295,7 @@ async function initializeSettingsModal() {
 
     return window.settingsModal;
   } catch (error) {
-    console.error("❌ Error inicializando SettingsModal:", error);
+    devLogger.error("❌ Error inicializando SettingsModal:", error);
   }
 }
 
@@ -304,9 +306,9 @@ async function initializeCloseTabConfirmation() {
     window.closeTabConfirmationModal = new CloseTabConfirmation();
     await window.closeTabConfirmationModal.init();
 
-    console.log("[CloseTabConfirmation] Initialized");
+    devLogger.log("[CloseTabConfirmation] Initialized");
   } catch (error) {
-    console.error("❌ Error inicializando CloseTabConfirmation:", error);
+    devLogger.error("❌ Error inicializando CloseTabConfirmation:", error);
   }
 }
 
@@ -317,7 +319,7 @@ async function initializeFloatingNavPosition() {
     window.floatingNavPosition = new FloatingNavPosition();
     window.floatingNavPosition.init();
   } catch (error) {
-    console.error("❌ Error inicializando FloatingNavPosition:", error);
+    devLogger.error("❌ Error inicializando FloatingNavPosition:", error);
   }
 }
 
@@ -333,7 +335,7 @@ async function initializeCommandPalette() {
 
     return window.commandPalette;
   } catch (error) {
-    console.error("❌ Error inicializando CommandPalette:", error);
+    devLogger.error("❌ Error inicializando CommandPalette:", error);
   }
 }
 
@@ -344,7 +346,7 @@ async function initializeEditorSettings() {
     window.editorSettings = new EditorSettings();
     window.editorSettings.init();
   } catch (error) {
-    console.error("❌ Error inicializando EditorSettings:", error);
+    devLogger.error("❌ Error inicializando EditorSettings:", error);
   }
 }
 
@@ -410,7 +412,7 @@ async function emergencyFallback() {
     };
   }
 
-  console.log("🆘 Modo emergencia activado");
+  devLogger.log("🆘 Modo emergencia activado");
 }
 
 function showErrorMessage() {
