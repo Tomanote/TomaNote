@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.2] - August 1, 2026
+
+### Added
+- The command palette now shows your 3 most recently edited notes on open, sorted by last modified time.
+- Each tab tracks its last modified timestamp to sort recent notes, preserved on every save.
+- The command palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens.
+- Command palette text now uses the theme's text color with stronger font weights, readable across all themes.
+
 ## [0.5.1] - July 30, 2026
 
 ### Added
@@ -20,9 +28,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The 'View full changelog' link points back to the correct URL.
 - Console logs are now restricted to development builds to keep the production bundle clean.
 
-## [0.5.0] - July 19, 2026
+### Previous Versions
 
-### Added
+<details>
+<summary>[0.5.0] - July 19, 2026</summary>
+
 - New settings panel with editor width control and paper background color customization.
 - Global search with Spotlight-style UI — search notes by title or content instantly.
 - Left sidebar on desktop, bottom navigation on mobile, floating menu reorganized as right sidebar.
@@ -30,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - All buttons now have smart tooltips with sidebar-aware positioning.
 - 455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities.
 
-### Previous Versions
+</details>
 
 <details>
 <summary>[0.4.4] - July 15, 2026</summary>
