@@ -202,6 +202,67 @@
     opacity: 0.7;
   }
 
+  &__section-title {
+    padding: 0.375rem 0.75rem 0.25rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tn-theme-contrast);
+    opacity: 0.6;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--tn-theme-contrast);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &__hints {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    &--touch {
+      display: none;
+    }
+  }
+
+  &__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--tn-theme-contrast);
+    opacity: 0.85;
+  }
+
+  &__hint-label {
+    white-space: nowrap;
+  }
+
+  &__keys {
+    display: inline-flex;
+    gap: 2px;
+  }
+
+  &__hint kbd {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.65rem;
+    font-family: var(--tn-font-family-default);
+    color: var(--tn-theme-contrast);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--tn-theme-contrast);
+    border-radius: 4px;
+    line-height: 1;
+  }
+
   &__no-results {
     padding: 2rem 1rem;
     text-align: center;
@@ -224,6 +285,18 @@
 
     &__results {
       max-height: 50dvh;
+    }
+  }
+}
+
+@media (pointer: coarse) {
+  .command-palette {
+    &__hints--desktop {
+      display: none;
+    }
+
+    &__hints--touch {
+      display: flex;
     }
   }
 }

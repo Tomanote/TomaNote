@@ -27,5 +27,36 @@ const t = useTranslations(getLang());
         {t("command-palette.empty")}
       </div>
     </div>
+    <div class="command-palette__footer">
+      <div class="command-palette__hints command-palette__hints--desktop">
+        <span class="command-palette__hint">
+          <span class="command-palette__keys"><kbd>↑</kbd><kbd>↓</kbd></span>
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.navigate">{t("command-palette.footer.navigate")}</span>
+        </span>
+        <span class="command-palette__hint">
+          <kbd>↵</kbd>
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.open">{t("command-palette.footer.open")}</span>
+        </span>
+        <span class="command-palette__hint">
+          <kbd>Esc</kbd>
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.close">{t("command-palette.footer.close")}</span>
+        </span>
+        <span class="command-palette__hint">
+          <span class="command-palette__keys"><kbd>Alt</kbd><kbd>/</kbd></span>
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.shortcuts">{t("command-palette.footer.shortcuts")}</span>
+        </span>
+      </div>
+      <div class="command-palette__hints command-palette__hints--touch">
+        <span class="command-palette__hint">
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.tap-open">{t("command-palette.footer.tap-open")}</span>
+        </span>
+        <span class="command-palette__hint">
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.tap-close">{t("command-palette.footer.tap-close")}</span>
+        </span>
+        <span class="command-palette__hint">
+          <span class="command-palette__hint-label" data-i18n="command-palette.footer.type-search">{t("command-palette.footer.type-search")}</span>
+        </span>
+      </div>
+    </div>
   </div>
 </dialog>
