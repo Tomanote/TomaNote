@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.2-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,27 +20,24 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.1
+## 🚀 What's new — v0.5.2
 
-This release revamps keyboard navigation with a centralized shortcut system, adds a shortcuts help overlay, and ships a batch of accessibility and mobile fixes.
+This release makes the command palette smarter and more readable — recent notes preview, device-aware hints, and a legibility pass across all themes.
 
-### ⌨️ Keyboard shortcuts system
-Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards, and automatic desktop detection.
+### 🕒 Recent notes preview
+The command palette now shows your 3 most recently edited notes on open, sorted by last modified time.
 
-### 🗺️ Shortcuts help overlay
-New interactive overlay listing all keyboard shortcuts grouped by category. Accessible via the sidebar button or `Alt+/`.
+### 📌 Per-tab timestamps
+Each tab tracks its last modified timestamp to sort recent notes, preserved on every save.
 
-### 🧭 Settings modal navigation
-Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls.
+### 📱 Responsive command palette footer
+The palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens.
 
-### 🔧 Hotfixes
-- Theme color radios restored to tab order; arrow keys navigate from the focused sidebar item; visible focus rings added.
-- Alt+number shortcuts no longer trigger from the numpad.
-- New tabs now apply the saved font size; no more auto-scroll on mobile.
-- Console logs gated to development builds; changelog link restored.
+### 🔍 Command palette legibility
+Palette text now uses the theme's text color with stronger font weights, readable across all themes.
 
 ### 🧪 Test coverage
-508 tests passing.
+522 tests passing.
 
 ## 🛠️ Tech Stack
 
