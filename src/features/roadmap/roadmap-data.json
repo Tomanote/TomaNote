@@ -29,9 +29,31 @@
     {
       "id": "current",
       "type": "current",
+      "versionNumber": "0.5.2",
+      "date": "2026-08-01",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          { "summary": "Vista previa de notas recientes", "description": "El command palette muestra tus 3 notas editadas más recientes al abrirlo, ordenadas por fecha de modificación." },
+          { "summary": "Marcas de tiempo por pestaña", "description": "Cada pestaña registra su última fecha de modificación para ordenar las notas recientes, preservada en cada guardado." },
+          { "summary": "Pie del command palette responsivo", "description": "El pie del command palette se adapta al dispositivo — atajos de teclado en escritorio y sugerencias táctiles en pantallas táctiles." },
+          { "summary": "Legibilidad del command palette", "description": "Los textos del command palette usan el color de texto del tema con pesos de fuente más fuertes, legibles en todos los temas." }
+        ],
+        "en": [
+          { "summary": "Recent notes preview", "description": "The command palette now shows your 3 most recently edited notes on open, sorted by last modified time." },
+          { "summary": "Per-tab timestamps", "description": "Each tab tracks its last modified timestamp to sort recent notes, preserved on every save." },
+          { "summary": "Responsive command palette footer", "description": "The command palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens." },
+          { "summary": "Command palette legibility", "description": "Command palette text now uses the theme's text color with stronger font weights, readable across all themes." }
+        ]
+      }
+    },
+    {
+      "id": "prev-051",
+      "type": "previous",
       "versionNumber": "0.5.1",
       "date": "2026-07-30",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [
@@ -65,12 +87,14 @@
       }
     },
     {
-      "id": "prev-050",
-      "type": "previous",
+      "id": "old-050",
+      "type": "old",
       "versionNumber": "0.5.0",
       "date": "2026-07-19",
       "isCurrent": false,
       "isNext": false,
+      "isOld": true,
+      "showInTab": false,
       "items": {
         "es": [
           { "summary": "Configuración del editor", "description": "Nuevo panel de configuración con control de ancho del editor y personalización de color de fondo de papel." },

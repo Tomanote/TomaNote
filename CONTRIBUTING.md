@@ -67,7 +67,7 @@ Please follow the guidelines below to keep the project organized and running smo
 1. **Never push directly to `master`.** All contributions must go through a **Pull Request**.
 2. Feature branches are merged into **`dev`** first via PR. The owner reviews and merges `dev` → `master` manually.
 3. `master` has branch protection: a PR is required and the `build-and-test` status check must pass before merging.
-4. **Keep commits self-contained and independently revertable.** Each commit should represent one logical change and leave the project in a working state.
+4. **Keep commits self-contained and independently revertable.** Each commit must be **revertible in isolation** without affecting other features integrated in the same branch/milestone. Each commit is one logical change that leaves the project in a working state. Do not mix changes from different features in a single commit; if a change depends on an earlier one, it must degrade gracefully (fallback) and not break anything when reverted.
 
 ### Conventional commits
 
