@@ -146,27 +146,34 @@ export class CommandPalette {
     }
 
     const html = this.results
-      .map((result, index) => {
-        const nameHtml = this.highlightMatch(result.tabName, query);
-        const snippetHtml = result.snippet
-          ? `<p class="command-palette__result-snippet">${result.snippet}</p>`
-          : "";
-        const activeClass = index === this.activeIndex ? " command-palette__result--active" : "";
-        const badgeLabel = result.matchType === "name" ? "title" : "content";
-
-        return `
-        <button class="command-palette__result${activeClass}" data-tab-id="${result.tabId}" data-action="open-tab" type="button" data-index="${index}">
-          <div class="command-palette__result-header">
-            <span class="command-palette__result-name">${nameHtml}</span>
-            <span class="command-palette__result-badge command-palette__result-badge--${result.matchType}">${badgeLabel}</span>
-          </div>
-          ${snippetHtml}
-        </button>
-      `;
-      })
+      .map((result, index) => this.buildResultHtml(result, query, index === this.activeIndex, index))
       .join("");
 
     this.resultsContainer.innerHTML = html;
+  }
+
+  buildResultHtml(result, query, isActive, index = "") {
+    const nameHtml = this.highlightMatch(result.tabName, query);
+    const snippetHtml = result.snippet
+      ? `<p class="command-palette__result-snippet">${result.snippet}</p>`
+      : "";
+    const activeClass = isActive ? " command-palette__result--active" : "";
+    let badgeHtml = "";
+    if (result.matchType === "name") {
+      badgeHtml = `<span class="command-palette__result-badge command-palette__result-badge--name">${this.t("command-palette.badge-title", "title")}</span>`;
+    } else if (result.matchType === "content") {
+      badgeHtml = `<span class="command-palette__result-badge command-palette__result-badge--content">${this.t("command-palette.badge-content", "content")}</span>`;
+    }
+
+    return `
+      <button class="command-palette__result${activeClass}" data-tab-id="${result.tabId}" data-action="open-tab" type="button" data-index="${index}">
+        <div class="command-palette__result-header">
+          <span class="command-palette__result-name">${nameHtml}</span>
+          ${badgeHtml}
+        </div>
+        ${snippetHtml}
+      </button>
+    `;
   }
 
   handleKeyNavigation(e) {
@@ -306,18 +313,56 @@ export class CommandPalette {
   }
 
   showInitialState() {
-    const emptyMsg = window.i18n?.t("command-palette.empty") || "Type to search your notes...";
-    this.resultsContainer.innerHTML = `<div class="command-palette__empty">${emptyMsg}</div>`;
-    this.results = [];
-    this.activeIndex = -1;
+    const recentResults = this.getRecentNotes();
+
+    if (recentResults.length === 0) {
+      const emptyMsg = this.t("command-palette.empty", "Type to search your notes...");
+      this.resultsContainer.innerHTML = `<div class="command-palette__empty">${emptyMsg}</div>`;
+      this.results = [];
+      this.activeIndex = -1;
+      return;
+    }
+
+    this.results = recentResults;
+    this.activeIndex = 0;
+
+    const recentLabel = this.t("command-palette.recent", "Recent");
+    const html =
+      `<div class="command-palette__section-title">${recentLabel}</div>` +
+      recentResults
+        .map((result, index) => this.buildResultHtml(result, "", index === this.activeIndex, index))
+        .join("");
+
+    this.resultsContainer.innerHTML = html;
+  }
+
+  getRecentNotes() {
+    const tabManager = window.tabManager;
+    if (!tabManager || !Array.isArray(tabManager.tabsData) || tabManager.tabsData.length === 0) {
+      return [];
+    }
+
+    const tabs = [...tabManager.tabsData];
+    tabs.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0));
+
+    return tabs.slice(0, 3).map((tab) => ({
+      tabId: tab.id,
+      tabName: tab.name || "Untitled",
+      snippet: "",
+      matchType: "recent",
+    }));
   }
 
   showNoResults(query = "") {
-    const noResultsMsg = window.i18n?.t("command-palette.no-results") || "No results found";
+    const noResultsMsg = this.t("command-palette.no-results", "No results found");
     const display = query ? `${noResultsMsg} "${this.escapeHtml(query)}"` : noResultsMsg;
     this.resultsContainer.innerHTML = `<div class="command-palette__no-results">${display}</div>`;
     this.results = [];
     this.activeIndex = -1;
+  }
+
+  t(key, fallback = "") {
+    return window.i18n?.t(key) || fallback;
   }
 
   log(...args) {

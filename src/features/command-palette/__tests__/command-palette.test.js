@@ -165,21 +165,26 @@ describe("CommandPalette", () => {
           const translations = {
             "command-palette.empty": "Type to search...",
             "command-palette.no-results": "No results found",
+            "command-palette.recent": "Recent",
+            "command-palette.badge-title": "title",
+            "command-palette.badge-content": "content",
           };
           return translations[key] || key;
         }),
       };
     });
 
-    it("should show initial state when query is empty", () => {
+    it("should show recent notes when query is empty", () => {
       commandPalette.handleSearch("");
-      expect(mockResultsContainer.innerHTML).toContain("Type to search...");
-      expect(commandPalette.results).toEqual([]);
+      expect(commandPalette.results).toHaveLength(3);
+      expect(mockResultsContainer.innerHTML).toContain("Recent");
+      expect(mockResultsContainer.innerHTML).toContain("command-palette__section-title");
     });
 
-    it("should show initial state when query is whitespace only", () => {
+    it("should show recent notes when query is whitespace only", () => {
       commandPalette.handleSearch("   ");
-      expect(mockResultsContainer.innerHTML).toContain("Type to search...");
+      expect(commandPalette.results).toHaveLength(3);
+      expect(commandPalette.activeIndex).toBe(0);
     });
 
     it("should find tabs by name", () => {
@@ -828,6 +833,10 @@ describe("CommandPalette", () => {
 
   // ===== SHOW STATES =====
   describe("showInitialState", () => {
+    beforeEach(() => {
+      window.tabManager = undefined;
+    });
+
     it("should show empty message from i18n", () => {
       window.i18n = { t: vi.fn((key) => "translated-" + key) };
       commandPalette.showInitialState();
@@ -869,6 +878,91 @@ describe("CommandPalette", () => {
       commandPalette.showNoResults("test");
       expect(commandPalette.results).toEqual([]);
       expect(commandPalette.activeIndex).toBe(-1);
+    });
+  });
+
+  // ===== RECENT NOTES PREVIEW =====
+  describe("recent notes preview", () => {
+    beforeEach(() => {
+      window.tabManager = {
+        tabsData: [
+          { id: "body-tab-1", name: "Old", updatedAt: 100 },
+          { id: "body-tab-2", name: "Newest", updatedAt: 300 },
+          { id: "body-tab-3", name: "Middle", updatedAt: 200 },
+          { id: "body-tab-4", name: "Fourth", updatedAt: 150 },
+        ],
+      };
+
+      window.i18n = {
+        t: vi.fn((key) => {
+          const translations = {
+            "command-palette.empty": "Type to search...",
+            "command-palette.recent": "Recent",
+          };
+          return translations[key] || key;
+        }),
+      };
+    });
+
+    it("should show the 3 most recently modified notes sorted by updatedAt", () => {
+      commandPalette.showInitialState();
+      expect(commandPalette.results.map((r) => r.tabId)).toEqual(["body-tab-2", "body-tab-3", "body-tab-4"]);
+      expect(mockResultsContainer.innerHTML).toContain("Recent");
+    });
+
+    it("should limit recent notes to 3", () => {
+      window.tabManager.tabsData = [1, 2, 3, 4, 5].map((n) => ({ id: "t" + n, name: "Note " + n, updatedAt: n }));
+      commandPalette.showInitialState();
+      expect(commandPalette.results).toHaveLength(3);
+    });
+
+    it("should set activeIndex to 0 for keyboard navigation", () => {
+      commandPalette.showInitialState();
+      expect(commandPalette.activeIndex).toBe(0);
+      commandPalette.moveSelection(1);
+      expect(commandPalette.activeIndex).toBe(1);
+    });
+
+    it("should open the most recent note with Enter", () => {
+      const mockRadio = { checked: false };
+      document.getElementById = vi.fn((id) => (id === "body-tab-2" ? mockRadio : null));
+      document.dispatchEvent = vi.fn();
+      commandPalette.isOpen = true;
+
+      commandPalette.showInitialState();
+      commandPalette.selectActive();
+
+      expect(mockRadio.checked).toBe(true);
+      expect(commandPalette.isOpen).toBe(false);
+    });
+
+    it("should fall back to the first 3 notes when no timestamps exist", () => {
+      window.tabManager.tabsData = [
+        { id: "a", name: "First" },
+        { id: "b", name: "Second" },
+        { id: "c", name: "Third" },
+        { id: "d", name: "Fourth" },
+      ];
+      commandPalette.showInitialState();
+      expect(commandPalette.results.map((r) => r.tabId)).toEqual(["a", "b", "c"]);
+    });
+
+    it("should show the empty message when there are no tabs", () => {
+      window.tabManager.tabsData = [];
+      commandPalette.showInitialState();
+      expect(commandPalette.results).toEqual([]);
+      expect(mockResultsContainer.innerHTML).toContain("Type to search...");
+    });
+
+    it("should show the empty message when tabManager is not available", () => {
+      window.tabManager = undefined;
+      commandPalette.showInitialState();
+      expect(mockResultsContainer.innerHTML).toContain("Type to search...");
+    });
+
+    it("should not render a badge for recent notes", () => {
+      commandPalette.showInitialState();
+      expect(mockResultsContainer.innerHTML).not.toContain("command-palette__result-badge");
     });
   });
 });

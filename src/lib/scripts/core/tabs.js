@@ -93,7 +93,7 @@ export class TabManager {
 
     const tabName = name ?? window.i18n?.t("tab.new") ?? "Nueva";
     const id = `body-tab-${this.tabIdCounter++}`;
-    const tabData = { id, name: tabName, content, isPinned, emoji };
+    const tabData = { id, name: tabName, content, isPinned, emoji, updatedAt: Date.now() };
 
     // Create an DOM Element
     const tabElement = this.createTabElement(tabData);
@@ -440,9 +440,23 @@ export class TabManager {
     // Automatically save when changing content
     this.tabList.addEventListener("input", (e) => {
       if (e.target.classList.contains("tab-list__item--content")) {
+        this.markTabUpdated(e.target);
         setTimeout(() => this.saveTabs(), 500); // Debounce
       }
     });
+  }
+
+  markTabUpdated(contentElement) {
+    const tabItem = contentElement.closest(".tab-list__item");
+    if (!tabItem) return;
+
+    const input = tabItem.querySelector("input");
+    if (!input) return;
+
+    const tab = this.findTabById(input.id);
+    if (tab) {
+      tab.updatedAt = Date.now();
+    }
   }
 
   saveTabs() {
@@ -452,6 +466,7 @@ export class TabManager {
 
     try {
       const tabsData = [];
+      const previousTabs = this.tabsData;
       const tabElements = this.tabList.querySelectorAll(".tab-list__item");
 
       tabElements.forEach((item) => {
@@ -465,8 +480,9 @@ export class TabManager {
           const name = spanEl.textContent;
           const isPinned = item.classList.contains("pinned");
           const emoji = spanEl.dataset.emoji || null;
+          const updatedAt = previousTabs.find((tab) => tab.id === id)?.updatedAt ?? Date.now();
 
-          tabsData.push({ id, content, name, isPinned, emoji });
+          tabsData.push({ id, content, name, isPinned, emoji, updatedAt });
         }
       });
 

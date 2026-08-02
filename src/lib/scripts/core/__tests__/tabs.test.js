@@ -84,6 +84,7 @@ describe("TabManager - Lógica Básica", () => {
     expect(tab.name).toBe("New");
     expect(tab.content).toBe("");
     expect(tab.id).toMatch(/^body-tab-\d+$/);
+    expect(tab.updatedAt).toEqual(expect.any(Number));
   });
 
   it("Agregar pestañas al array interno", () => {
@@ -191,8 +192,40 @@ describe("TabManager - saveTabs", () => {
     expect(saved[0].id).toBe("body-tab-1");
     expect(saved[0].name).toBe("Nota 1");
     expect(saved[0].isPinned).toBe(false);
+    expect(saved[0].updatedAt).toEqual(expect.any(Number));
     expect(saved[1].isPinned).toBe(true);
     expect(saved[1].emoji).toBe("📌");
+    expect(saved[1].updatedAt).toEqual(expect.any(Number));
+  });
+
+  it("Preserva updatedAt existente de cada pestaña al guardar", () => {
+    tabManager.tabsData = [{ id: "body-tab-1", updatedAt: 111 }, { id: "body-tab-2", updatedAt: 222 }];
+
+    const mockItem1 = {
+      querySelector: vi.fn((sel) => {
+        if (sel === ".tab-list__item--content") return { innerHTML: "<p>contenido 1</p>" };
+        if (sel === "input") return { id: "body-tab-1" };
+        if (sel === "label span") return { textContent: "Nota 1", dataset: {} };
+        return null;
+      }),
+      classList: { contains: vi.fn().mockReturnValue(false) },
+    };
+    const mockItem2 = {
+      querySelector: vi.fn((sel) => {
+        if (sel === ".tab-list__item--content") return { innerHTML: "<p>contenido 2</p>" };
+        if (sel === "input") return { id: "body-tab-2" };
+        if (sel === "label span") return { textContent: "Nota 2", dataset: {} };
+        return null;
+      }),
+      classList: { contains: vi.fn().mockReturnValue(false) },
+    };
+
+    tabManager.tabList.querySelectorAll = vi.fn(() => [mockItem1, mockItem2]);
+    tabManager.saveTabs();
+
+    const saved = JSON.parse(localStorageMock.setItem.mock.calls[0][1]);
+    expect(saved[0].updatedAt).toBe(111);
+    expect(saved[1].updatedAt).toBe(222);
   });
 
   it("No guarda si autoSave y persistence están deshabilitados", () => {
@@ -206,6 +239,48 @@ describe("TabManager - saveTabs", () => {
     tabManager.tabList.querySelectorAll = vi.fn(() => []);
     tabManager.saveTabs();
     expect(localStorageMock.setItem).toHaveBeenCalledWith("tabsData", "[]");
+  });
+});
+
+describe("TabManager - markTabUpdated", () => {
+  let tabManager;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    tabManager = makeTabManager();
+  });
+
+  it("Actualiza updatedAt solo de la pestaña editada", () => {
+    tabManager.tabsData = [
+      { id: "body-tab-1", name: "A", updatedAt: 1000 },
+      { id: "body-tab-2", name: "B", updatedAt: 2000 },
+    ];
+
+    const contentElement = {
+      closest: vi.fn(() => ({
+        querySelector: vi.fn(() => ({ id: "body-tab-1" })),
+      })),
+    };
+
+    tabManager.markTabUpdated(contentElement);
+
+    expect(tabManager.tabsData[0].updatedAt).not.toBe(1000);
+    expect(tabManager.tabsData[0].updatedAt).toEqual(expect.any(Number));
+    expect(tabManager.tabsData[1].updatedAt).toBe(2000);
+  });
+
+  it("No hace nada si el elemento no pertenece a una pestaña", () => {
+    const contentElement = { closest: vi.fn(() => null) };
+    expect(() => tabManager.markTabUpdated(contentElement)).not.toThrow();
+  });
+
+  it("No actualiza si la pestaña no existe en tabsData", () => {
+    const contentElement = {
+      closest: vi.fn(() => ({
+        querySelector: vi.fn(() => ({ id: "body-tab-99" })),
+      })),
+    };
+    expect(() => tabManager.markTabUpdated(contentElement)).not.toThrow();
   });
 });
 
