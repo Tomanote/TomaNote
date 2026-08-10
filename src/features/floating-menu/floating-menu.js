@@ -312,18 +312,8 @@ export class FloatingMenu {
 
       case "paste":
         navigator.clipboard.readText().then((text) => {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editable.focus();
-            document.execCommand("insertText", false, text);
-          }
+          editable.focus();
+          document.execCommand("insertText", false, text);
         });
         break;
 
@@ -400,18 +390,8 @@ export class FloatingMenu {
 
       case "paste":
         navigator.clipboard.readText().then((text) => {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editable.focus();
-            document.execCommand("insertText", false, text);
-          }
+          editable.focus();
+          document.execCommand("insertText", false, text);
         });
         break;
 
