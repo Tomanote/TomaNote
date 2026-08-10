@@ -128,6 +128,22 @@ describe("ContextMenu", () => {
       expect(contextMenu.activeEditableElement).toBe(mockEditable);
       expect(mockElement.style.display).toBe("block");
     });
+
+    it("saves caret range even when there is no text selection", () => {
+      global.window.getSelection = vi.fn().mockReturnValue({
+        toString: vi.fn().mockReturnValue(""),
+        isCollapsed: true,
+        rangeCount: 1,
+        getRangeAt: vi.fn().mockReturnValue({
+          cloneRange: vi.fn().mockReturnValue({ caret: true }),
+        }),
+      });
+
+      const mockEditable = { focus: vi.fn() };
+      contextMenu.showTextContextMenu(mockEvent, mockEditable);
+
+      expect(contextMenu.activeSelection).toEqual({ caret: true });
+    });
   });
 
   describe("hideContextMenu", () => {
@@ -154,7 +170,7 @@ describe("ContextMenu", () => {
       expect(global.document.execCommand).toHaveBeenCalledWith("copy", false, null);
     });
 
-    it("should execute paste command using clipboard and Selection API", async () => {
+    it("should execute paste command using clipboard and insertText", async () => {
       global.navigator = {
         clipboard: { readText: vi.fn().mockResolvedValue("pasted text") },
       };
@@ -163,14 +179,7 @@ describe("ContextMenu", () => {
       await contextMenu.handleTextAction("paste");
 
       expect(global.navigator.clipboard.readText).toHaveBeenCalled();
-
-      const mockSelection = global.window.getSelection();
-      expect(mockSelection.getRangeAt).toHaveBeenCalled();
-      expect(mockSelection.getRangeAt(0).deleteContents).toHaveBeenCalled();
-      expect(mockSelection.getRangeAt(0).insertNode).toHaveBeenCalled();
-      expect(mockSelection.getRangeAt(0).collapse).toHaveBeenCalledWith(false);
-      expect(mockSelection.removeAllRanges).toHaveBeenCalled();
-      expect(mockSelection.addRange).toHaveBeenCalled();
+      expect(global.document.execCommand).toHaveBeenCalledWith("insertText", false, "pasted text");
     });
   });
 
@@ -359,12 +368,12 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.redo")).toBe("Rehacer");
     });
 
-    it('t("context-menu.pin-tab") must be return "Fijar"', () => {
-      expect(i18n.t("context-menu.pin-tab")).toBe("Fijar");
+    it('t("context-menu.pin-tab") must be return "Fijar Pestaña"', () => {
+      expect(i18n.t("context-menu.pin-tab")).toBe("Fijar Pestaña");
     });
 
-    it('t("context-menu.unpin-tab") must be return "Desfijar"', () => {
-      expect(i18n.t("context-menu.unpin-tab")).toBe("Desfijar");
+    it('t("context-menu.unpin-tab") must be return "Desfijar Pestaña"', () => {
+      expect(i18n.t("context-menu.unpin-tab")).toBe("Desfijar Pestaña");
     });
   });
 
@@ -406,12 +415,12 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.redo")).toBe("Redo");
     });
 
-    it('t("context-menu.pin-tab") must be return "Pin"', () => {
-      expect(i18n.t("context-menu.pin-tab")).toBe("Pin");
+    it('t("context-menu.pin-tab") must be return "Pin Tab"', () => {
+      expect(i18n.t("context-menu.pin-tab")).toBe("Pin Tab");
     });
 
-    it('t("context-menu.unpin-tab") must be return "Unpin"', () => {
-      expect(i18n.t("context-menu.unpin-tab")).toBe("Unpin");
+    it('t("context-menu.unpin-tab") must be return "Unpin Tab"', () => {
+      expect(i18n.t("context-menu.unpin-tab")).toBe("Unpin Tab");
     });
   });
 

@@ -55,6 +55,7 @@ describe("KeyboardShortcuts", () => {
       commandPalette: { toggle: vi.fn(), isOpen: false },
       editorSettings: { applyWidth: vi.fn() },
       keyboardShortcutsHelp: { toggle: vi.fn() },
+      saveIndicator: { trigger: vi.fn() },
     };
     mockDoc();
   });
@@ -430,6 +431,57 @@ describe("KeyboardShortcuts", () => {
       });
       fire("t");
       expect(editButton.click).toHaveBeenCalled();
+    });
+  });
+
+  // ─── CTRL+S SHORTCUT (visual save feedback) ───
+  describe("Ctrl+S shortcut via handleKeydown()", () => {
+    let preventDefault;
+
+    beforeEach(async () => {
+      preventDefault = vi.fn();
+
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { checked: true, closest: vi.fn() };
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+
+      ks = makeKS();
+      await ks.init();
+    });
+
+    function fireCtrlS(mods = {}) {
+      ks.handleKeydown({
+        key: "s",
+        ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0,
+        preventDefault,
+        ...mods,
+      });
+    }
+
+    it("shows the save indicator when Ctrl+S is pressed", () => {
+      fireCtrlS();
+      expect(window.saveIndicator.trigger).toHaveBeenCalled();
+    });
+
+    it("prevents the default browser behavior", () => {
+      fireCtrlS();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("works while an input is focused (skipWhenInputFocused is false)", () => {
+      const input = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: input, configurable: true });
+      fireCtrlS();
+      expect(window.saveIndicator.trigger).toHaveBeenCalled();
+    });
+
+    it("does nothing when saveIndicator is unavailable", () => {
+      const trigger = window.saveIndicator.trigger;
+      window.saveIndicator = undefined;
+      expect(() => fireCtrlS()).not.toThrow();
+      window.saveIndicator = { trigger };
     });
   });
 

@@ -515,10 +515,10 @@ describe("Floating menu tooltip translations (context-menu keys)", () => {
       "context-menu.underline": "Subrayado",
       "context-menu.undo": "Deshacer",
       "context-menu.redo": "Rehacer",
-      "context-menu.pin-tab": "Fijar",
-      "context-menu.unpin-tab": "Desfijar",
-      "context-menu.edit-name-tab": "Renombrar",
-      "context-menu.delete-tab": "Eliminar",
+      "context-menu.pin-tab": "Fijar Pestaña",
+      "context-menu.unpin-tab": "Desfijar Pestaña",
+      "context-menu.edit-name-tab": "Renombrar Pestaña",
+      "context-menu.delete-tab": "Eliminar Pestaña",
       "context-menu.settings": "Ajustes",
     };
 
@@ -544,10 +544,10 @@ describe("Floating menu tooltip translations (context-menu keys)", () => {
       "context-menu.underline": "Underline",
       "context-menu.undo": "Undo",
       "context-menu.redo": "Redo",
-      "context-menu.pin-tab": "Pin",
-      "context-menu.unpin-tab": "Unpin",
-      "context-menu.edit-name-tab": "Rename",
-      "context-menu.delete-tab": "Delete",
+      "context-menu.pin-tab": "Pin Tab",
+      "context-menu.unpin-tab": "Unpin Tab",
+      "context-menu.edit-name-tab": "Rename Tab",
+      "context-menu.delete-tab": "Delete Tab",
       "context-menu.settings": "Settings",
     };
 

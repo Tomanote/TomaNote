@@ -2,6 +2,9 @@
 // Styles
 import "./modal-info.scss";
 
+//Logo
+import logoNotes from "../../assets/logo/none-bg__notes.png";
+
 // Icons
 import Icon from "../../components/icons/Icon.astro";
 
@@ -39,11 +42,11 @@ const navItems = [
       <div class="settings-sidebar lg:justify-between md:w-auto w-full bg-(--tn-theme-accent) flex flex-col min-h-auto pt-5! pb-3! px-4!">
         <div class="user-section border-b border-(--color-text) text-center pt-0! px-3! pb-1.5!">
           <h2 id="settings-title" class="flex items-center justify-start text-xl! font-semibold m-0! text-(--color-text)">
-            <Icon name="tomanote" className="size-1 md:size-6" />
+            <img src={logoNotes.src} alt="tomanote-notes" title="TomaNote Notes" class="w-10" />
             TomaNote
           </h2>
           <p id="settings-desc" class="sr-only">Settings and preferences for TomaNote app</p>
-          <span class="version text-sm! text-(--color-text)">v 0.5.2</span>
+          <span class="version text-sm! text-(--color-text)">v 0.5.3</span>
         </div>
 
         <nav class="settings-nav bg-(--tn-neutral-tertiary-color)/10 rounded-lg mt-4! px-1.25!">

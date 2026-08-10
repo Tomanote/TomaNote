@@ -88,6 +88,14 @@
         font-family: var(--font-family-notes, var(--tn-font-family-default));
       }
 
+      span.editing {
+        width: auto !important;
+        max-width: 100%;
+        text-overflow: clip;
+        overflow: visible;
+        white-space: normal;
+      }
+
       .edit-name-tab,
       .delete-tab {
         &:hover {

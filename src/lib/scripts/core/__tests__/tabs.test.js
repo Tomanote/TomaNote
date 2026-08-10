@@ -583,8 +583,8 @@ describe("TabManager - pinTab / unpinTab", () => {
   });
 
   it("pinTab agrega clase pinned y data-emoji", () => {
-    const label = { setAttribute: vi.fn() };
-    const labelSpan = { setAttribute: vi.fn() };
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "" };
     const tabElement = {
       classList: { add: vi.fn() },
       querySelector: vi.fn((sel) => {
@@ -599,6 +599,42 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(tabElement.classList.add).toHaveBeenCalledWith("pinned");
     expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
     expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
+  });
+
+  it("pinTab preserva data-emoji existente si no se pasa emoji", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟") };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), textContent: "Nota" };
+    const tabElement = {
+      classList: { add: vi.fn() },
+      querySelector: vi.fn((sel) => {
+        if (sel === "label") return label;
+        if (sel === "label span") return labelSpan;
+        return null;
+      }),
+    };
+
+    tabManager.pinTab(tabElement);
+
+    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+  });
+
+  it("pinTab detecta emoji del nombre de la pestaña si no hay data-emoji", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "🚀 Proyecto" };
+    const tabElement = {
+      classList: { add: vi.fn() },
+      querySelector: vi.fn((sel) => {
+        if (sel === "label") return label;
+        if (sel === "label span") return labelSpan;
+        return null;
+      }),
+    };
+
+    tabManager.pinTab(tabElement);
+
+    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
+    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
   });
 
   it("unpinTab remueve clase pinned y data-emoji", () => {
@@ -630,5 +666,62 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.pinTab(tabElement, "🔴");
 
     expect(tabElement.classList.add).not.toHaveBeenCalledWith("pinned");
+  });
+});
+
+describe("TabManager - startEditingTabName", () => {
+  let tabManager;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    tabManager = makeTabManager();
+
+    const selection = {
+      removeAllRanges: vi.fn(),
+      addRange: vi.fn(),
+    };
+    global.window.getSelection = vi.fn(() => selection);
+  });
+
+  it("Agrega clase editing y activa contenteditable al iniciar edición", () => {
+    const span = document.createElement("span");
+    span.textContent = "Nota larga que se recorta";
+    const label = document.createElement("label");
+    label.appendChild(span);
+    const editButton = document.createElement("button");
+    label.appendChild(editButton);
+    const tabItem = document.createElement("div");
+    tabItem.className = "tab-list__item";
+    tabItem.appendChild(label);
+
+    tabManager.startEditingTabName(editButton);
+
+    expect(span.classList.contains("editing")).toBe(true);
+    expect(label.getAttribute("contenteditable")).toBe("true");
+  });
+
+  it("Inserta texto plano y previene el default al pegar en edición", () => {
+    const span = document.createElement("span");
+    const label = document.createElement("label");
+    label.appendChild(span);
+    const editButton = document.createElement("button");
+    label.appendChild(editButton);
+    const tabItem = document.createElement("div");
+    tabItem.className = "tab-list__item";
+    tabItem.appendChild(label);
+
+    document.execCommand = vi.fn();
+    const execCommandSpy = vi.spyOn(document, "execCommand");
+    tabManager.startEditingTabName(editButton);
+
+    const event = new Event("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", {
+      value: { getData: vi.fn(() => "<b>bold</b> text") },
+    });
+    label.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(event.clipboardData.getData).toHaveBeenCalledWith("text/plain");
+    expect(execCommandSpy).toHaveBeenCalledWith("insertText", false, "<b>bold</b> text");
   });
 });
