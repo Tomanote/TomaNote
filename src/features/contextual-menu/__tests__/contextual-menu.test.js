@@ -359,12 +359,12 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.redo")).toBe("Rehacer");
     });
 
-    it('t("context-menu.pin-tab") must be return "Fijar"', () => {
-      expect(i18n.t("context-menu.pin-tab")).toBe("Fijar");
+    it('t("context-menu.pin-tab") must be return "Fijar Pestaña"', () => {
+      expect(i18n.t("context-menu.pin-tab")).toBe("Fijar Pestaña");
     });
 
-    it('t("context-menu.unpin-tab") must be return "Desfijar"', () => {
-      expect(i18n.t("context-menu.unpin-tab")).toBe("Desfijar");
+    it('t("context-menu.unpin-tab") must be return "Desfijar Pestaña"', () => {
+      expect(i18n.t("context-menu.unpin-tab")).toBe("Desfijar Pestaña");
     });
   });
 
@@ -406,12 +406,12 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.redo")).toBe("Redo");
     });
 
-    it('t("context-menu.pin-tab") must be return "Pin"', () => {
-      expect(i18n.t("context-menu.pin-tab")).toBe("Pin");
+    it('t("context-menu.pin-tab") must be return "Pin Tab"', () => {
+      expect(i18n.t("context-menu.pin-tab")).toBe("Pin Tab");
     });
 
-    it('t("context-menu.unpin-tab") must be return "Unpin"', () => {
-      expect(i18n.t("context-menu.unpin-tab")).toBe("Unpin");
+    it('t("context-menu.unpin-tab") must be return "Unpin Tab"', () => {
+      expect(i18n.t("context-menu.unpin-tab")).toBe("Unpin Tab");
     });
   });
 
