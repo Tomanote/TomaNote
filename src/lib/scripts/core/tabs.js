@@ -352,6 +352,7 @@ export class TabManager {
     const label = tabItem.querySelector("label");
     const span = label.querySelector("span");
 
+    span.classList.add("editing");
     label.setAttribute("contenteditable", "true");
     span.focus();
 
@@ -362,7 +363,9 @@ export class TabManager {
     selection.addRange(range);
 
     const finishEditing = () => {
+      span.classList.remove("editing");
       label.removeAttribute("contenteditable");
+      this.placeCaretAtStart(span);
       this.saveTabs();
       this.updateTabIds();
     };
@@ -524,6 +527,15 @@ export class TabManager {
         }
       });
     }
+  }
+
+  placeCaretAtStart(element) {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 
   findTabById(id) {

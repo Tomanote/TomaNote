@@ -632,3 +632,35 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(tabElement.classList.add).not.toHaveBeenCalledWith("pinned");
   });
 });
+
+describe("TabManager - startEditingTabName", () => {
+  let tabManager;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    tabManager = makeTabManager();
+
+    const selection = {
+      removeAllRanges: vi.fn(),
+      addRange: vi.fn(),
+    };
+    global.window.getSelection = vi.fn(() => selection);
+  });
+
+  it("Agrega clase editing y activa contenteditable al iniciar edición", () => {
+    const span = document.createElement("span");
+    span.textContent = "Nota larga que se recorta";
+    const label = document.createElement("label");
+    label.appendChild(span);
+    const editButton = document.createElement("button");
+    label.appendChild(editButton);
+    const tabItem = document.createElement("div");
+    tabItem.className = "tab-list__item";
+    tabItem.appendChild(label);
+
+    tabManager.startEditingTabName(editButton);
+
+    expect(span.classList.contains("editing")).toBe(true);
+    expect(label.getAttribute("contenteditable")).toBe("true");
+  });
+});
