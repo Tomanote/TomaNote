@@ -583,8 +583,8 @@ describe("TabManager - pinTab / unpinTab", () => {
   });
 
   it("pinTab agrega clase pinned y data-emoji", () => {
-    const label = { setAttribute: vi.fn() };
-    const labelSpan = { setAttribute: vi.fn() };
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "" };
     const tabElement = {
       classList: { add: vi.fn() },
       querySelector: vi.fn((sel) => {
@@ -599,6 +599,42 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(tabElement.classList.add).toHaveBeenCalledWith("pinned");
     expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
     expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
+  });
+
+  it("pinTab preserva data-emoji existente si no se pasa emoji", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟") };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), textContent: "Nota" };
+    const tabElement = {
+      classList: { add: vi.fn() },
+      querySelector: vi.fn((sel) => {
+        if (sel === "label") return label;
+        if (sel === "label span") return labelSpan;
+        return null;
+      }),
+    };
+
+    tabManager.pinTab(tabElement);
+
+    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+  });
+
+  it("pinTab detecta emoji del nombre de la pestaña si no hay data-emoji", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "🚀 Proyecto" };
+    const tabElement = {
+      classList: { add: vi.fn() },
+      querySelector: vi.fn((sel) => {
+        if (sel === "label") return label;
+        if (sel === "label span") return labelSpan;
+        return null;
+      }),
+    };
+
+    tabManager.pinTab(tabElement);
+
+    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
+    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
   });
 
   it("unpinTab remueve clase pinned y data-emoji", () => {

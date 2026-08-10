@@ -2,6 +2,7 @@
 // Complete tab management system with feature flags
 import { FormattingUtils } from "../utils/formatting.js";
 import { TabDeletionHandler } from "./tabDeletion.js";
+import { detectEmojiInText, getRandomPinEmoji } from "../utils/emojiDetector.js";
 
 export class TabManager {
   constructor(options = {}) {
@@ -132,15 +133,21 @@ export class TabManager {
     window.floatingNavPosition?.getContentHeight();
   }
 
-  pinTab(tabElement, emoji = "📄") {
+  pinTab(tabElement, emoji = null) {
     if (!this.options.enablePinning) return;
 
-    tabElement.classList.add("pinned");
     const label = tabElement.querySelector("label");
     const labelSpan = tabElement.querySelector("label span");
 
-    label.setAttribute("data-emoji", emoji);
-    labelSpan.setAttribute("data-emoji", emoji);
+    // Preserve an existing emoji, otherwise detect one in the tab name,
+    // otherwise fall back to a random pin emoji
+    const existingEmoji = label?.getAttribute("data-emoji") || labelSpan?.getAttribute("data-emoji") || null;
+    const tabName = labelSpan?.textContent?.trim() || "";
+    const resolvedEmoji = emoji || existingEmoji || detectEmojiInText(tabName) || getRandomPinEmoji();
+
+    tabElement.classList.add("pinned");
+    if (label) label.setAttribute("data-emoji", resolvedEmoji);
+    if (labelSpan) labelSpan.setAttribute("data-emoji", resolvedEmoji);
 
     this.reorderTabs();
     this.saveTabs();
