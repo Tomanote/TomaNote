@@ -196,6 +196,8 @@
   "shortcuts.category.tabs": "Pestañas",
   "shortcuts.category.navigation": "Navegación",
   "shortcuts.category.editor": "Editor",
+  "_comment-save-indicator": "Indicador de guardado",
+  "save-indicator.saved": "Guardado",
   "_comment_roadmap": "Auto-generated from roadmap-data.json - Do not edit manually",
   "roadmap.badge.current": "ACTUAL",
   "roadmap.badge.next": "PRÓXIMO",

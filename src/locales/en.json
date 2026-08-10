@@ -195,6 +195,8 @@
   "shortcuts.category.tabs": "Tabs",
   "shortcuts.category.navigation": "Navigation",
   "shortcuts.category.editor": "Editor",
+  "_comment-save-indicator": "Save indicator",
+  "save-indicator.saved": "Saved",
   "_comment_roadmap": "Auto-generated from roadmap-data.json - Do not edit manually",
   "roadmap.badge.current": "CURRENT",
   "roadmap.badge.next": "NEXT",

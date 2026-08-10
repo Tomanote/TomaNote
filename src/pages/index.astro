@@ -11,6 +11,7 @@ import Modalsinfo from "../features/modal-info/modal-info.astro";
 import CloseTabConfirmation from "../features/close-tab-confirmation/close-tab-confirmation.astro";
 import CommandPalette from "../features/command-palette/command-palette.astro";
 import KeyboardShortcutsHelp from "../features/keyboard-shortcuts-help/keyboard-shortcuts-help.astro";
+import SaveIndicator from "../features/save-indicator/save-indicator.astro";
 ---
 
 <Layout>
@@ -18,6 +19,7 @@ import KeyboardShortcutsHelp from "../features/keyboard-shortcuts-help/keyboard-
   <div class="app-layout flex h-full">
     <SidebarLeft />
     <main class="flex-1 relative overflow-hidden min-w-0">
+      <SaveIndicator />
       <div dir="ltr" class="tab-list flex flex-row justify-start items-start w-full h-dvh max-w-100dvw overflow-x-auto z-999 px-0 md:px-2">
         <span id="tab-list-anchor" class="hidden"></span>
       </div>
