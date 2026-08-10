@@ -4,6 +4,7 @@
 
 import "./sidebar-left.scss";
 import Icon from "../../components/icons/Icon.astro";
+import logoNotes from "../../assets/logo/none-bg__notes.png";
 import { getLang, useTranslations } from "../../i18n/utils";
 
 const t = useTranslations(getLang());
@@ -11,7 +12,7 @@ const t = useTranslations(getLang());
 
 <aside class="sidebar-left hidden md:flex h-dvh!">
   <div class="sidebar-header">
-    <Icon name="tomanote" className="text-(--tn-theme-contrast)" />
+    <img src={logoNotes.src} alt="tomanote-notes" title="Tomanote Notes" />
   </div>
   <div class="sidebar-body flex flex-col h-full justify-between">
     <div class="sidebar-left__top">
