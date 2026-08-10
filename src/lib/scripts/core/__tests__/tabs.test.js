@@ -663,4 +663,29 @@ describe("TabManager - startEditingTabName", () => {
     expect(span.classList.contains("editing")).toBe(true);
     expect(label.getAttribute("contenteditable")).toBe("true");
   });
+
+  it("Inserta texto plano y previene el default al pegar en edición", () => {
+    const span = document.createElement("span");
+    const label = document.createElement("label");
+    label.appendChild(span);
+    const editButton = document.createElement("button");
+    label.appendChild(editButton);
+    const tabItem = document.createElement("div");
+    tabItem.className = "tab-list__item";
+    tabItem.appendChild(label);
+
+    document.execCommand = vi.fn();
+    const execCommandSpy = vi.spyOn(document, "execCommand");
+    tabManager.startEditingTabName(editButton);
+
+    const event = new Event("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", {
+      value: { getData: vi.fn(() => "<b>bold</b> text") },
+    });
+    label.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(event.clipboardData.getData).toHaveBeenCalledWith("text/plain");
+    expect(execCommandSpy).toHaveBeenCalledWith("insertText", false, "<b>bold</b> text");
+  });
 });

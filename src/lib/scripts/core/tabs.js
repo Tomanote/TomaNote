@@ -393,16 +393,25 @@ export class TabManager {
         e.preventDefault();
         finishEditing();
         label.removeEventListener("keydown", keydownHandler);
+        label.removeEventListener("paste", pasteHandler);
       }
     };
 
+    const pasteHandler = (e) => {
+      e.preventDefault();
+      const plainText = e.clipboardData.getData("text/plain");
+      document.execCommand("insertText", false, plainText);
+    };
+
     label.addEventListener("keydown", keydownHandler);
+    label.addEventListener("paste", pasteHandler);
 
     setTimeout(() => {
       if (!skipClickOutside && clickOutsideHandler) {
         document.removeEventListener("click", clickOutsideHandler);
       }
       label.removeEventListener("keydown", keydownHandler);
+      label.removeEventListener("paste", pasteHandler);
     }, 30000);
   }
 
