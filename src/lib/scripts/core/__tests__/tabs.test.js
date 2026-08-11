@@ -724,4 +724,14 @@ describe("TabManager - startEditingTabName", () => {
     expect(event.clipboardData.getData).toHaveBeenCalledWith("text/plain");
     expect(execCommandSpy).toHaveBeenCalledWith("insertText", false, "<b>bold</b> text");
   });
+
+  it("Resetea scrollLeft al posicionar el caret al inicio del nombre", () => {
+    const span = document.createElement("span");
+    span.textContent = "Nombre de pestaña muy largo que se desplaza";
+    span.scrollLeft = 120;
+
+    tabManager.placeCaretAtStart(span);
+
+    expect(span.scrollLeft).toBe(0);
+  });
 });

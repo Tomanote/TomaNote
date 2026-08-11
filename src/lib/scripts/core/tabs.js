@@ -552,6 +552,7 @@ export class TabManager {
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
+    element.scrollLeft = 0;
   }
 
   findTabById(id) {
