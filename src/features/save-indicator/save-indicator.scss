@@ -3,7 +3,7 @@
 
 .save-indicator {
   position: absolute;
-  right: 1rem;
+  right: 1.5rem;
   bottom: 1rem;
   z-index: 50;
   display: flex;
@@ -25,7 +25,7 @@
 
   &.is-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-10px);
   }
 
   &__icon {
