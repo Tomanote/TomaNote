@@ -1,7 +1,6 @@
 // src/features/contextual-menu/contextual-menu.js
 // Context menu system for text and tabs
 
-import { detectEmojiInText, getRandomPinEmoji } from "../../lib/scripts/utils/emojiDetector.js";
 import { FormattingUtils } from "../../lib/scripts/utils/formatting.js";
 
 export class ContextMenu {
@@ -272,104 +271,13 @@ export class ContextMenu {
 
   handlePinTab(tabElement) {
     const isPinned = tabElement.classList.contains("pinned");
+    const method = isPinned ? "unpinTab" : "pinTab";
 
-    if (isPinned) {
-      this.unpinTab(tabElement);
+    if (window.tabManager && typeof window.tabManager[method] === "function") {
+      window.tabManager[method](tabElement);
     } else {
-      this.pinTab(tabElement);
+      this.log("⚠️ TabManager no disponible para fijar/desfijar pestaña");
     }
-  }
-
-  pinTab(tabElement) {
-    // Check if there is an emoticon in the name text
-    const labelSpan = tabElement.querySelector("label span");
-    const tabName = labelSpan.textContent.trim();
-    const emojiInText = detectEmojiInText(tabName);
-
-    // Usar emoji detectado o uno aleatorio
-    const emoji = emojiInText || getRandomPinEmoji();
-
-    // Mark as pinned
-    tabElement.classList.add("pinned");
-    const label = tabElement.querySelector("label");
-    label.setAttribute("data-emoji", emoji);
-    labelSpan.setAttribute("data-emoji", emoji);
-
-    // Reorganize tabs
-    this.reorderTabs();
-
-    // Save changes (you will need to access the TabManager)
-    this.saveTabChanges();
-
-    this.log("📍 Pestaña fijada:", tabName);
-  }
-
-  unpinTab(tabElement) {
-    // Remove pinned mark
-    tabElement.classList.remove("pinned");
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    label.removeAttribute("data-emoji");
-    labelSpan.removeAttribute("data-emoji");
-
-    // Reorganize tabs
-    this.reorderTabs();
-
-    // Save changes
-    this.saveTabChanges();
-
-    this.log("📍 Pestaña desfijada");
-  }
-
-  reorderTabs() {
-    const tabList = document.querySelector(".tab-list");
-    const createTabButton = document.getElementById("create-tab");
-    const tabAnchor = document.querySelector("#tab-list-anchor");
-
-    if (!tabList) return;
-
-    const allTabs = Array.from(tabList.querySelectorAll(".tab-list__item"));
-
-    // Separate fixed and normal lashes
-    const pinnedTabs = allTabs.filter((tab) => tab.classList.contains("pinned"));
-    const normalTabs = allTabs.filter((tab) => !tab.classList.contains("pinned"));
-
-    // Remove all tabs from the DOM
-    allTabs.forEach((tab) => tab.remove());
-
-    // Obtener el elemento de referencia para insertBefore
-    const referenceElement = tabAnchor || createTabButton;
-
-    // Reinsert in order: first the fixed ones, then the normal ones
-    if (referenceElement) {
-      pinnedTabs.forEach((tab) => {
-        tabList.insertBefore(tab, referenceElement);
-      });
-
-      normalTabs.forEach((tab) => {
-        tabList.insertBefore(tab, referenceElement);
-      });
-    } else {
-      // If there is no reference, use appendChild
-      pinnedTabs.forEach((tab) => {
-        tabList.appendChild(tab);
-      });
-
-      normalTabs.forEach((tab) => {
-        tabList.appendChild(tab);
-      });
-    }
-
-    this.log("🔄 Pestañas reordenadas");
-  }
-
-  saveTabChanges() {
-    // This function needs to access the TabManager to save.
-
-    // For now, it triggers a global event that the TabManager can listen for.
-    const event = new CustomEvent("tabsChanged");
-    document.dispatchEvent(event);
   }
 
   log(...args) {

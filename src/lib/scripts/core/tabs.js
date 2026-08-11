@@ -2,7 +2,7 @@
 // Complete tab management system with feature flags
 import { FormattingUtils } from "../utils/formatting.js";
 import { TabDeletionHandler } from "./tabDeletion.js";
-import { detectEmojiInText, getRandomPinEmoji } from "../utils/emojiDetector.js";
+import { TabPinHandler } from "./tabPinHandler.js";
 
 export class TabManager {
   constructor(options = {}) {
@@ -26,6 +26,7 @@ export class TabManager {
     this.tabsData = [];
 
     this.deletionHandler = new TabDeletionHandler(this);
+    this.pinHandler = new TabPinHandler(this);
 
     this.setupContextMenuIntegration();
   }
@@ -136,35 +137,13 @@ export class TabManager {
   pinTab(tabElement, emoji = null) {
     if (!this.options.enablePinning) return;
 
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    // Preserve an existing emoji, otherwise detect one in the tab name,
-    // otherwise fall back to a random pin emoji
-    const existingEmoji = label?.getAttribute("data-emoji") || labelSpan?.getAttribute("data-emoji") || null;
-    const tabName = labelSpan?.textContent?.trim() || "";
-    const resolvedEmoji = emoji || existingEmoji || detectEmojiInText(tabName) || getRandomPinEmoji();
-
-    tabElement.classList.add("pinned");
-    if (label) label.setAttribute("data-emoji", resolvedEmoji);
-    if (labelSpan) labelSpan.setAttribute("data-emoji", resolvedEmoji);
-
-    this.reorderTabs();
-    this.saveTabs();
+    this.pinHandler.pinTab(tabElement, emoji);
   }
 
   unpinTab(tabElement) {
     if (!this.options.enablePinning) return;
 
-    tabElement.classList.remove("pinned");
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    label.removeAttribute("data-emoji");
-    labelSpan.removeAttribute("data-emoji");
-
-    this.reorderTabs();
-    this.saveTabs();
+    this.pinHandler.unpinTab(tabElement);
   }
 
   reorderTabs() {

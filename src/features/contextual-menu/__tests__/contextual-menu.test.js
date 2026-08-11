@@ -1,12 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ContextMenu } from "../contextual-menu.js";
 
-// Mockear dependencias
-vi.mock("../../../lib/scripts/utils/emojiDetector.js", () => ({
-  detectEmojiInText: vi.fn().mockReturnValue(false),
-  getRandomPinEmoji: vi.fn().mockReturnValue("🔴"),
-}));
-
 // Mock de navigator.language
 function mockNavigatorLanguage(lang) {
   Object.defineProperty(global, "navigator", {
@@ -306,6 +300,54 @@ describe("ContextMenu", () => {
       contextMenu.handleMenuAction({ target: { closest: vi.fn().mockReturnValue(mockMenuItem) } });
 
       expect(mockElement.style.display).toBe("none");
+    });
+  });
+
+  describe("handlePinTab", () => {
+    it("should delegate pinning to window.tabManager.pinTab when the tab is not pinned", () => {
+      const mockTabElement = {
+        classList: { contains: vi.fn().mockReturnValue(false) },
+      };
+
+      global.window = {
+        tabManager: {
+          pinTab: vi.fn(),
+          unpinTab: vi.fn(),
+        },
+      };
+
+      contextMenu.handlePinTab(mockTabElement);
+
+      expect(global.window.tabManager.pinTab).toHaveBeenCalledWith(mockTabElement);
+      expect(global.window.tabManager.unpinTab).not.toHaveBeenCalled();
+    });
+
+    it("should delegate unpinning to window.tabManager.unpinTab when the tab is pinned", () => {
+      const mockTabElement = {
+        classList: { contains: vi.fn().mockReturnValue(true) },
+      };
+
+      global.window = {
+        tabManager: {
+          pinTab: vi.fn(),
+          unpinTab: vi.fn(),
+        },
+      };
+
+      contextMenu.handlePinTab(mockTabElement);
+
+      expect(global.window.tabManager.unpinTab).toHaveBeenCalledWith(mockTabElement);
+      expect(global.window.tabManager.pinTab).not.toHaveBeenCalled();
+    });
+
+    it("should not fail if tabManager is unavailable", () => {
+      const mockTabElement = {
+        classList: { contains: vi.fn().mockReturnValue(false) },
+      };
+
+      global.window = {};
+
+      expect(() => contextMenu.handlePinTab(mockTabElement)).not.toThrow();
     });
   });
 

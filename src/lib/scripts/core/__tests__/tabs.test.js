@@ -637,7 +637,7 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
   });
 
-  it("unpinTab remueve clase pinned y data-emoji", () => {
+  it("unpinTab remueve la clase pinned pero conserva data-emoji", () => {
     const label = { removeAttribute: vi.fn() };
     const labelSpan = { removeAttribute: vi.fn() };
     const tabElement = {
@@ -652,8 +652,8 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.unpinTab(tabElement);
 
     expect(tabElement.classList.remove).toHaveBeenCalledWith("pinned");
-    expect(label.removeAttribute).toHaveBeenCalledWith("data-emoji");
-    expect(labelSpan.removeAttribute).toHaveBeenCalledWith("data-emoji");
+    expect(label.removeAttribute).not.toHaveBeenCalled();
+    expect(labelSpan.removeAttribute).not.toHaveBeenCalled();
   });
 
   it("pinTab no hace nada si enablePinning es false", () => {
