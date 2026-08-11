@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { FloatingMenu } from "../floating-menu.js";
-import { getRandomPinEmoji, detectEmojiInText } from "../../../lib/scripts/utils/emojiDetector.js";
-
-vi.mock("../../../lib/scripts/utils/emojiDetector.js", () => ({
-  getRandomPinEmoji: vi.fn(),
-  detectEmojiInText: vi.fn(),
-}));
 
 describe("FloatingMenu", () => {
   let floatingMenu;
@@ -189,110 +183,50 @@ describe("FloatingMenu", () => {
   });
 
   describe("handlePinTab", () => {
-    it("should add pinned class to the tab", () => {
-      const mockLabel = { setAttribute: vi.fn() };
-      const mockLabelSpan = { dataset: {}, textContent: "Test", setAttribute: vi.fn() };
+    it("should delegate pinning to window.tabManager.pinTab when the tab is not pinned", () => {
       const mockTabElement = {
-        classList: { contains: vi.fn().mockReturnValue(false), add: vi.fn() },
-        querySelector: vi.fn().mockImplementation((selector) => {
-          if (selector === "label") return mockLabel;
-          if (selector === "label span") return mockLabelSpan;
-          return null;
-        }),
+        classList: { contains: vi.fn().mockReturnValue(false) },
       };
 
       global.window = {
         tabManager: {
-          reorderTabs: vi.fn(),
-          saveTabs: vi.fn(),
+          pinTab: vi.fn(),
+          unpinTab: vi.fn(),
         },
       };
 
       floatingMenu.handlePinTab(mockTabElement);
 
-      expect(mockTabElement.classList.add).toHaveBeenCalledWith("pinned");
+      expect(global.window.tabManager.pinTab).toHaveBeenCalledWith(mockTabElement);
+      expect(global.window.tabManager.unpinTab).not.toHaveBeenCalled();
     });
 
-    it("Must be remove the pinned class from the tab if it is already pinned.", () => {
-      const mockLabel = { removeAttribute: vi.fn() };
-      const mockLabelSpan = { dataset: { emoji: "📝" }, removeAttribute: vi.fn() };
+    it("should delegate unpinning to window.tabManager.unpinTab when the tab is pinned", () => {
       const mockTabElement = {
-        classList: { contains: vi.fn().mockReturnValue(true), remove: vi.fn() },
-        querySelector: vi.fn().mockImplementation((selector) => {
-          if (selector === "label") return mockLabel;
-          if (selector === "label span") return mockLabelSpan;
-          return null;
-        }),
+        classList: { contains: vi.fn().mockReturnValue(true) },
       };
 
       global.window = {
         tabManager: {
-          reorderTabs: vi.fn(),
-          saveTabs: vi.fn(),
+          pinTab: vi.fn(),
+          unpinTab: vi.fn(),
         },
       };
 
       floatingMenu.handlePinTab(mockTabElement);
 
-      expect(mockTabElement.classList.remove).toHaveBeenCalledWith("pinned");
+      expect(global.window.tabManager.unpinTab).toHaveBeenCalledWith(mockTabElement);
+      expect(global.window.tabManager.pinTab).not.toHaveBeenCalled();
     });
 
-    it("Must be use a custom emoji if one exists in the tab name", () => {
-      const mockLabel = { setAttribute: vi.fn() };
-      const mockLabelSpan = { dataset: {}, textContent: "⭐ Mi nota", setAttribute: vi.fn() };
+    it("should not fail if tabManager is unavailable", () => {
       const mockTabElement = {
-        classList: { contains: vi.fn().mockReturnValue(false), add: vi.fn() },
-        querySelector: vi.fn().mockImplementation((selector) => {
-          if (selector === "label") return mockLabel;
-          if (selector === "label span") return mockLabelSpan;
-          return null;
-        }),
+        classList: { contains: vi.fn().mockReturnValue(false) },
       };
 
-      global.window = {
-        tabManager: {
-          reorderTabs: vi.fn(),
-          saveTabs: vi.fn(),
-        },
-      };
+      global.window = {};
 
-      detectEmojiInText.mockReturnValue("⭐");
-
-      floatingMenu.handlePinTab(mockTabElement);
-
-      expect(detectEmojiInText).toHaveBeenCalledWith("⭐ Mi nota");
-      expect(mockLabel.setAttribute).toHaveBeenCalledWith("data-emoji", "⭐");
-      expect(mockLabelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "⭐");
-    });
-
-    it("Should use random emoji if there is no emoji in the tab name", () => {
-      const mockLabel = { setAttribute: vi.fn() };
-      const mockLabelSpan = { dataset: {}, textContent: "Mi nota", setAttribute: vi.fn() };
-      const mockTabElement = {
-        classList: { contains: vi.fn().mockReturnValue(false), add: vi.fn() },
-        querySelector: vi.fn().mockImplementation((selector) => {
-          if (selector === "label") return mockLabel;
-          if (selector === "label span") return mockLabelSpan;
-          return null;
-        }),
-      };
-
-      global.window = {
-        tabManager: {
-          reorderTabs: vi.fn(),
-          saveTabs: vi.fn(),
-        },
-      };
-
-      detectEmojiInText.mockReturnValue(null);
-      getRandomPinEmoji.mockReturnValue("🔴");
-
-      floatingMenu.handlePinTab(mockTabElement);
-
-      expect(detectEmojiInText).toHaveBeenCalledWith("Mi nota");
-      expect(getRandomPinEmoji).toHaveBeenCalled();
-      expect(mockLabel.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
-      expect(mockLabelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
+      expect(() => floatingMenu.handlePinTab(mockTabElement)).not.toThrow();
     });
   });
 

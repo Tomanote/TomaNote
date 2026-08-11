@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.2-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.3-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,24 +20,30 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.2
+## 🚀 What's new — v0.5.3
 
-This release makes the command palette smarter and more readable — recent notes preview, device-aware hints, and a legibility pass across all themes.
+This release brings a fresh brand, a cleaner editor, and clearer feedback while you write.
 
-### 🕒 Recent notes preview
-The command palette now shows your 3 most recently edited notes on open, sorted by last modified time.
+### 🎨 New branding
+New logo, icons, screenshots and favicon renewed across the whole app.
 
-### 📌 Per-tab timestamps
-Each tab tracks its last modified timestamp to sort recent notes, preserved on every save.
+### ✍️ Editor polish
+Code blocks now use readable colors in all themes, and new empty tabs inherit the configured font size.
 
-### 📱 Responsive command palette footer
-The palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens.
+### 🗂️ Tab improvements
+The full name is shown while editing with the caret at the start, pasting into a tab name inserts plain text, and Alt+P keeps the tab's existing emoji when pinning.
 
-### 🔍 Command palette legibility
-Palette text now uses the theme's text color with stronger font weights, readable across all themes.
+### ↩️ Undoable paste
+Pasting in the editor is now undoable and respects the cursor position.
+
+### 💾 Save feedback
+A "Saved" indicator appears after you pause typing, and Ctrl+S shows instant save feedback.
+
+### 💬 Sidebar tooltips
+The collapsed right panel buttons now show tooltips.
 
 ### 🧪 Test coverage
-522 tests passing.
+547 tests passing.
 
 ## 🛠️ Tech Stack
 

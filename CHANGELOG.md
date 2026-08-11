@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.3] - August 10, 2026
+
+### Added
+- New logo, icons, screenshots and favicon renewed across the whole app.
+- Code blocks now use readable colors across all themes.
+- New empty tabs inherit the configured global font size.
+- The full name is shown while editing and the caret is placed at the start.
+- Pasting into a tab name inserts plain text without formatting.
+- Pasting in the editor is now undoable and respects the cursor position.
+- Alt+P keeps the tab's existing emoji when pinning.
+- The collapsed right panel buttons now show tooltips.
+- A 'Saved' indicator appears after you pause typing.
+- Ctrl+S shows instant save feedback.
+
 ## [0.5.2] - August 1, 2026
 
 ### Added
@@ -12,9 +26,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The command palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens.
 - Command palette text now uses the theme's text color with stronger font weights, readable across all themes.
 
-## [0.5.1] - July 30, 2026
+### Previous Versions
 
-### Added
+<details>
+<summary>[0.5.1] - July 30, 2026</summary>
+
 - Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards (system/global), and automatic desktop detection.
 - New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/.
 - Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls.
@@ -28,7 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The 'View full changelog' link points back to the correct URL.
 - Console logs are now restricted to development builds to keep the production bundle clean.
 
-### Previous Versions
+</details>
 
 <details>
 <summary>[0.5.0] - July 19, 2026</summary>

@@ -39,11 +39,11 @@ const tabButtons = [
     <MainToolsButton />
 
     <div class="tn-tools-container max-h-0 relative overflow-hidden peer-checked/menu:overflow-visible peer-checked/menu:max-h-75! max-w-15 transition-all duration-300 ease-in-out flex flex-col items-center justify-center gap-1">
-      <FloatingButtonGroup id="tn-navbar__content" radioName="options" radioId="tn-open-options__content" iconName="clipboard" buttons={contentButtons} iconStrokeWidth="1.5" />
+      <FloatingButtonGroup id="tn-navbar__content" radioName="options" radioId="tn-open-options__content" iconName="clipboard" buttons={contentButtons} iconStrokeWidth="1.5" tooltip={t("context-menu.content")} tooltipKey="context-menu.content" />
 
-      <FloatingButtonGroup id="tn-navbar__font" radioName="options" radioId="tn-open-options__font" iconName="font" buttons={fontButtons} iconStrokeWidth="10" />
+      <FloatingButtonGroup id="tn-navbar__font" radioName="options" radioId="tn-open-options__font" iconName="font" buttons={fontButtons} iconStrokeWidth="10" tooltip={t("context-menu.font")} tooltipKey="context-menu.font" />
 
-      <FloatingButtonGroup id="tn-navbar__tab" radioName="options" radioId="tn-open-options__tab" iconName="tab" buttons={tabButtons} iconStrokeWidth="1.5" />
+      <FloatingButtonGroup id="tn-navbar__tab" radioName="options" radioId="tn-open-options__tab" iconName="tab" buttons={tabButtons} iconStrokeWidth="1.5" tooltip={t("context-menu.tab")} tooltipKey="context-menu.tab" />
 
       <!-- <FloatingButton action="settings" iconName="settings" tooltip={t("context-menu.settings")} className="tn-setting border-(--tn-theme-contrast)! p-4! bg-(--tn-theme-secondary)" onClick="event.preventDefault(); document.querySelector('dialog#info-notepad').showModal()" /> -->
     </div>

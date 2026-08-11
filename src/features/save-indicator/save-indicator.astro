@@ -1,0 +1,14 @@
+---
+// src/features/save-indicator/save-indicator.astro
+// Save indicator that shows "Saved" feedback after typing pauses
+
+import "./save-indicator.scss";
+import { getLang, useTranslations } from "../../i18n/utils";
+
+const t = useTranslations(getLang());
+---
+
+<div id="save-indicator" class="save-indicator" role="status" aria-live="polite">
+  <span class="save-indicator__icon" aria-hidden="true">✓</span>
+  <span class="save-indicator__text" data-i18n="save-indicator.saved">{t("save-indicator.saved")}</span>
+</div>

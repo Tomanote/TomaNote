@@ -29,9 +29,43 @@
     {
       "id": "current",
       "type": "current",
+      "versionNumber": "0.5.3",
+      "date": "2026-08-10",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          { "summary": "Nuevo branding", "description": "Nuevo logo, iconos, capturas de pantalla y favicon renovados en toda la aplicación." },
+          { "summary": "Contraste de bloques de código", "description": "Los bloques de código ahora usan colores legibles en todos los temas." },
+          { "summary": "Tamaño de fuente heredado", "description": "Las pestañas nuevas vacías heredan el tamaño de fuente global configurado." },
+          { "summary": "Edición del nombre de pestaña", "description": "El nombre completo se muestra mientras se edita y el cursor se coloca al inicio." },
+          { "summary": "Pegado como texto plano", "description": "Pegar en el nombre de una pestaña inserta texto plano sin formato." },
+          { "summary": "Pegado deshacible", "description": "Pegar en el editor ahora se puede deshacer y respeta la posición del cursor." },
+          { "summary": "Emoji preservado al fijar", "description": "Alt+P conserva el emoji existente de la pestaña al fijarla." },
+          { "summary": "Tooltips en controles contraídos", "description": "Los botones del panel derecho contraído ahora muestran tooltips." },
+          { "summary": "Indicador de guardado", "description": "Un indicador 'Guardado' aparece tras pausar la escritura." },
+          { "summary": "Atajo Ctrl+S", "description": "Ctrl+S muestra feedback visual de guardado al instante." }
+        ],
+        "en": [
+          { "summary": "New branding", "description": "New logo, icons, screenshots and favicon renewed across the whole app." },
+          { "summary": "Code block contrast", "description": "Code blocks now use readable colors across all themes." },
+          { "summary": "Inherited font size", "description": "New empty tabs inherit the configured global font size." },
+          { "summary": "Tab name editing", "description": "The full name is shown while editing and the caret is placed at the start." },
+          { "summary": "Plain-text paste", "description": "Pasting into a tab name inserts plain text without formatting." },
+          { "summary": "Undoable paste", "description": "Pasting in the editor is now undoable and respects the cursor position." },
+          { "summary": "Pin emoji preservation", "description": "Alt+P keeps the tab's existing emoji when pinning." },
+          { "summary": "Collapsed controls tooltips", "description": "The collapsed right panel buttons now show tooltips." },
+          { "summary": "Saved indicator", "description": "A 'Saved' indicator appears after you pause typing." },
+          { "summary": "Ctrl+S shortcut", "description": "Ctrl+S shows instant save feedback." }
+        ]
+      }
+    },
+    {
+      "id": "prev-052",
+      "type": "previous",
       "versionNumber": "0.5.2",
       "date": "2026-08-01",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [
@@ -49,12 +83,14 @@
       }
     },
     {
-      "id": "prev-051",
-      "type": "previous",
+      "id": "old-051",
+      "type": "old",
       "versionNumber": "0.5.1",
       "date": "2026-07-30",
       "isCurrent": false,
       "isNext": false,
+      "isOld": true,
+      "showInTab": false,
       "items": {
         "es": [
           { "summary": "Refactor de atajos de teclado", "description": "Sistema centralizado de atajos con registro por clases, verificación de modificadores (Ctrl/Alt/Shift/Meta), guards por ámbito (system/global) y detección automática de escritorio." },

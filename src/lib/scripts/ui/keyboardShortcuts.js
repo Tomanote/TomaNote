@@ -299,6 +299,19 @@ export class KeyboardShortcuts {
       },
     });
 
+    // --- Ctrl+S: Save (visual feedback) ---
+    this.registerShortcut({
+      key: "s",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      skipWhenInputFocused: false,
+      label: "Ctrl+S",
+      description: "Save",
+      category: "editor",
+      handler: () => {
+        window.saveIndicator?.trigger();
+      },
+    });
+
     // --- Alt+/ : Show shortcuts help ---
     this.registerShortcut({
       key: "/",

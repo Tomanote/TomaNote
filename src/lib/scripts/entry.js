@@ -135,6 +135,7 @@ async function initializeBasicComponents() {
   await initializeFloatingNavPosition();
   await initializeEditorSettings();
   await initializeKeyboardShortcutsHelp();
+  await initializeSaveIndicator();
 }
 
 async function initializeTabsSystem() {
@@ -347,6 +348,22 @@ async function initializeEditorSettings() {
     window.editorSettings.init();
   } catch (error) {
     devLogger.error("❌ Error inicializando EditorSettings:", error);
+  }
+}
+
+async function initializeSaveIndicator() {
+  try {
+    const { SaveIndicator } = await import("../../features/save-indicator/save-indicator.js");
+
+    window.saveIndicator = new SaveIndicator({
+      debug: true,
+    });
+
+    await window.saveIndicator.init();
+
+    return window.saveIndicator;
+  } catch (error) {
+    devLogger.error("❌ Error inicializando SaveIndicator:", error);
   }
 }
 

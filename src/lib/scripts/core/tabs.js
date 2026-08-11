@@ -2,6 +2,7 @@
 // Complete tab management system with feature flags
 import { FormattingUtils } from "../utils/formatting.js";
 import { TabDeletionHandler } from "./tabDeletion.js";
+import { TabPinHandler } from "./tabPinHandler.js";
 
 export class TabManager {
   constructor(options = {}) {
@@ -25,6 +26,7 @@ export class TabManager {
     this.tabsData = [];
 
     this.deletionHandler = new TabDeletionHandler(this);
+    this.pinHandler = new TabPinHandler(this);
 
     this.setupContextMenuIntegration();
   }
@@ -132,32 +134,16 @@ export class TabManager {
     window.floatingNavPosition?.getContentHeight();
   }
 
-  pinTab(tabElement, emoji = "📄") {
+  pinTab(tabElement, emoji = null) {
     if (!this.options.enablePinning) return;
 
-    tabElement.classList.add("pinned");
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    label.setAttribute("data-emoji", emoji);
-    labelSpan.setAttribute("data-emoji", emoji);
-
-    this.reorderTabs();
-    this.saveTabs();
+    this.pinHandler.pinTab(tabElement, emoji);
   }
 
   unpinTab(tabElement) {
     if (!this.options.enablePinning) return;
 
-    tabElement.classList.remove("pinned");
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    label.removeAttribute("data-emoji");
-    labelSpan.removeAttribute("data-emoji");
-
-    this.reorderTabs();
-    this.saveTabs();
+    this.pinHandler.unpinTab(tabElement);
   }
 
   reorderTabs() {
@@ -352,6 +338,7 @@ export class TabManager {
     const label = tabItem.querySelector("label");
     const span = label.querySelector("span");
 
+    span.classList.add("editing");
     label.setAttribute("contenteditable", "true");
     span.focus();
 
@@ -362,7 +349,9 @@ export class TabManager {
     selection.addRange(range);
 
     const finishEditing = () => {
+      span.classList.remove("editing");
       label.removeAttribute("contenteditable");
+      this.placeCaretAtStart(span);
       this.saveTabs();
       this.updateTabIds();
     };
@@ -390,16 +379,25 @@ export class TabManager {
         e.preventDefault();
         finishEditing();
         label.removeEventListener("keydown", keydownHandler);
+        label.removeEventListener("paste", pasteHandler);
       }
     };
 
+    const pasteHandler = (e) => {
+      e.preventDefault();
+      const plainText = e.clipboardData.getData("text/plain");
+      document.execCommand("insertText", false, plainText);
+    };
+
     label.addEventListener("keydown", keydownHandler);
+    label.addEventListener("paste", pasteHandler);
 
     setTimeout(() => {
       if (!skipClickOutside && clickOutsideHandler) {
         document.removeEventListener("click", clickOutsideHandler);
       }
       label.removeEventListener("keydown", keydownHandler);
+      label.removeEventListener("paste", pasteHandler);
     }, 30000);
   }
 
@@ -524,6 +522,16 @@ export class TabManager {
         }
       });
     }
+  }
+
+  placeCaretAtStart(element) {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    element.scrollLeft = 0;
   }
 
   findTabById(id) {

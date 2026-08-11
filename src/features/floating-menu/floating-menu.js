@@ -2,7 +2,6 @@
 // Floating menu system - connects buttons to existing functions
 
 import { FormattingUtils } from "../../lib/scripts/utils/formatting.js";
-import { detectEmojiInText, getRandomPinEmoji } from "../../lib/scripts/utils/emojiDetector.js";
 import { devLogger } from "../../lib/scripts/utils/devLogger.js";
 
 export class FloatingMenu {
@@ -312,18 +311,8 @@ export class FloatingMenu {
 
       case "paste":
         navigator.clipboard.readText().then((text) => {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editable.focus();
-            document.execCommand("insertText", false, text);
-          }
+          editable.focus();
+          document.execCommand("insertText", false, text);
         });
         break;
 
@@ -400,18 +389,8 @@ export class FloatingMenu {
 
       case "paste":
         navigator.clipboard.readText().then((text) => {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editable.focus();
-            document.execCommand("insertText", false, text);
-          }
+          editable.focus();
+          document.execCommand("insertText", false, text);
         });
         break;
 
@@ -466,50 +445,15 @@ export class FloatingMenu {
 
   handlePinTab(tabElement) {
     const isPinned = tabElement.classList.contains("pinned");
+    const method = isPinned ? "unpinTab" : "pinTab";
 
-    if (isPinned) {
-      this.unpinTab(tabElement);
+    if (window.tabManager && typeof window.tabManager[method] === "function") {
+      window.tabManager[method](tabElement);
     } else {
-      this.pinTab(tabElement);
+      this.log("⚠️ TabManager no disponible para fijar/desfijar pestaña");
     }
 
     this.log("📍 Pestaña" + (isPinned ? " desfijada" : " fijada"));
-  }
-
-  pinTab(tabElement) {
-    const labelSpan = tabElement.querySelector("label span");
-    const fallbackName = window.i18n?.t("tab.new") ?? "Nueva";
-    const tabName = labelSpan?.textContent?.trim() || fallbackName;
-    const emojiInText = detectEmojiInText(tabName);
-    const emoji = emojiInText || getRandomPinEmoji();
-
-    tabElement.classList.add("pinned");
-    const label = tabElement.querySelector("label");
-    if (label) label.setAttribute("data-emoji", emoji);
-    if (labelSpan) labelSpan.setAttribute("data-emoji", emoji);
-
-    if (window.tabManager && typeof window.tabManager.reorderTabs === "function") {
-      window.tabManager.reorderTabs();
-    }
-    if (window.tabManager && typeof window.tabManager.saveTabs === "function") {
-      window.tabManager.saveTabs();
-    }
-  }
-
-  unpinTab(tabElement) {
-    tabElement.classList.remove("pinned");
-    const label = tabElement.querySelector("label");
-    const labelSpan = tabElement.querySelector("label span");
-
-    if (label) label.removeAttribute("data-emoji");
-    if (labelSpan) labelSpan.removeAttribute("data-emoji");
-
-    if (window.tabManager && typeof window.tabManager.reorderTabs === "function") {
-      window.tabManager.reorderTabs();
-    }
-    if (window.tabManager && typeof window.tabManager.saveTabs === "function") {
-      window.tabManager.saveTabs();
-    }
   }
 
   setupTabChangeListener() {
