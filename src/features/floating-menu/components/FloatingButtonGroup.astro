@@ -26,17 +26,17 @@ const { id, radioName, radioId, iconName, tooltip, tooltipKey, buttons, iconStro
 import Icon from "../../../components/icons/Icon.astro";
 ---
 
-<div class="tn-horizontal-buttons group relative">
+<div class="tn-horizontal-buttons relative">
   <input type="radio" name={radioName} id={radioId} class="peer hidden" />
-  <label for={radioId} aria-label={tooltip} class={`tn-btn border border-transparent p-4! bg-(--tn-theme-primary) rounded-2xl hover:bg-(--tn-theme-secondary) peer-checked/${radioId}:border peer-checked/${radioId}:border-(--tn-theme-contrast) tn-undo cursor-pointer peer-checked/${radioId}:bg-(--tn-theme-contrast) peer-checked/${radioId}:hover:bg-(--tn-theme-contrast) flex justify-center items-center min-w-14`}>
+  <label for={radioId} aria-label={tooltip} class={`tn-btn group relative border border-transparent p-4! bg-(--tn-theme-primary) rounded-2xl hover:bg-(--tn-theme-secondary) peer-checked/${radioId}:border peer-checked/${radioId}:border-(--tn-theme-contrast) tn-undo cursor-pointer peer-checked/${radioId}:bg-(--tn-theme-contrast) peer-checked/${radioId}:hover:bg-(--tn-theme-contrast) flex justify-center items-center min-w-14`}>
     <Icon name={iconName} className="text-(--tn-theme-contrast)" strokeWidth={iconStrokeWidth || "1.5"} />
-  </label>
 
-  {tooltip && (
-    <span data-i18n={tooltipKey} class="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-      {tooltip}
-    </span>
-  )}
+    {tooltip && (
+      <span data-i18n={tooltipKey} class="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+        {tooltip}
+      </span>
+    )}
+  </label>
 
   <div id={id} class="tn-navbar-btns">
     {buttons.map((btn) => <FloatingButton action={btn.action} iconName={btn.iconName} tooltip={btn.tooltip} className={btn.className} />)}
