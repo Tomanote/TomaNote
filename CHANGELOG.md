@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.4] - August 19, 2026
+
+### Added
+- Context menu no longer suppresses native right-click outside tab areas and shows correct actions on tab label right-click.
+- The pin button now dynamically toggles between 'Pin Tab' and 'Unpin Tab' based on the active tab's pinned state.
+- New keyboard shortcuts for bold (Ctrl+B), italic (Ctrl+I), and underline (Ctrl+U) centralized in the shortcuts system.
+- Keyboard shortcut descriptions now display in the user's language instead of hardcoded English.
+- The close-tab confirmation dialog no longer shows Spanish inverted question marks in English.
+- New documentation button in the left sidebar linking to docs.tomanote.app.
+- Web Share Target API support — shared text automatically creates a new tab.
+- fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability.
+- Expanded test coverage with fix for state pollution in formatting shortcut tests.
+
 ## [0.5.3] - August 10, 2026
 
 ### Added

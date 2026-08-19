@@ -27,11 +27,43 @@
       }
     },
     {
-      "id": "current",
+      "id": "release-054",
       "type": "current",
+      "versionNumber": "0.5.4",
+      "date": "2026-08-19",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          { "summary": "Correcciones del menú contextual", "description": "El menú contextual ya no suprime el clic derecho nativo fuera de las pestañas y muestra las acciones correctas al hacer clic derecho en el nombre de una pestaña." },
+          { "summary": "Tooltip de fijar/desfijar dinámico", "description": "El botón de fijar ahora alterna dinámicamente entre 'Fijar pestaña' y 'Desfijar pestaña' según el estado de la pestaña activa." },
+          { "summary": "Atajos de formato Ctrl+B/I/U", "description": "Nuevos atajos de teclado para negrita (Ctrl+B), cursiva (Ctrl+I) y subrayado (Ctrl+U) centralizados en el sistema de atajos." },
+          { "summary": "Descripciones de atajos localizadas", "description": "Las descripciones de los atajos de teclado ahora se muestran en el idioma del usuario en lugar de estar en inglés hardcodeado." },
+          { "summary": "Diálogo de cierre corregido", "description": "El diálogo de confirmación de cierre de pestaña ya no muestra caracteres de interrogación invertidos (¿) en inglés." },
+          { "summary": "Botón de documentación", "description": "Nuevo botón de documentación en la barra lateral izquierda que enlaza a docs.tomanote.app." },
+          { "summary": "Soporte share_target PWA", "description": "Soporte para la API Web Share Target de PWA — el texto compartido crea una nueva pestaña automáticamente." },
+          { "summary": "Corrección de seguridad CVE-2026-18446", "description": "fast-uri actualizado a ^3.1.5 para resolver la vulnerabilidad CVE-2026-18446." },
+          { "summary": "574 tests pasando", "description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato." }
+        ],
+        "en": [
+          { "summary": "Context menu fixes", "description": "Context menu no longer suppresses native right-click outside tab areas and shows correct actions on tab label right-click." },
+          { "summary": "Dynamic pin/unpin tooltip", "description": "The pin button now dynamically toggles between 'Pin Tab' and 'Unpin Tab' based on the active tab's pinned state." },
+          { "summary": "Ctrl+B/I/U formatting shortcuts", "description": "New keyboard shortcuts for bold (Ctrl+B), italic (Ctrl+I), and underline (Ctrl+U) centralized in the shortcuts system." },
+          { "summary": "Localized shortcut descriptions", "description": "Keyboard shortcut descriptions now display in the user's language instead of hardcoded English." },
+          { "summary": "Fixed close-tab dialog", "description": "The close-tab confirmation dialog no longer shows Spanish inverted question marks in English." },
+          { "summary": "Documentation button", "description": "New documentation button in the left sidebar linking to docs.tomanote.app." },
+          { "summary": "PWA share_target support", "description": "Web Share Target API support — shared text automatically creates a new tab." },
+          { "summary": "CVE-2026-18446 security fix", "description": "fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability." },
+          { "summary": "574 tests passing", "description": "Expanded test coverage with fix for state pollution in formatting shortcut tests." }
+        ]
+      }
+    },
+    {
+      "id": "prev-053",
+      "type": "previous",
       "versionNumber": "0.5.3",
       "date": "2026-08-10",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [

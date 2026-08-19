@@ -1,0 +1,71 @@
+name: Sincronizar Versión en la Organización
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - "v*" # Se ejecuta si subes manualmente una etiqueta v1.0.0
+
+jobs:
+  update-ecosystem-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extraer versión del Tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      # ----------------------------------------------------
+      # ACTUALIZAR DOCUMENTACIÓN (ASTRO STARLIGHT)
+      # ----------------------------------------------------
+      - name: Clonar Repositorio de Documentación
+        uses: actions/checkout@v4
+        with:
+          repository: "Tomanote/TomaNote-Docs"
+          token: ${{ secrets.GITHUB_TOKEN }} # Funciona nativamente en la misma ORG
+          path: docs-repo
+
+      - name: Inyectar versión en Astro Docs
+        run: |
+          cd docs-repo
+          # Opción A: Modifica el package.json de la documentación
+          sed -i 's/"version": ".*"/"version": "${{ steps.get_version.outputs.VERSION }}"/g' package.json
+
+          # Opción B: Si tienes una variable en astro.config.mjs o un archivo JSON de constantes,
+          # puedes editarlo aquí para que aparezca dinámicamente en tu barra o footer.
+          # Ejemplo si tuvieras un archivo 'src/content/docs/version.json':
+          # echo '{"current": "${{ steps.get_version.outputs.VERSION }}"}' > src/content/docs/version.json
+
+      - name: Push a TomaNote-Docs
+        run: |
+          cd docs-repo
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: actualizar versión a ${{ steps.get_version.outputs.VERSION }} desde APP" || echo "Sin cambios"
+          git push origin main
+
+      # ----------------------------------------------------
+      # ACTUALIZAR BLOG (Mención estética)
+      # ----------------------------------------------------
+      - name: Clonar Repositorio del Blog
+        uses: actions/checkout@v4
+        with:
+          repository: "Tomanote/TomaNote-blog"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: blog-repo
+
+      - name: Actualizar dato de versión en Blog
+        run: |
+          cd blog-repo
+          # Creamos o modificamos un archivo estático de configuración que lea tu blog
+          echo '{"app_version": "${{ steps.get_version.outputs.VERSION }}"}' > version-info.json
+
+      - name: Push a TomaNote-blog
+        run: |
+          cd blog-repo
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: sincronizar badge de versión ${{ steps.get_version.outputs.VERSION }}" || echo "Sin cambios"
+          git push origin main
