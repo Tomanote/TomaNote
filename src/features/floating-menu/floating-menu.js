@@ -530,6 +530,21 @@ export class FloatingMenu {
       });
     }
 
+    // Update pin-tab button tooltip/label based on active tab pinned state
+    const isPinned = activeTab?.classList?.contains("pinned") ?? false;
+    const pinLabel = isPinned
+      ? (window.i18n?.t("context-menu.unpin-tab") ?? "Unpin Tab")
+      : (window.i18n?.t("context-menu.pin-tab") ?? "Pin Tab");
+    document.querySelectorAll("[data-floating-action='pin-tab']").forEach((btn) => {
+      btn.setAttribute("aria-label", pinLabel);
+      // Update hover tooltip span (FloatingButton.astro renders a span.absolute)
+      const tooltipSpan = btn.closest(".group")?.querySelector(".absolute");
+      if (tooltipSpan) {
+        tooltipSpan.textContent = pinLabel;
+        tooltipSpan.setAttribute("data-i18n", isPinned ? "context-menu.unpin-tab" : "context-menu.pin-tab");
+      }
+    });
+
     this.log(`🔄 Estados actualizados - Tab activa: ${hasActiveTab}, Selección: ${hasTextSelection}`);
   }
 
