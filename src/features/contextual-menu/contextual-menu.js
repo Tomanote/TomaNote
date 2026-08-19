@@ -72,8 +72,17 @@ export class ContextMenu {
 
     // Show context menu on right click
     document.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      this.handleContextMenu(e);
+      const target = e.target;
+      const isContentEditable = target.closest(".tab-list__item--content");
+      const isTabLabel = target.closest(".tab-list__item label");
+
+      if (
+        (isContentEditable && this.options.enableTextContext) ||
+        (isTabLabel && this.options.enableTabContext)
+      ) {
+        e.preventDefault();
+        this.handleContextMenu(e);
+      }
     });
 
     // Hide menu on click
