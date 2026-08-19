@@ -43,6 +43,8 @@
           { "summary": "Botón de documentación", "description": "Nuevo botón de documentación en la barra lateral izquierda que enlaza a docs.tomanote.app." },
           { "summary": "Soporte share_target PWA", "description": "Soporte para la API Web Share Target de PWA — el texto compartido crea una nueva pestaña automáticamente." },
           { "summary": "Corrección de seguridad CVE-2026-18446", "description": "fast-uri actualizado a ^3.1.5 para resolver la vulnerabilidad CVE-2026-18446." },
+          { "summary": "Inauguración de la documentación", "description": "Nuevo sitio de documentación oficial en docs.tomanote.app con guías de uso, atajos de teclado y referencia completa de la aplicación." },
+          { "summary": "Enlace a la documentación", "description": "Acceso directo a la documentación desde el botón de la barra lateral izquierda. Visítala en: https://docs.tomanote.app/" },
           { "summary": "574 tests pasando", "description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato." }
         ],
         "en": [
@@ -54,6 +56,8 @@
           { "summary": "Documentation button", "description": "New documentation button in the left sidebar linking to docs.tomanote.app." },
           { "summary": "PWA share_target support", "description": "Web Share Target API support — shared text automatically creates a new tab." },
           { "summary": "CVE-2026-18446 security fix", "description": "fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability." },
+          { "summary": "Documentation launch", "description": "Official documentation site launched at docs.tomanote.app with usage guides, keyboard shortcuts reference, and full app documentation." },
+          { "summary": "Documentation link", "description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/" },
           { "summary": "574 tests passing", "description": "Expanded test coverage with fix for state pollution in formatting shortcut tests." }
         ]
       }

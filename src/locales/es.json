@@ -259,8 +259,8 @@
   "roadmap.release-054.6.description": "Soporte para la API Web Share Target de PWA — el texto compartido crea una nueva pestaña automáticamente.",
   "roadmap.release-054.7.summary": "Corrección de seguridad CVE-2026-18446",
   "roadmap.release-054.7.description": "fast-uri actualizado a ^3.1.5 para resolver la vulnerabilidad CVE-2026-18446.",
-  "roadmap.release-054.8.summary": "574 tests pasando",
-  "roadmap.release-054.8.description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato.",
+  "roadmap.release-054.8.summary": "Inauguración de la documentación",
+  "roadmap.release-054.8.description": "Nuevo sitio de documentación oficial en docs.tomanote.app con guías de uso, atajos de teclado y referencia completa de la aplicación.",
   "roadmap.prev-053.0.summary": "Nuevo branding",
   "roadmap.prev-053.0.description": "Nuevo logo, iconos, capturas de pantalla y favicon renovados en toda la aplicación.",
   "roadmap.prev-053.1.summary": "Contraste de bloques de código",
@@ -280,5 +280,9 @@
   "roadmap.prev-053.8.summary": "Indicador de guardado",
   "roadmap.prev-053.8.description": "Un indicador 'Guardado' aparece tras pausar la escritura.",
   "roadmap.prev-053.9.summary": "Atajo Ctrl+S",
-  "roadmap.prev-053.9.description": "Ctrl+S muestra feedback visual de guardado al instante."
+  "roadmap.prev-053.9.description": "Ctrl+S muestra feedback visual de guardado al instante.",
+  "roadmap.release-054.9.summary": "Enlace a la documentación",
+  "roadmap.release-054.9.description": "Acceso directo a la documentación desde el botón de la barra lateral izquierda. Visítala en: https://docs.tomanote.app/",
+  "roadmap.release-054.10.summary": "574 tests pasando",
+  "roadmap.release-054.10.description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato."
 }

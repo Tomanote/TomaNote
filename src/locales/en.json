@@ -258,8 +258,8 @@
   "roadmap.release-054.6.description": "Web Share Target API support — shared text automatically creates a new tab.",
   "roadmap.release-054.7.summary": "CVE-2026-18446 security fix",
   "roadmap.release-054.7.description": "fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability.",
-  "roadmap.release-054.8.summary": "574 tests passing",
-  "roadmap.release-054.8.description": "Expanded test coverage with fix for state pollution in formatting shortcut tests.",
+  "roadmap.release-054.8.summary": "Documentation launch",
+  "roadmap.release-054.8.description": "Official documentation site launched at docs.tomanote.app with usage guides, keyboard shortcuts reference, and full app documentation.",
   "roadmap.prev-053.0.summary": "New branding",
   "roadmap.prev-053.0.description": "New logo, icons, screenshots and favicon renewed across the whole app.",
   "roadmap.prev-053.1.summary": "Code block contrast",
@@ -279,5 +279,9 @@
   "roadmap.prev-053.8.summary": "Saved indicator",
   "roadmap.prev-053.8.description": "A 'Saved' indicator appears after you pause typing.",
   "roadmap.prev-053.9.summary": "Ctrl+S shortcut",
-  "roadmap.prev-053.9.description": "Ctrl+S shows instant save feedback."
+  "roadmap.prev-053.9.description": "Ctrl+S shows instant save feedback.",
+  "roadmap.release-054.9.summary": "Documentation link",
+  "roadmap.release-054.9.description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/",
+  "roadmap.release-054.10.summary": "574 tests passing",
+  "roadmap.release-054.10.description": "Expanded test coverage with fix for state pollution in formatting shortcut tests."
 }
