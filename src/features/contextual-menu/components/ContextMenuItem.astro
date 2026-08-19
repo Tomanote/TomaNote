@@ -6,15 +6,16 @@ interface Props {
   labelKey: string;
   shortcut?: string;
   requiresSelection?: boolean;
+  context?: string;
 }
 
-const { action, iconName, labelKey, shortcut, requiresSelection = false } = Astro.props;
+const { action, iconName, labelKey, shortcut, requiresSelection = false, context } = Astro.props;
 
 // Icons
 import Icon from "../../../components/icons/Icon.astro";
 ---
 
-<div class="context-menu__item group context-menu__item:hover py-2! px-3! cursor-pointer flex! justify-start items-center hover:bg-(--tn-neutral-tertiary-color)/20 hover:text-(--tn-theme-contrast) text-md" data-action={action} data-requires-selection={requiresSelection ? "true" : undefined}>
+<div class="context-menu__item group context-menu__item:hover py-2! px-3! cursor-pointer flex! justify-start items-center hover:bg-(--tn-neutral-tertiary-color)/20 hover:text-(--tn-theme-contrast) text-md" data-action={action} data-requires-selection={requiresSelection ? "true" : undefined} data-context={context}>
   <Icon name={iconName} className="size-1 text-(--tn-theme-contrast) mr-1!" />
 
   {
