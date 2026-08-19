@@ -53,7 +53,7 @@ export class KeyboardShortcutsHelp {
     const shortcuts = window.keyboardShortcuts?.getShortcutsByCategory() || [];
     if (shortcuts.length === 0) {
       this.contentContainer.innerHTML =
-        '<div class="ks-help__empty" style="padding:2rem;text-align:center;color:var(--tn-theme-contrast);opacity:0.6;font-size:0.875rem">No shortcuts available</div>';
+        '<div class="ks-help__empty" style="padding:2rem;text-align:center;color:var(--tn-theme-contrast);opacity:0.6;font-size:0.875rem">' + (window.i18n?.t("shortcuts.empty") || "No shortcuts available") + '</div>';
       return;
     }
 
@@ -82,7 +82,11 @@ export class KeyboardShortcutsHelp {
       for (const item of items) {
         const label = item.label || item.key;
         html += `<div class="ks-help__item">`;
-        html += `<span class="ks-help__item-label">${item.description || label}</span>`;
+        const desc = window.i18n?.t(item.description) || item.description;
+        const finalDesc = item.description === "shortcuts.desc.jumpToTab"
+          ? desc + label.replace("Alt+", "")
+          : desc;
+        html += `<span class="ks-help__item-label">${finalDesc || label}</span>`;
         html += `<kbd class="ks-help__kbd">${label}</kbd>`;
         html += `</div>`;
       }
