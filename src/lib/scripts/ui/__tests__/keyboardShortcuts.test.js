@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { KeyboardShortcuts } from "../keyboardShortcuts.js";
+import { FormattingUtils } from "../../utils/formatting.js";
 
 function makeKS() {
   return new KeyboardShortcuts({ debug: false });
@@ -110,7 +111,7 @@ describe("KeyboardShortcuts", () => {
 
     it("stores custom config", () => {
       expect(ks.shortcuts[1]).toMatchObject({
-        key: "k", label: "Ctrl+K", description: "Command Palette", category: "navigation", scope: "system",
+        key: "k", label: "Ctrl+K", description: "shortcuts.desc.commandPalette", category: "navigation", scope: "system",
       });
     });
 
@@ -482,6 +483,66 @@ describe("KeyboardShortcuts", () => {
       window.saveIndicator = undefined;
       expect(() => fireCtrlS()).not.toThrow();
       window.saveIndicator = { trigger };
+    });
+  });
+
+  // ─── CTRL+B/I/U FORMATTING SHORTCUTS ───
+  describe("Ctrl+B/I/U formatting shortcuts", () => {
+    let preventDefault;
+    let originalCycleBold;
+    let originalExecCommand;
+
+    beforeEach(async () => {
+      preventDefault = vi.fn();
+
+      originalExecCommand = document.execCommand;
+      document.execCommand = vi.fn().mockImplementation(() => true);
+
+      originalCycleBold = FormattingUtils.cycleBold;
+      FormattingUtils.cycleBold = vi.fn();
+
+      // Reset activeElement to avoid pollution from prior tests (e.g. Ctrl+S "works while an input is focused")
+      Object.defineProperty(document, "activeElement", { value: document.body, configurable: true });
+
+      ks = makeKS();
+      await ks.init();
+    });
+
+    afterEach(() => {
+      document.execCommand = originalExecCommand;
+      FormattingUtils.cycleBold = originalCycleBold;
+    });
+
+    const fireFormat = (key) => {
+      ks.handleKeydown({
+        key,
+        ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0,
+        preventDefault,
+      });
+    };
+
+    it("calls FormattingUtils.cycleBold() on Ctrl+B", () => {
+      fireFormat("b");
+      expect(FormattingUtils.cycleBold).toHaveBeenCalled();
+    });
+
+    it("calls document.execCommand('italic') on Ctrl+I", () => {
+      fireFormat("i");
+      expect(document.execCommand).toHaveBeenCalledWith("italic", false, null);
+    });
+
+    it("calls document.execCommand('underline') on Ctrl+U", () => {
+      fireFormat("u");
+      expect(document.execCommand).toHaveBeenCalledWith("underline", false, null);
+    });
+
+    it("prevents default for Ctrl+B/I/U", () => {
+      fireFormat("b");
+      expect(preventDefault).toHaveBeenCalled();
+      fireFormat("i");
+      expect(preventDefault).toHaveBeenCalled();
+      fireFormat("u");
+      expect(preventDefault).toHaveBeenCalled();
     });
   });
 

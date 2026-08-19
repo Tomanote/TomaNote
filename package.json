@@ -1,7 +1,7 @@
 {
   "name": "notepad-astro",
   "type": "module",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "scripts": {
     "sync:roadmap": "node scripts/sync-roadmap-locales.cjs",
     "changelog": "node scripts/generate-changelog.cjs",
@@ -47,6 +47,7 @@
   "overrides": {
     "yaml": "^2.8.3",
     "ws": "^8.21.0",
-    "brace-expansion": ">=2.1.2"
+    "brace-expansion": ">=2.1.2",
+    "fast-uri": "^3.1.5"
   }
 }

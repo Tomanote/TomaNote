@@ -14,7 +14,7 @@ export class TabDeletionHandler {
     } else {
       if (
         !confirm(
-          window.i18n?.t("tab.delete-confirm") ?? "¿Eliminar esta pestaña?"
+          window.i18n?.t("tab.delete-confirm") ?? "Delete this tab?"
         )
       ) {
         return;

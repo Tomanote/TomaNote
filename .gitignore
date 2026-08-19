@@ -144,3 +144,6 @@ nul
 
 # Html temporal
 temp.html
+
+# File for context from others REPO's
+opencode.json

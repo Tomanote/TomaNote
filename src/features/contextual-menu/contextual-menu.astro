@@ -7,41 +7,41 @@ import ContextMenuItem from "./components/ContextMenuItem.astro";
 import ContextMenuSeparator from "./components/ContextMenuSeparator.astro";
 
 const editItems = [
-  { action: "copy", iconName: "copy", labelKey: "context-menu.copy", shortcut: "Ctrl + C", requiresSelection: true },
-  { action: "cut", iconName: "cut", labelKey: "context-menu.cut", shortcut: "Ctrl + X", requiresSelection: true },
-  { action: "paste", iconName: "paste", labelKey: "context-menu.paste", shortcut: "Ctrl + V" },
+  { action: "copy", iconName: "copy", labelKey: "context-menu.copy", shortcut: "Ctrl + C", requiresSelection: true, context: "text" },
+  { action: "cut", iconName: "cut", labelKey: "context-menu.cut", shortcut: "Ctrl + X", requiresSelection: true, context: "text" },
+  { action: "paste", iconName: "paste", labelKey: "context-menu.paste", shortcut: "Ctrl + V", context: "text" },
 ];
 
 const formatItems = [
-  { action: "bold", iconName: "bold", labelKey: "context-menu.bold", shortcut: "Ctrl + B", requiresSelection: true },
-  { action: "italic", iconName: "italic", labelKey: "context-menu.italic", shortcut: "Ctrl + I", requiresSelection: true },
-  { action: "underline", iconName: "underline", labelKey: "context-menu.underline", shortcut: "Ctrl + U", requiresSelection: true },
+  { action: "bold", iconName: "bold", labelKey: "context-menu.bold", shortcut: "Ctrl + B", requiresSelection: true, context: "text" },
+  { action: "italic", iconName: "italic", labelKey: "context-menu.italic", shortcut: "Ctrl + I", requiresSelection: true, context: "text" },
+  { action: "underline", iconName: "underline", labelKey: "context-menu.underline", shortcut: "Ctrl + U", requiresSelection: true, context: "text" },
 ];
 
 const historyItems = [
-  { action: "undo", iconName: "undo", labelKey: "context-menu.undo", shortcut: "Ctrl + Z" },
-  { action: "redo", iconName: "redo", labelKey: "context-menu.redo", shortcut: "Ctrl + Y" },
+  { action: "undo", iconName: "undo", labelKey: "context-menu.undo", shortcut: "Ctrl + Z", context: "text" },
+  { action: "redo", iconName: "redo", labelKey: "context-menu.redo", shortcut: "Ctrl + Y", context: "text" },
 ];
 
-const tabItems = [{ action: "pin-tab", iconName: "pin", labelKey: "context-menu.pin-tab" }];
+const tabItems = [{ action: "pin-tab", iconName: "pin", labelKey: "context-menu.pin-tab", context: "tab" }];
 ---
 
 <div id="context-menu" class="context-menu hidden fixed bg-(--tn-theme-primary) border border-(--tn-theme-contrast) rounded-lg shadow-2xl z-50 min-w-50 w-auto">
   {/* Edition */}
-  {editItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} requiresSelection={item.requiresSelection} />)}
+  {editItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} requiresSelection={item.requiresSelection} context={item.context} />)}
 
   <ContextMenuSeparator variant="thin" />
 
   {/* Format */}
-  {formatItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} requiresSelection={item.requiresSelection} />)}
+  {formatItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} requiresSelection={item.requiresSelection} context={item.context} />)}
 
   <ContextMenuSeparator variant="thin" />
 
   {/* History */}
-  {historyItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} />)}
+  {historyItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} shortcut={item.shortcut} context={item.context} />)}
 
   <ContextMenuSeparator variant="thin" />
 
   {/* Tabs */}
-  {tabItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} />)}
+  {tabItems.map((item) => <ContextMenuItem action={item.action} iconName={item.iconName} labelKey={item.labelKey} context={item.context} />)}
 </div>

@@ -30,6 +30,7 @@ describe("FloatingMenu", () => {
         if (selector === ".tab-list") return mockTabList;
         return null;
       }),
+      querySelectorAll: vi.fn().mockReturnValue([]),
       getElementById: vi.fn().mockReturnValue(mockToolsButton),
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),

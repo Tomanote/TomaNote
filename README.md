@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.3-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.4-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,30 +20,27 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.3
+## 🚀 What's new — v0.5.4
 
-This release brings a fresh brand, a cleaner editor, and clearer feedback while you write.
+Bug fixes, new formatting shortcuts, documentation link, and PWA share support.
 
-### 🎨 New branding
-New logo, icons, screenshots and favicon renewed across the whole app.
+### 🐛 Bug fixes
+- Context menu no longer suppresses native right-click outside tab areas (#71)
+- Tab label right-click now shows the correct context menu (#65)
+- Pin button tooltip dynamically switches between Pin/Unpin (#70)
+- English close-tab dialog no longer shows Spanish inverted question marks (#68)
+- Keyboard shortcuts help overlay now shows localized descriptions (#69)
 
-### ✍️ Editor polish
-Code blocks now use readable colors in all themes, and new empty tabs inherit the configured font size.
+### ✨ New features
+- **Ctrl+B / Ctrl+I / Ctrl+U** formatting shortcuts (#67)
+- **Documentation button** in the left sidebar linking to [docs.tomanote.app](https://docs.tomanote.app)
+- **PWA share_target** support — shared text creates a new tab automatically (#66)
 
-### 🗂️ Tab improvements
-The full name is shown while editing with the caret at the start, pasting into a tab name inserts plain text, and Alt+P keeps the tab's existing emoji when pinning.
-
-### ↩️ Undoable paste
-Pasting in the editor is now undoable and respects the cursor position.
-
-### 💾 Save feedback
-A "Saved" indicator appears after you pause typing, and Ctrl+S shows instant save feedback.
-
-### 💬 Sidebar tooltips
-The collapsed right panel buttons now show tooltips.
+### 🔒 Security
+- Bumped fast-uri to ^3.1.5 to resolve CVE-2026-18446 (#61)
 
 ### 🧪 Test coverage
-547 tests passing.
+574 tests passing.
 
 ## 🛠️ Tech Stack
 
