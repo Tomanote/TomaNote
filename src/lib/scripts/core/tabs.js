@@ -1,6 +1,5 @@
 // src/lib/scripts/core/tabs.js
 // Complete tab management system with feature flags
-import { FormattingUtils } from "../utils/formatting.js";
 import { TabDeletionHandler } from "./tabDeletion.js";
 import { TabPinHandler } from "./tabPinHandler.js";
 
@@ -312,12 +311,6 @@ export class TabManager {
       if (event.key === "Tab" && event.target.classList.contains("tab-list__item--content")) {
         event.preventDefault();
         document.execCommand("insertText", false, "    ");
-      }
-
-      // Shortcut for bold: CTRL + B
-      if (event.ctrlKey && event.key === "b" && event.target.classList.contains("tab-list__item--content")) {
-        event.preventDefault();
-        FormattingUtils.cycleBold();
       }
     });
   }
