@@ -16,6 +16,10 @@ export async function initNotepad() {
     // 2. Initialize basic components
     await initializeBasicComponents();
 
+    // 2.5. Process PWA query parameters (share target, protocol handler, ?new=true)
+    const { QueryParamHandler } = await import("./core/queryParamHandler.js");
+    QueryParamHandler.init();
+
     // 3. Initial content height calculation (after tabs + floatingNav are ready)
     window.floatingNavPosition?.getContentHeight();
 
@@ -53,9 +57,13 @@ async function loadCriticalFunctions() {
   // 3. Configure theme system (dark/light mode)
   await setupThemeSystem();
 
-  // 4. Configure Service Worker if available
-  setupServiceWorker();
-}
+    // 4. Configure Service Worker if available
+    setupServiceWorker();
+
+    // 5. Register PWA protocol handler (web+tomanote://)
+    const { QueryParamHandler } = await import("./core/queryParamHandler.js");
+    QueryParamHandler.registerProtocolHandler();
+  }
 
 async function setupThemeSystem() {
   try {
@@ -189,20 +197,6 @@ async function initializeContextMenu() {
 
     // Init
     await window.contextMenu.init();
-
-    document.addEventListener(
-      "contextmenu",
-      (e) => {
-        // IMPORTANT: just prvent if is in our areas
-        const isContentEditable = e.target.closest(".tab-list__item--content");
-        const isTabLabel = e.target.closest(".tab-list__item label");
-
-        if (isContentEditable || isTabLabel) {
-          e.preventDefault();
-        }
-      },
-      true
-    ); // Use capture: true for capture the event early
 
     return window.contextMenu;
   } catch (error) {
