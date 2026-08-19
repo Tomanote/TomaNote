@@ -2,6 +2,7 @@
 // Desktop keyboard shortcut system with centralized registry
 
 import { devLogger } from "../utils/devLogger.js";
+import { FormattingUtils } from "../utils/formatting.js";
 
 export class KeyboardShortcuts {
   constructor(options = {}) {
@@ -141,7 +142,7 @@ export class KeyboardShortcuts {
       scope: "system",
       skipWhenInputFocused: false,
       label: "Ctrl+K",
-      description: "Command Palette",
+      description: "shortcuts.desc.commandPalette",
       category: "navigation",
       handler: () => {
         window.commandPalette?.toggle();
@@ -153,7 +154,7 @@ export class KeyboardShortcuts {
       key: "n",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+N",
-      description: "New tab",
+      description: "shortcuts.desc.newTab",
       category: "tabs",
       handler: () => {
         window.tabManager?.createTab();
@@ -165,7 +166,7 @@ export class KeyboardShortcuts {
       key: "w",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+W",
-      description: "Close active tab",
+      description: "shortcuts.desc.closeTab",
       category: "tabs",
       handler: () => {
         const activeTab = document.querySelector('.tab-list input[type="radio"]:checked');
@@ -182,7 +183,7 @@ export class KeyboardShortcuts {
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       location: 0,
       label: "Alt+,",
-      description: "Previous tab",
+      description: "shortcuts.desc.previousTab",
       category: "tabs",
       handler: () => {
         const tabs = document.querySelectorAll('.tab-list input[type="radio"]');
@@ -201,7 +202,7 @@ export class KeyboardShortcuts {
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       location: 0,
       label: "Alt+.",
-      description: "Next tab",
+      description: "shortcuts.desc.nextTab",
       category: "tabs",
       handler: () => {
         const tabs = document.querySelectorAll('.tab-list input[type="radio"]');
@@ -221,7 +222,7 @@ export class KeyboardShortcuts {
         modifiers: { alt: true, ctrl: false, shift: false, meta: false },
         location: 0,
         label: `Alt+${i}`,
-        description: `Jump to tab #${i}`,
+        description: "shortcuts.desc.jumpToTab",
         category: "tabs",
         handler: () => {
           const tabs = document.querySelectorAll('.tab-list input[type="radio"]');
@@ -238,7 +239,7 @@ export class KeyboardShortcuts {
       key: "s",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+S",
-      description: "Open Settings",
+      description: "shortcuts.desc.openSettings",
       category: "navigation",
       handler: () => {
         const modal = document.querySelector("dialog#info-notepad");
@@ -251,7 +252,7 @@ export class KeyboardShortcuts {
       key: "t",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+T",
-      description: "Rename active tab",
+      description: "shortcuts.desc.renameTab",
       category: "tabs",
       handler: () => {
         const activeTab = document.querySelector('.tab-list input[type="radio"]:checked');
@@ -269,7 +270,7 @@ export class KeyboardShortcuts {
       key: "p",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+P",
-      description: "Pin/Unpin active tab",
+      description: "shortcuts.desc.pinTab",
       category: "tabs",
       handler: () => {
         const activeTab = document.querySelector('.tab-list input[type="radio"]:checked');
@@ -289,7 +290,7 @@ export class KeyboardShortcuts {
       key: "e",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+E",
-      description: "Toggle editor width",
+      description: "shortcuts.desc.toggleEditorWidth",
       category: "editor",
       handler: () => {
         const current = localStorage.getItem("editorWidth") || "default";
@@ -305,10 +306,46 @@ export class KeyboardShortcuts {
       modifiers: { ctrl: true, alt: false, shift: false, meta: false },
       skipWhenInputFocused: false,
       label: "Ctrl+S",
-      description: "Save",
+      description: "shortcuts.desc.save",
       category: "editor",
       handler: () => {
         window.saveIndicator?.trigger();
+      },
+    });
+
+    // --- Ctrl+B: Bold (uses custom Range-based cycling) ---
+    this.registerShortcut({
+      key: "b",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      label: "Ctrl+B",
+      description: "shortcuts.desc.bold",
+      category: "editor",
+      handler: () => {
+        FormattingUtils.cycleBold();
+      },
+    });
+
+    // --- Ctrl+I: Italic ---
+    this.registerShortcut({
+      key: "i",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      label: "Ctrl+I",
+      description: "shortcuts.desc.italic",
+      category: "editor",
+      handler: () => {
+        document.execCommand("italic", false, null);
+      },
+    });
+
+    // --- Ctrl+U: Underline ---
+    this.registerShortcut({
+      key: "u",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      label: "Ctrl+U",
+      description: "shortcuts.desc.underline",
+      category: "editor",
+      handler: () => {
+        document.execCommand("underline", false, null);
       },
     });
 
@@ -317,7 +354,7 @@ export class KeyboardShortcuts {
       key: "/",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+/",
-      description: "Keyboard shortcuts help",
+      description: "shortcuts.desc.shortcutsHelp",
       category: "navigation",
       handler: () => {
         window.keyboardShortcutsHelp?.toggle();
@@ -329,7 +366,7 @@ export class KeyboardShortcuts {
       key: "Backspace",
       modifiers: { alt: true, ctrl: false, shift: false, meta: false },
       label: "Alt+Backspace",
-      description: "Delete active tab",
+      description: "shortcuts.desc.deleteTab",
       category: "tabs",
       handler: async () => {
         const activeTab = document.querySelector('.tab-list input[type="radio"]:checked');
