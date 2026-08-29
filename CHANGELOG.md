@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.5] - August 28, 2026
+
+### Added
+- Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature.
+- New GitHub issue template for requesting features with guided structure.
+- The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips.
+- Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility.
+
 ## [0.5.4] - August 19, 2026
 
 ### Added
@@ -15,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - New documentation button in the left sidebar linking to docs.tomanote.app.
 - Web Share Target API support — shared text automatically creates a new tab.
 - fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability.
+- Official documentation site launched at docs.tomanote.app with usage guides, keyboard shortcuts reference, and full app documentation.
+- Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/
 - Expanded test coverage with fix for state pollution in formatting shortcut tests.
 
 ## [0.5.3] - August 10, 2026

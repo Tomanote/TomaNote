@@ -147,3 +147,11 @@ temp.html
 
 # File for context from others REPO's
 opencode.json
+
+# Cluade Code
+/.claude
+/.claude/**
+
+#Freebuff
+/.freebuff
+/.freebuff/**

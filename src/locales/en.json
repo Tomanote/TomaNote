@@ -189,6 +189,9 @@
   "error.message": "Some features may not be available.",
   "error.hint": "Try reloading the page.",
   "sidebar.docs": "Documentation",
+  "sidebar.blog": "Blog",
+  "sidebar.bug": "Report a Bug",
+  "sidebar.feature": "Request a Feature",
   "_comment-shortcuts": "Keyboard shortcuts help",
   "shortcuts.title": "Keyboard Shortcuts",
   "shortcuts.footer": "Press to open this help at any time",
@@ -283,5 +286,13 @@
   "roadmap.release-054.9.summary": "Documentation link",
   "roadmap.release-054.9.description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/",
   "roadmap.release-054.10.summary": "574 tests passing",
-  "roadmap.release-054.10.description": "Expanded test coverage with fix for state pollution in formatting shortcut tests."
+  "roadmap.release-054.10.description": "Expanded test coverage with fix for state pollution in formatting shortcut tests.",
+  "roadmap.release-055.0.summary": "External link buttons",
+  "roadmap.release-055.0.description": "Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature.",
+  "roadmap.release-055.1.summary": "Feature Request template",
+  "roadmap.release-055.1.description": "New GitHub issue template for requesting features with guided structure.",
+  "roadmap.release-055.2.summary": "Official blog live",
+  "roadmap.release-055.2.description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips.",
+  "roadmap.release-055.3.summary": "Accessible icons on dark themes",
+  "roadmap.release-055.3.description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility."
 }

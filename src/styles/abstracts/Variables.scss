@@ -243,3 +243,38 @@ $tn-themes: (
   --color-text: var(--tn-color-text);
   --font-family-default: var(--tn-font-family-default);
 }
+
+// =============================================== 
+// ====== Accessibility: high-contrast icons ===== 
+// =============================================== 
+// On dark themes, sidebar/bottom-bar icons switch to white
+// with a subtle tinted circle for better visibility.
+// Light themes keep the default (dark icons on light bg).
+
+:root:not([data-theme="light"]):not([data-theme="cozy-rose"]):not([data-theme="chill-aqua"]):not([data-theme="wild-forest"]) {
+  .sidebar-left__btn svg,
+  .tn-bottom-bar-btn svg {
+    color: #ffffff !important;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  }
+
+  .sidebar-left__btn,
+  .tn-bottom-bar-btn {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: var(--tn-theme-contrast);
+      opacity: 0.15;
+      z-index: -1;
+      transition: opacity 0.15s;
+    }
+
+    &:hover::before {
+      opacity: 0.25;
+    }
+  }
+}

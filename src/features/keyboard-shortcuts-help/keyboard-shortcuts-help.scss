@@ -167,6 +167,25 @@
     font-size: 0.75rem;
     color: var(--tn-neutral-secondary-color);
   }
+
+  &__footer-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 0.5rem;
+  }
+
+  &__footer-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--tn-theme-contrast);
+    transition: opacity 0.15s;
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 @media (max-width: 768px) {

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.4-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.5-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,24 +20,17 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.4
+## 🚀 What's new — v0.5.5
 
-Bug fixes, new formatting shortcuts, documentation link, and PWA share support.
-
-### 🐛 Bug fixes
-- Context menu no longer suppresses native right-click outside tab areas (#71)
-- Tab label right-click now shows the correct context menu (#65)
-- Pin button tooltip dynamically switches between Pin/Unpin (#70)
-- English close-tab dialog no longer shows Spanish inverted question marks (#68)
-- Keyboard shortcuts help overlay now shows localized descriptions (#69)
+External link buttons, accessible dark-theme icons, blog launch, and feature request template.
 
 ### ✨ New features
-- **Ctrl+B / Ctrl+I / Ctrl+U** formatting shortcuts (#67)
-- **Documentation button** in the left sidebar linking to [docs.tomanote.app](https://docs.tomanote.app)
-- **PWA share_target** support — shared text creates a new tab automatically (#66)
+- **External link buttons** — Blog, Report a Bug, and Request a Feature in the sidebar, settings modal, and shortcuts help
+- **Feature Request GitHub template** — structured issue template for suggesting new features
+- **Official blog** — [blog.tomanote.app](https://blog.tomanote.app) with articles, changelogs, and productivity tips
 
-### 🔒 Security
-- Bumped fast-uri to ^3.1.5 to resolve CVE-2026-18446 (#61)
+### ♿ Accessibility
+- Sidebar and bottom bar icons now display **white with a subtle tinted background** on dark themes for better visibility
 
 ### 🧪 Test coverage
 574 tests passing.
