@@ -51,38 +51,46 @@ const navItems = [
           </h2>
           <p id="settings-desc" class="sr-only">Settings and preferences for TomaNote app</p>
           <span class="version text-sm! text-(--color-text)">v 0.5.5</span>
-          <div class="flex justify-center gap-3 mt-2!">
-            <a href="https://blog.tomanote.app" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.blog")}>
-              <Icon name="blog" className="size-4! text-(--color-text)" strokeWidth={2} />
-              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-                {t("sidebar.blog")}
-              </span>
-            </a>
-            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.bug")}>
-              <Icon name="bug" className="size-4! text-(--color-text)" strokeWidth={2} />
-              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-                {t("sidebar.bug")}
-              </span>
-            </a>
-            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.feature")}>
-              <Icon name="lightbulb" className="size-4! text-(--color-text)" strokeWidth={2} />
-              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-                {t("sidebar.feature")}
-              </span>
-            </a>
-          </div>
         </div>
 
         <nav class="settings-nav bg-(--tn-neutral-tertiary-color)/10 rounded-lg mt-4! px-1.25!">
           {navItems.map((item) => <SettingsNavItem className={item.className || ""} tabId={item.tabId} iconName={item.iconName} labelKey={item.labelKey} />)}
         </nav>
 
-        <form enctype="application/x-www-form-urlencoded" method="dialog" class="sidebar-footer">
-          <button class="save-button w-full p-3! border-0 rounded-sm bg-(--tn-theme-contrast) text-(--tn-neutral-tertiary-color)! cursor-pointer text-normal! transition-all hover:bg-(--tn-theme-contrast)/85! hover flex items-center justify-center gap-2">
-            <Icon name="check" className="size-1 md:size-6" />
-            <span data-i18n="mtb.submit"></span>
-          </button>
-        </form>
+        <div class="sidebar-footer">
+          <div class="settings-external-links flex justify-center gap-4 mb-3!">
+            <a href="https://blog.tomanote.app" target="_blank" rel="noopener noreferrer" class="settings-external-link group relative" aria-label={t("sidebar.blog")}>
+              <Icon name="blog" className="size-5! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.blog")}
+              </span>
+            </a>
+            <a href="https://docs.tomanote.app" target="_blank" rel="noopener noreferrer" class="settings-external-link group relative" aria-label={t("sidebar.docs")}>
+              <Icon name="docs" className="size-5! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.docs")}
+              </span>
+            </a>
+            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md" target="_blank" rel="noopener noreferrer" class="settings-external-link group relative" aria-label={t("sidebar.bug")}>
+              <Icon name="bug" className="size-5! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.bug")}
+              </span>
+            </a>
+            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md" target="_blank" rel="noopener noreferrer" class="settings-external-link group relative" aria-label={t("sidebar.feature")}>
+              <Icon name="lightbulb" className="size-5! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.feature")}
+              </span>
+            </a>
+          </div>
+          <form enctype="application/x-www-form-urlencoded" method="dialog">
+            <button class="save-button w-full p-3! border-0 rounded-sm bg-(--tn-theme-contrast) text-(--tn-neutral-tertiary-color)! cursor-pointer text-normal! transition-all hover:bg-(--tn-theme-contrast)/85! hover flex items-center justify-center gap-2">
+              <Icon name="check" className="size-1 md:size-6" />
+              <span data-i18n="mtb.submit"></span>
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Main COntent */}

@@ -53,14 +53,13 @@
     justify-content: space-between;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--tn-theme-contrast);
-    opacity: 0.25;
   }
 
   &__title {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--tn-neutral-tertiary-color);
+    color: var(--text-color);
   }
 
   &__close {
@@ -163,9 +162,8 @@
     gap: 0.5rem;
     padding: 0.75rem 1.25rem;
     border-top: 1px solid var(--tn-theme-contrast);
-    opacity: 0.25;
     font-size: 0.75rem;
-    color: var(--tn-neutral-secondary-color);
+    color: var(--text-color);
   }
 
   &__footer-links {

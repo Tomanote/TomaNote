@@ -18,32 +18,35 @@ const t = useTranslations(getLang());
         <Icon name="close" className="ks-help__close-icon" strokeWidth={2} />
       </button>
     </div>
+    <div class="flex justify-start gap-3 my-2! pl-8">
+      <a href="https://blog.tomanote.app" target="_blank" rel="noopener noreferrer" class="group relative inline-flex button items-center gap-1 border border-(--tn-theme-contrast) text-(--tn-theme-constrast)! px-3 no-underline! py-0.5 rounded-md" aria-label={t("sidebar.blog")}>
+        <span>Blog</span>
+        <Icon name="blog" className="size-4! text-(--color-text)" strokeWidth={2} />
+        <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+          {t("sidebar.blog")}
+        </span>
+      </a>
+      <a href="https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex button items-center gap-1 border border-(--tn-theme-contrast) text-(--tn-theme-constrast)! px-3 no-underline! py-0.5 rounded-md" aria-label={t("sidebar.bug")}>
+        <span>Issues</span>
+        <Icon name="bug" className="size-4! text-(--color-text)" strokeWidth={2} />
+        <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+          {t("sidebar.bug")}
+        </span>
+      </a>
+      <a href="https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex button items-center gap-1 border border-(--tn-theme-contrast) text-(--tn-theme-constrast)! px-3 no-underline! py-0.5 rounded-md" aria-label={t("sidebar.feature")}>
+        <span>Features</span>
+        <Icon name="lightbulb" className="size-4! text-(--color-text)" strokeWidth={2} />
+        <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+          {t("sidebar.feature")}
+        </span>
+      </a>
+    </div>
     <div id="ksHelpContent" class="ks-help__content">
       <!-- Populated by JS -->
     </div>
     <div class="ks-help__footer">
-      <kbd class="ks-help__kbd">Alt+/</kbd>
+      <kbd class="ks-help__kbd text-(--tn-theme-constrast)! opacity-100">Alt+/</kbd>
       <span data-i18n="shortcuts.footer">{t("shortcuts.footer")}</span>
-      <div class="ks-help__footer-links">
-        <a href="https://blog.tomanote.app" target="_blank" rel="noopener noreferrer" class="ks-help__footer-link group relative" aria-label={t("sidebar.blog")}>
-          <Icon name="blog" className="size-4!" strokeWidth={2} />
-          <span class="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-            {t("sidebar.blog")}
-          </span>
-        </a>
-        <a href="https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md" target="_blank" rel="noopener noreferrer" class="ks-help__footer-link group relative" aria-label={t("sidebar.bug")}>
-          <Icon name="bug" className="size-4!" strokeWidth={2} />
-          <span class="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-            {t("sidebar.bug")}
-          </span>
-        </a>
-        <a href="https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md" target="_blank" rel="noopener noreferrer" class="ks-help__footer-link group relative" aria-label={t("sidebar.feature")}>
-          <Icon name="lightbulb" className="size-4!" strokeWidth={2} />
-          <span class="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-            {t("sidebar.feature")}
-          </span>
-        </a>
-      </div>
     </div>
   </div>
 </dialog>
