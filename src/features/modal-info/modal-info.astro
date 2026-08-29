@@ -8,6 +8,10 @@ import logoNotes from "../../assets/logo/none-bg__notes.png";
 // Icons
 import Icon from "../../components/icons/Icon.astro";
 
+// i18n
+import { getLang, useTranslations } from "../../i18n/utils";
+const t = useTranslations(getLang());
+
 // Components
 import SettingsNavItem from "./components/SettingsNavItem.astro";
 
@@ -46,7 +50,27 @@ const navItems = [
             TomaNote
           </h2>
           <p id="settings-desc" class="sr-only">Settings and preferences for TomaNote app</p>
-          <span class="version text-sm! text-(--color-text)">v 0.5.4</span>
+          <span class="version text-sm! text-(--color-text)">v 0.5.5</span>
+          <div class="flex justify-center gap-3 mt-2!">
+            <a href="https://blog.tomanote.app" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.blog")}>
+              <Icon name="blog" className="size-4! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.blog")}
+              </span>
+            </a>
+            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.bug")}>
+              <Icon name="bug" className="size-4! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.bug")}
+              </span>
+            </a>
+            <a href="https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md" target="_blank" rel="noopener noreferrer" class="group relative inline-flex" aria-label={t("sidebar.feature")}>
+              <Icon name="lightbulb" className="size-4! text-(--color-text)" strokeWidth={2} />
+              <span class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
+                {t("sidebar.feature")}
+              </span>
+            </a>
+          </div>
         </div>
 
         <nav class="settings-nav bg-(--tn-neutral-tertiary-color)/10 rounded-lg mt-4! px-1.25!">
