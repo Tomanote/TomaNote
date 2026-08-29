@@ -27,11 +27,33 @@
       }
     },
     {
-      "id": "release-054",
+      "id": "release-055",
       "type": "current",
+      "versionNumber": "0.5.5",
+      "date": "2026-08-28",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          { "summary": "Botones de enlace externo", "description": "Tres nuevos botones de enlace externo en la barra lateral, modal de ajustes y ayuda de atajos: Blog, Reportar Bug y Solicitar Feature." },
+          { "summary": "Plantilla de Feature Request", "description": "Nuevo template de issue en GitHub para solicitar features con estructura guiada." },
+          { "summary": "Blog oficial en línea", "description": "El blog de TomaNote (blog.tomanote.app) está oficialmente en línea con artículos, changelogs y consejos de productividad." },
+          { "summary": "Iconos accesibles en temas oscuros", "description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad." }
+        ],
+        "en": [
+          { "summary": "External link buttons", "description": "Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature." },
+          { "summary": "Feature Request template", "description": "New GitHub issue template for requesting features with guided structure." },
+          { "summary": "Official blog live", "description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips." },
+          { "summary": "Accessible icons on dark themes", "description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility." }
+        ]
+      }
+    },
+    {
+      "id": "release-054",
+      "type": "previous",
       "versionNumber": "0.5.4",
       "date": "2026-08-19",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [

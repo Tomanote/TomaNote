@@ -57,4 +57,27 @@
   .sidebar-footer {
     margin-top: 1rem;
   }
+
+  .settings-external-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .settings-external-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: background 0.15s;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
 }

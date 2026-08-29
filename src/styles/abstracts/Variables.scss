@@ -243,3 +243,16 @@ $tn-themes: (
   --color-text: var(--tn-color-text);
   --font-family-default: var(--tn-font-family-default);
 }
+
+// =============================================== 
+// ====== Accessibility: high-contrast icons ===== 
+// =============================================== 
+// On dark themes, bottom-bar icons switch to white
+// for better visibility. Light themes keep dark icons.
+// Desktop sidebar keeps original contrast colors.
+
+:root:not([data-theme="light"]):not([data-theme="cozy-rose"]):not([data-theme="chill-aqua"]):not([data-theme="wild-forest"]) {
+  .tn-bottom-bar-btn svg {
+    color: #ffffff !important;
+  }
+}
