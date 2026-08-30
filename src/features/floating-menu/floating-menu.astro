@@ -12,17 +12,27 @@ import FloatingButton from "./components/FloatingButton.astro";
 import { getLang, useTranslations } from "../../i18n/utils";
 const t = useTranslations(getLang());
 
+// Formatting toolbar buttons — always visible, direct access
+const formatButtons = [
+  { action: "bold", iconName: "bold", tooltip: t("context-menu.bold"), className: "tn-bold" },
+  { action: "italic", iconName: "italic", tooltip: t("context-menu.italic"), className: "tn-italic" },
+  { action: "underline", iconName: "underline", tooltip: t("context-menu.underline"), className: "tn-under" },
+  { action: "heading1", iconName: "heading1", tooltip: t("context-menu.heading1"), className: "tn-h1" },
+  { action: "heading2", iconName: "heading2", tooltip: t("context-menu.heading2"), className: "tn-h2" },
+  { action: "heading3", iconName: "heading3", tooltip: t("context-menu.heading3"), className: "tn-h3" },
+  { action: "blockquote", iconName: "blockquote", tooltip: t("context-menu.blockquote"), className: "tn-bq" },
+  { action: "codeInline", iconName: "code", tooltip: t("context-menu.code"), className: "tn-code" },
+  { action: "codeBlock", iconName: "codeBlock", tooltip: t("context-menu.codeBlock"), className: "tn-codeblock" },
+  { action: "bulletList", iconName: "bulletList", tooltip: t("context-menu.bulletList"), className: "tn-list" },
+  { action: "orderedList", iconName: "orderedList", tooltip: t("context-menu.orderedList"), className: "tn-olist" },
+  { action: "link", iconName: "link", tooltip: t("context-menu.link"), className: "tn-link" },
+];
+
 const contentButtons = [
   { action: "redo", iconName: "redo", tooltip: t("context-menu.redo"), className: "tn-redo" },
   { action: "undo", iconName: "undo", tooltip: t("context-menu.undo"), className: "tn-undo" },
   { action: "copy", iconName: "copy", tooltip: t("context-menu.copy"), className: "tn-copy" },
   { action: "paste", iconName: "paste", tooltip: t("context-menu.paste"), className: "tn-paste" },
-];
-
-const fontButtons = [
-  { action: "bold", iconName: "bold", tooltip: t("context-menu.bold"), className: "tn-bold" },
-  { action: "underline", iconName: "underline", tooltip: t("context-menu.underline"), className: "tn-under" },
-  { action: "italic", iconName: "italic", tooltip: t("context-menu.italic"), className: "tn-italic" },
 ];
 
 const tabButtons = [
@@ -39,13 +49,16 @@ const tabButtons = [
     <MainToolsButton />
 
     <div class="tn-tools-container max-h-0 relative overflow-hidden peer-checked/menu:overflow-visible peer-checked/menu:max-h-75! max-w-15 transition-all duration-300 ease-in-out flex flex-col items-center justify-center gap-1">
+      <!-- Formatting toolbar — always visible, direct access -->
+      <div class="tn-formatting-toolbar flex flex-col items-center gap-0.5">
+        {formatButtons.map((btn) => <FloatingButton action={btn.action} iconName={btn.iconName} tooltip={btn.tooltip} className={btn.className} />)}
+      </div>
+
+      <hr />
+
       <FloatingButtonGroup id="tn-navbar__content" radioName="options" radioId="tn-open-options__content" iconName="clipboard" buttons={contentButtons} iconStrokeWidth="1.5" tooltip={t("context-menu.content")} tooltipKey="context-menu.content" />
 
-      <FloatingButtonGroup id="tn-navbar__font" radioName="options" radioId="tn-open-options__font" iconName="font" buttons={fontButtons} iconStrokeWidth="10" tooltip={t("context-menu.font")} tooltipKey="context-menu.font" />
-
       <FloatingButtonGroup id="tn-navbar__tab" radioName="options" radioId="tn-open-options__tab" iconName="tab" buttons={tabButtons} iconStrokeWidth="1.5" tooltip={t("context-menu.tab")} tooltipKey="context-menu.tab" />
-
-      <!-- <FloatingButton action="settings" iconName="settings" tooltip={t("context-menu.settings")} className="tn-setting border-(--tn-theme-contrast)! p-4! bg-(--tn-theme-secondary)" onClick="event.preventDefault(); document.querySelector('dialog#info-notepad').showModal()" /> -->
     </div>
   </div>
 </nav>

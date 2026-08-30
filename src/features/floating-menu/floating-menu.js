@@ -303,6 +303,25 @@ export class FloatingMenu {
       editable.focus();
     }
 
+    // Check if active tab uses Milkdown (bottom bar)
+    const activeTab = this.getActiveTab();
+    const isMilkdown = activeTab?.dataset?.format === "markdown";
+    const tabId = activeTab?.querySelector("input")?.id;
+
+    // Route format commands through Milkdown for markdown tabs
+    if (isMilkdown && tabId && window.milkdownEditor?.hasEditor(tabId)) {
+      const milkdownActions = ["bold", "italic", "underline", "strikethrough",
+        "heading1", "heading2", "heading3", "heading4", "heading5", "heading6",
+        "codeInline", "codeBlock", "blockquote", "bulletList", "orderedList",
+        "link", "horizontalRule"];
+      if (milkdownActions.includes(action)) {
+        window.milkdownEditor.executeCommand(tabId, action);
+        this.closeBottomBarSubmenus();
+        this.log(`📝 Milkdown command (bottom bar): ${action}`);
+        return;
+      }
+    }
+
     switch (action) {
       case "copy":
       case "cut":
@@ -311,8 +330,8 @@ export class FloatingMenu {
 
       case "paste":
         navigator.clipboard.readText().then((text) => {
-          editable.focus();
-          document.execCommand("insertText", false, text);
+        editable.focus();
+        document.execCommand("insertText", false, text);
         });
         break;
 
@@ -379,6 +398,25 @@ export class FloatingMenu {
       this.savedSelection = null;
     } else {
       editable.focus();
+    }
+
+    // Check if active tab uses Milkdown
+    const activeTab = this.getActiveTab();
+    const isMilkdown = activeTab?.dataset?.format === "markdown";
+    const tabId = activeTab?.querySelector("input")?.id;
+
+    // Route format commands through Milkdown for markdown tabs
+    if (isMilkdown && tabId && window.milkdownEditor?.hasEditor(tabId)) {
+      const milkdownActions = ["bold", "italic", "underline", "strikethrough",
+        "heading1", "heading2", "heading3", "heading4", "heading5", "heading6",
+        "codeInline", "codeBlock", "blockquote", "bulletList", "orderedList",
+        "link", "horizontalRule"];
+      if (milkdownActions.includes(action)) {
+        window.milkdownEditor.executeCommand(tabId, action);
+        if (button) this.closeParentSubmenu(button);
+        this.log(`📝 Milkdown command executed: ${action}`);
+        return;
+      }
     }
 
     switch (action) {

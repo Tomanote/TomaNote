@@ -160,8 +160,18 @@ export class ContextMenu {
     this.activeEditableElement = null;
     this.activeSelection = null;
 
-    // Check if the tab is locked
+    // Check if the tab is pinned
     const isPinned = this.activeTabElement.classList.contains("pinned");
+
+    // Update pin button label based on state
+    const pinItem = this.contextMenu?.querySelector?.("[data-action='pin-tab']");
+    if (pinItem) {
+      const pinLabel = pinItem.querySelector?.("span, .context-menu__label");
+      if (pinLabel) {
+        const labelKey = isPinned ? "context-menu.unpin-tab" : "context-menu.pin-tab";
+        pinLabel.textContent = window.i18n?.t(labelKey) ?? (isPinned ? "Unpin tab" : "Pin tab");
+      }
+    }
 
     // Show only tab options
     this.contextMenu.querySelectorAll(".context-menu__item").forEach((item) => {
@@ -247,7 +257,40 @@ export class ContextMenu {
       selection.addRange(this.activeSelection);
     }
 
-    // Execute the corresponding command
+    // Route format commands through Milkdown for markdown tabs
+    const tabItem = this.activeEditableElement?.closest?.(".tab-list__item");
+    const isMilkdown = tabItem?.dataset?.format === "markdown";
+    const tabId = tabItem?.querySelector?.("input")?.id;
+    if (isMilkdown && tabId && window.milkdownEditor?.hasEditor(tabId)) {
+      // Format commands
+      const milkdownActions = ["bold", "italic", "underline"];
+      if (milkdownActions.includes(action)) {
+        window.milkdownEditor.executeCommand(tabId, action);
+        this.log(`📝 Milkdown command executed: ${action}`);
+        return;
+      }
+      // Undo/Redo
+      if (action === "undo") {
+        window.milkdownEditor.undo(tabId);
+        this.log(`📝 Milkdown undo executed`);
+        return;
+      }
+      if (action === "redo") {
+        window.milkdownEditor.redo(tabId);
+        this.log(`📝 Milkdown redo executed`);
+        return;
+      }
+      // Paste via ProseMirror
+      if (action === "paste") {
+        navigator.clipboard.readText().then((text) => {
+          window.milkdownEditor.pasteText(tabId, text);
+        });
+        this.log(`📝 Milkdown paste executed`);
+        return;
+      }
+    }
+
+    // Legacy commands for contenteditable tabs
     switch (action) {
       case "copy":
       case "cut":
@@ -271,7 +314,6 @@ export class ContextMenu {
         break;
 
       default:
-        // italic, underline, etc.
         document.execCommand(action, false, null);
     }
 

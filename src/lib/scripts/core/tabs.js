@@ -2,6 +2,8 @@
 // Complete tab management system with feature flags
 import { TabDeletionHandler } from "./tabDeletion.js";
 import { TabPinHandler } from "./tabPinHandler.js";
+import { milkdownEditor } from "./milkdownEditor.js";
+import { isMarkdownTab } from "./contentMigration.js";
 
 export class TabManager {
   constructor(options = {}) {
@@ -71,6 +73,16 @@ export class TabManager {
         }
       });
 
+      // 5. Dispatch tabsChanged when a tab radio is selected (mouse click)
+      this.tabList.addEventListener("change", (e) => {
+        if (e.target.type === "radio" && e.target.name === "body-tab") {
+          document.dispatchEvent(new CustomEvent("tabsChanged"));
+        }
+      });
+
+      // 5. Setup Milkdown integration for markdown tabs
+      this.setupMilkdownIntegration();
+
       return this;
     } catch (error) {
       throw error;
@@ -86,7 +98,7 @@ export class TabManager {
     return activeInput ? this.findTabById(activeInput.id) : null;
   }
 
-  createTab(name = null, content = "", isPinned = false, emoji = null) {
+  createTab(name = null, content = "", isPinned = false, emoji = null, format = "markdown") {
     if (!this.options.enableCreation) {
       this.log("⚠️  Creación de pestañas deshabilitada");
       return null;
@@ -94,7 +106,7 @@ export class TabManager {
 
     const tabName = name ?? window.i18n?.t("tab.new") ?? "Nueva";
     const id = `body-tab-${this.tabIdCounter++}`;
-    const tabData = { id, name: tabName, content, isPinned, emoji, updatedAt: Date.now() };
+    const tabData = { id, name: tabName, content, format, isPinned, emoji, updatedAt: Date.now() };
 
     // Create an DOM Element
     const tabElement = this.createTabElement(tabData);
@@ -104,17 +116,24 @@ export class TabManager {
 
     // Choose and focus
     tabElement.querySelector("input").checked = true;
-    setTimeout(() => {
-      const contentDiv = tabElement.querySelector(".tab-list__item--content");
-      if (contentDiv) contentDiv.focus();
-    }, 50);
 
     this.log("➕ Pestaña creada:", { id, name });
-    this.saveTabs();
 
-    // Notifyc change of tabs
+    // Notify change of tabs — this triggers handleMilkdownTabSwitch
+    // which mounts the Milkdown editor for markdown tabs
     document.dispatchEvent(new CustomEvent("tabsChanged"));
 
+    // Focus after mount (delay to let Milkdown initialize)
+    setTimeout(() => {
+      if (format === "markdown") {
+        milkdownEditor.focus(id);
+      } else {
+        const contentDiv = tabElement.querySelector?.(".tab-list__item--content");
+        if (contentDiv) contentDiv.focus();
+      }
+    }, 100);
+
+    this.saveTabs();
     this.updateContentHeight();
 
     return tabData;
@@ -127,6 +146,84 @@ export class TabManager {
     document.addEventListener("tabsChanged", () => {
       this.saveTabs();
     });
+  }
+
+  // ===== MILKDOWN INTEGRATION =====
+
+  setupMilkdownIntegration() {
+    // Listen for tab changes to mount/unmount Milkdown editors
+    document.addEventListener("tabsChanged", () => {
+      this.handleMilkdownTabSwitch();
+    });
+
+    // Listen for tab-saved events (from Milkdown auto-save)
+    window.addEventListener("tab-saved", () => {
+      window.saveIndicator?.trigger();
+    });
+
+    // Mount editor for the initially active tab (if any)
+    // Use double rAF to ensure DOM is fully rendered before mounting
+    requestAnimationFrame(() => requestAnimationFrame(() => this.handleMilkdownTabSwitch()));
+  }
+
+  async handleMilkdownTabSwitch() {
+    const activeInput = this.tabList?.querySelector('input[type="radio"]:checked');
+    if (!activeInput) {
+      this.log("[Milkdown] No active radio found");
+      return;
+    }
+
+    const activeTabId = activeInput.id;
+    const tabElement = activeInput.closest(".tab-list__item");
+    if (!tabElement) {
+      this.log("[Milkdown] No tab element found for:", activeTabId);
+      return;
+    }
+
+    const isMarkdown = tabElement.dataset.format === "markdown";
+    if (!isMarkdown) {
+      this.log("[Milkdown] Tab is not markdown:", activeTabId, "format:", tabElement.dataset.format);
+      return;
+    }
+
+    this.log("[Milkdown] Switching to markdown tab:", activeTabId);
+
+    // Save content from any previously active Milkdown tab
+    // Content is saved to in-memory tabsData, then persisted to localStorage
+    for (const [tabId] of milkdownEditor.editors) {
+      if (tabId !== activeTabId) {
+        const content = milkdownEditor.getContent(tabId);
+        if (content !== null) {
+          const tab = this.findTabById(tabId);
+          if (tab) tab.content = content;
+        }
+        await milkdownEditor.destroyEditor(tabId);
+      }
+    }
+
+    // Persist all tab content to localStorage after saving inactive tabs
+    this.saveTabs();
+
+    // Mount editor for the new active tab if not already mounted
+    if (!milkdownEditor.hasEditor(activeTabId)) {
+      const contentDiv = tabElement.querySelector(".tab-list__item--content");
+      if (!contentDiv) {
+        this.log("[Milkdown] No content div found for:", activeTabId);
+        return;
+      }
+
+      const tab = this.findTabById(activeTabId);
+      const content = tab?.content || "";
+
+      this.log("[Milkdown] Mounting editor for:", activeTabId, "content length:", content.length);
+      await milkdownEditor.createEditor(activeTabId, contentDiv, content, "markdown");
+      // Delay focus to let ProseMirror finish rendering
+      requestAnimationFrame(async () => {
+        await milkdownEditor.focus(activeTabId);
+        this.log("[Milkdown] Editor focused for:", activeTabId);
+      });
+      this.log("[Milkdown] Editor mounted for:", activeTabId);
+    }
   }
 
   updateContentHeight() {
@@ -221,6 +318,14 @@ export class TabManager {
       const savedData = localStorage.getItem("tabsData");
       this.tabsData = savedData ? JSON.parse(savedData) : [];
 
+      // Migration: convert HTML content to markdown for markdown tabs
+      this.tabsData.forEach((tab) => {
+        if (tab.format === "markdown" && tab.content && tab.content.startsWith("<")) {
+          tab.content = this.htmlToMarkdown(tab.content);
+        }
+      });
+      localStorage.setItem("tabsData", JSON.stringify(this.tabsData));
+
       // Clear existing tabs (except the create button)
       this.tabList.querySelectorAll(".tab-list__item").forEach((item) => item.remove());
 
@@ -236,8 +341,30 @@ export class TabManager {
     }
   }
 
+  htmlToMarkdown(html) {
+    if (!html) return "";
+    let md = html;
+    md = md.replace(/<h1[^>]*>(.*?)<\/h1>/gi, "# $1\n");
+    md = md.replace(/<h2[^>]*>(.*?)<\/h2>/gi, "## $1\n");
+    md = md.replace(/<h3[^>]*>(.*?)<\/h3>/gi, "### $1\n");
+    md = md.replace(/<strong[^>]*>(.*?)<\/strong>/gi, "**$1**");
+    md = md.replace(/<b[^>]*>(.*?)<\/b>/gi, "**$1**");
+    md = md.replace(/<em[^>]*>(.*?)<\/em>/gi, "*$1*");
+    md = md.replace(/<i[^>]*>(.*?)<\/i>/gi, "*$1*");
+    md = md.replace(/<code[^>]*>(.*?)<\/code>/gi, "`$1`");
+    md = md.replace(/<li[^>]*>(.*?)<\/li>/gi, "- $1\n");
+    md = md.replace(/<[^>]+>/g, "");
+    md = md.replace(/&nbsp;/g, " ");
+    md = md.replace(/&amp;/g, "&");
+    md = md.replace(/&lt;/g, "<");
+    md = md.replace(/&gt;/g, ">");
+    md = md.replace(/\n{3,}/g, "\n\n");
+    return md.trim();
+  }
+
   createTabElement(tabData) {
-    const { id, name, content, isPinned, emoji } = tabData;
+    const { id, name, content, isPinned, emoji, format } = tabData;
+    const isMarkdown = format === "markdown";
 
     const tabElement = document.createElement("div");
     tabElement.className = "tab-list__item flex justify-start items-center flex-wrap h-auto ml-[5px]! first:ml-0! [&:not(.pinned)_label]:relative! border border-(--tn-theme-secondary) rounded";
@@ -263,7 +390,7 @@ export class TabManager {
           </svg>
         </button>
       </label>
-      <div class="tab-list__item--content md:ml-10px overflow-x-hidden overflow-y-scroll font-thin hidden bg-(--tn-theme-secondary) p-(--tn-padding-base)! border-0 outline-0 absolute top-11 md:left-2.5 md:w-[calc(100%-25px)] first:mr-2.5 border-r border-(--tn-theme-secondary)! rounded-md" contenteditable="true"><div>${content || ""}</div></div>
+      <div class="tab-list__item--content md:ml-10px overflow-x-hidden overflow-y-scroll font-thin hidden bg-(--tn-theme-secondary) p-(--tn-padding-base)! border-0 outline-0 absolute top-11 md:left-2.5 md:w-[calc(100%-25px)] first:mr-2.5 border-r border-(--tn-theme-secondary)! rounded-md" ${isMarkdown ? '' : 'contenteditable="true"'}>${isMarkdown ? '' : `<div>${content || ''}</div>`}</div>
     `;
 
     // Insert using the anchor or button as a reference
@@ -292,6 +419,16 @@ export class TabManager {
       if (savedFontSize && ["base", "medium", "large"].includes(savedFontSize)) {
         contentDiv.classList.add(`${savedFontSize}-text`);
       }
+
+      // Add milkdown-editor class for markdown format tabs
+      if (isMarkdown && contentDiv.classList) {
+        contentDiv.classList.add("milkdown-editor");
+      }
+    }
+
+    // Store format on the element for easy access
+    if (isMarkdown && tabElement.dataset) {
+      tabElement.dataset.format = "markdown";
     }
 
     return tabElement;
@@ -306,9 +443,12 @@ export class TabManager {
   }
 
   setupContentEditing() {
-    // Configure tab handling in content editors
+    // Configure tab handling in content editors (legacy contenteditable only)
     this.tabList.addEventListener("keydown", (event) => {
       if (event.key === "Tab" && event.target.classList.contains("tab-list__item--content")) {
+        // Skip for Milkdown tabs — Milkdown handles Tab internally
+        const tabItem = event.target.closest(".tab-list__item");
+        if (tabItem?.dataset.format === "markdown") return;
         event.preventDefault();
         document.execCommand("insertText", false, "    ");
       }
@@ -345,8 +485,8 @@ export class TabManager {
       span.classList.remove("editing");
       label.removeAttribute("contenteditable");
       this.placeCaretAtStart(span);
-      this.saveTabs();
       this.updateTabIds();
+      this.saveTabs();
     };
 
     let clickOutsideHandler = null;
@@ -450,6 +590,13 @@ export class TabManager {
     }
   }
 
+  markTabUpdatedById(tabId) {
+    const tab = this.findTabById(tabId);
+    if (tab) {
+      tab.updatedAt = Date.now();
+    }
+  }
+
   saveTabs() {
     if (!this.options.enableAutoSave && !this.options.enablePersistence) {
       return;
@@ -466,14 +613,34 @@ export class TabManager {
         const spanEl = item.querySelector("label span");
 
         if (contentEl && inputEl && spanEl) {
-          const content = contentEl.innerHTML;
           const id = inputEl.id;
+          const isMarkdown = item?.dataset?.format === "markdown";
+          let content;
+
+          if (isMarkdown) {
+            // Strategy: prefer live editor content, then tabsData, then empty
+            // The key rule: NEVER let tabsData be empty if the tab has content
+            if (milkdownEditor.hasEditor(id)) {
+              content = milkdownEditor.getContent(id) || "";
+            } else if (previousTabs.find((t) => t.id === id)?.content) {
+              // Preserve content from auto-save (MutationObserver writes to tabsData)
+              content = previousTabs.find((t) => t.id === id).content;
+            } else {
+              content = "";
+            }
+          } else {
+            content = contentEl.innerHTML;
+          }
+
           const name = spanEl.textContent;
           const isPinned = item.classList.contains("pinned");
           const emoji = spanEl.dataset.emoji || null;
+          const format = isMarkdown ? "markdown" : undefined;
           const updatedAt = previousTabs.find((tab) => tab.id === id)?.updatedAt ?? Date.now();
 
-          tabsData.push({ id, content, name, isPinned, emoji, updatedAt });
+          const tabEntry = { id, content, name, isPinned, emoji, updatedAt };
+          if (format) tabEntry.format = format;
+          tabsData.push(tabEntry);
         }
       });
 
@@ -484,18 +651,28 @@ export class TabManager {
 
   updateTabIds() {
     const tabElements = this.tabList.querySelectorAll(".tab-list__item");
+    const oldToNew = {}; // Map old IDs to new IDs
 
     tabElements.forEach((item, index) => {
       const input = item.querySelector("input");
       const label = item.querySelector("label");
       const newId = `body-tab-${index + 1}`;
 
-      // Only update if it changed
       if (input && input.id !== newId) {
+        oldToNew[input.id] = newId;
         input.id = newId;
         if (label) label.setAttribute("for", newId);
       }
     });
+
+    // Sync tabsData IDs with the new DOM IDs
+    if (Object.keys(oldToNew).length > 0) {
+      this.tabsData.forEach((tab) => {
+        if (oldToNew[tab.id]) {
+          tab.id = oldToNew[tab.id];
+        }
+      });
+    }
 
     // Actualizar contador
     this.tabIdCounter = tabElements.length + 1;

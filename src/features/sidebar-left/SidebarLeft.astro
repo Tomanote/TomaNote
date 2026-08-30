@@ -10,7 +10,7 @@ import { getLang, useTranslations } from "../../i18n/utils";
 const t = useTranslations(getLang());
 ---
 
-<aside class="sidebar-left hidden md:flex h-dvh!">
+<aside class="sidebar-left hidden md:flex! h-dvh!">
   <div class="sidebar-header">
     <img src={logoNotes.src} alt="tomanote-notes" title="Tomanote Notes" />
   </div>
@@ -26,38 +26,6 @@ const t = useTranslations(getLang());
       </div>
     </div>
     <div class="sidebar-left__bottom">
-      <div class="group relative">
-        <button tabindex="0" aria-label={t("sidebar.docs")} class="sidebar-left__btn cursor-pointer!" onclick="window.open('https://docs.tomanote.app/', '_blank')">
-          <Icon name="docs" className="text-(--tn-theme-contrast)" strokeWidth={2} />
-        </button>
-        <span data-i18n="sidebar.docs" class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-          {t("sidebar.docs")}
-        </span>
-      </div>
-      <div class="group relative">
-        <button tabindex="0" aria-label={t("sidebar.blog")} class="sidebar-left__btn cursor-pointer!" onclick="window.open('https://blog.tomanote.app', '_blank')">
-          <Icon name="blog" className="text-(--tn-theme-contrast)" strokeWidth={2} />
-        </button>
-        <span data-i18n="sidebar.blog" class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-          {t("sidebar.blog")}
-        </span>
-      </div>
-      <div class="group relative">
-        <button tabindex="0" aria-label={t("sidebar.bug")} class="sidebar-left__btn cursor-pointer!" onclick="window.open('https://github.com/Tomanote/TomaNote/issues/new?template=bug-report.md', '_blank')">
-          <Icon name="bug" className="text-(--tn-theme-contrast)" strokeWidth={2} />
-        </button>
-        <span data-i18n="sidebar.bug" class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-          {t("sidebar.bug")}
-        </span>
-      </div>
-      <div class="group relative">
-        <button tabindex="0" aria-label={t("sidebar.feature")} class="sidebar-left__btn cursor-pointer!" onclick="window.open('https://github.com/Tomanote/TomaNote/issues/new?template=feature-request.md', '_blank')">
-          <Icon name="lightbulb" className="text-(--tn-theme-contrast)" strokeWidth={2} />
-        </button>
-        <span data-i18n="sidebar.feature" class="pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">
-          {t("sidebar.feature")}
-        </span>
-      </div>
       <div class="group relative">
         <button tabindex="0" aria-label={t("shortcuts.help")} class="sidebar-left__btn cursor-pointer!" onclick="window.keyboardShortcutsHelp?.toggle()">
           <Icon name="help" className="text-(--tn-theme-contrast)" strokeWidth={3} />

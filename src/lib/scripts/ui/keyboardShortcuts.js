@@ -313,7 +313,7 @@ export class KeyboardShortcuts {
       },
     });
 
-    // --- Ctrl+B: Bold (uses custom Range-based cycling) ---
+    // --- Ctrl+B: Bold ---
     this.registerShortcut({
       key: "b",
       modifiers: { ctrl: true, alt: false, shift: false, meta: false },
@@ -321,7 +321,7 @@ export class KeyboardShortcuts {
       description: "shortcuts.desc.bold",
       category: "editor",
       handler: () => {
-        FormattingUtils.cycleBold();
+        this.executeFormatCommand("bold");
       },
     });
 
@@ -333,7 +333,7 @@ export class KeyboardShortcuts {
       description: "shortcuts.desc.italic",
       category: "editor",
       handler: () => {
-        document.execCommand("italic", false, null);
+        this.executeFormatCommand("italic");
       },
     });
 
@@ -345,7 +345,43 @@ export class KeyboardShortcuts {
       description: "shortcuts.desc.underline",
       category: "editor",
       handler: () => {
-        document.execCommand("underline", false, null);
+        this.executeFormatCommand("underline");
+      },
+    });
+
+    // --- Ctrl+Z: Undo ---
+    this.registerShortcut({
+      key: "z",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      label: "Ctrl+Z",
+      description: "shortcuts.desc.undo",
+      category: "editor",
+      handler: () => {
+        this.executeFormatCommand("undo");
+      },
+    });
+
+    // --- Ctrl+Shift+Z: Redo ---
+    this.registerShortcut({
+      key: "z",
+      modifiers: { ctrl: true, alt: false, shift: true, meta: false },
+      label: "Ctrl+Shift+Z",
+      description: "shortcuts.desc.redo",
+      category: "editor",
+      handler: () => {
+        this.executeFormatCommand("redo");
+      },
+    });
+
+    // --- Ctrl+Y: Redo (alternative) ---
+    this.registerShortcut({
+      key: "y",
+      modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      label: "Ctrl+Y",
+      description: "shortcuts.desc.redo",
+      category: "editor",
+      handler: () => {
+        this.executeFormatCommand("redo");
       },
     });
 
@@ -377,6 +413,51 @@ export class KeyboardShortcuts {
         }
       },
     });
+  }
+
+  // ===== FORMAT COMMAND ROUTING =====
+
+  executeFormatCommand(action) {
+    // Get active tab
+    const activeInput = document.querySelector('.tab-list input[type="radio"]:checked');
+    if (!activeInput) return;
+
+    const tabElement = activeInput.closest(".tab-list__item");
+    const isMilkdown = tabElement?.dataset?.format === "markdown";
+    const tabId = activeInput.id;
+
+    // Route through Milkdown for markdown tabs
+    if (isMilkdown && tabId && window.milkdownEditor?.hasEditor(tabId)) {
+      // Handle undo/redo specially
+      if (action === "undo") {
+        window.milkdownEditor.undo(tabId);
+        this.log(`📝 Milkdown undo: ${tabId}`);
+        return;
+      }
+      if (action === "redo") {
+        window.milkdownEditor.redo(tabId);
+        this.log(`📝 Milkdown redo: ${tabId}`);
+        return;
+      }
+      window.milkdownEditor.executeCommand(tabId, action);
+      this.log(`📝 Milkdown command: ${action}`);
+      return;
+    }
+
+    // Legacy commands
+    switch (action) {
+      case "bold":
+        FormattingUtils.cycleBold();
+        break;
+      case "italic":
+      case "underline":
+        document.execCommand(action, false, null);
+        break;
+      case "undo":
+      case "redo":
+        document.execCommand(action, false, null);
+        break;
+    }
   }
 
   // ===== ESCAPE HANDLER =====

@@ -132,6 +132,7 @@ function setupServiceWorker() {
 // ===== BASIC COMPONENTS =====
 async function initializeBasicComponents() {
   // For now, we'll list them here as internal functions.
+  await initializeMilkdownEditor();
   await initializeTabsSystem();
   await initializeContextMenu();
   await initializeFloatingMenu();
@@ -331,6 +332,17 @@ async function initializeCommandPalette() {
     return window.commandPalette;
   } catch (error) {
     devLogger.error("❌ Error inicializando CommandPalette:", error);
+  }
+}
+
+async function initializeMilkdownEditor() {
+  try {
+    const { milkdownEditor } = await import("./core/milkdownEditor.js");
+    await milkdownEditor.init();
+    window.milkdownEditor = milkdownEditor;
+    devLogger.log("✅ MilkdownEditor initialized");
+  } catch (error) {
+    devLogger.error("❌ Error inicializando MilkdownEditor:", error);
   }
 }
 

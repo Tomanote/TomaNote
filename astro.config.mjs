@@ -18,7 +18,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: ["sortablejs"],
+      include: ["sortablejs", "@milkdown/kit/core", "@milkdown/kit/preset/commonmark", "@milkdown/kit/preset/gfm", "@milkdown/plugin-tooltip", "@milkdown/theme-nord"],
     },
     build: {
       assetsDir: "assets",

@@ -24,15 +24,33 @@ export class TabDeletionHandler {
     this.executeDeletion(tabElement);
   }
 
-  executeDeletion(tabElement) {
+  async executeDeletion(tabElement) {
     const tabId = tabElement.querySelector("input").id;
 
+    // 1. Destroy the Milkdown editor for this tab (prevents orphaned editors)
+    if (window.milkdownEditor?.hasEditor(tabId)) {
+      await window.milkdownEditor.destroyEditor(tabId);
+    }
+
+    // 2. Remove from DOM
     tabElement.remove();
 
+    // 3. Remove from in-memory data
     this.tabManager.tabsData = this.tabManager.tabsData.filter(
       (tab) => tab.id !== tabId
     );
 
+    // 4. Clean up orphaned editors (editors for tabs that no longer exist in DOM)
+    if (window.milkdownEditor) {
+      for (const [editorTabId] of window.milkdownEditor.editors) {
+        const el = document.getElementById(editorTabId);
+        if (!el) {
+          await window.milkdownEditor.destroyEditor(editorTabId);
+        }
+      }
+    }
+
+    // 5. Reassign IDs and persist
     this.tabManager.updateTabIds();
     this.tabManager.saveTabs();
 

@@ -27,6 +27,7 @@ export class FloatingMenu {
       this.setupButtonHandlers();
       this.setupToolsButtonHandler();
       this.setupTabChangeListener();
+      this.setupDropdownBehavior();
 
       this.log("✅ FloatingMenu inicializado");
       return this;
@@ -190,6 +191,7 @@ export class FloatingMenu {
     }
 
     const editable = this.getActiveEditable();
+    this.log(`🔍 [DEBUG] handleTextAction: action=${action}, editable=`, editable?.tagName, editable?.className?.substring(0, 40));
     if (!editable) {
       this.log("⚠️ No hay editor de contenido activo");
       return;
@@ -204,6 +206,28 @@ export class FloatingMenu {
       editable.focus();
     }
 
+    // Check if active tab uses Milkdown
+    const activeTab = this.getActiveTab();
+    const isMilkdown = activeTab?.dataset?.format === "markdown";
+    const tabId = activeTab?.querySelector("input")?.id;
+    this.log(`🔍 [DEBUG] Milkdown check: isMilkdown=${isMilkdown}, tabId=${tabId}, hasEditor=${window.milkdownEditor?.hasEditor(tabId)}`);
+
+    // Route format commands through Milkdown for markdown tabs
+    if (isMilkdown && tabId && window.milkdownEditor?.hasEditor(tabId)) {
+      const milkdownActions = ["bold", "italic", "underline", "strikethrough",
+        "heading1", "heading2", "heading3", "heading4", "heading5", "heading6",
+        "codeInline", "codeBlock", "blockquote", "bulletList", "orderedList",
+        "link", "horizontalRule"];
+      if (milkdownActions.includes(action)) {
+        this.log(`🔍 [DEBUG] Calling executeCommand('${tabId}', '${action}')`);
+        window.milkdownEditor.executeCommand(tabId, action);
+        if (button) this.closeParentSubmenu(button);
+        this.log(`📝 Milkdown command executed: ${action}`);
+        return;
+      }
+    }
+
+    // Legacy commands for contenteditable tabs
     switch (action) {
       case "copy":
       case "cut":
@@ -336,6 +360,39 @@ export class FloatingMenu {
     });
 
     this.updateButtonStates();
+  }
+
+  setupDropdownBehavior() {
+    // 1. Click outside → close all dropdowns
+    document.addEventListener("click", (e) => {
+      if (!this.floatingMenu?.contains(e.target)) {
+        this.closeAllDropdowns();
+      }
+    });
+
+    // 2. Tab change → close all dropdowns
+    document.addEventListener("tabsChanged", () => {
+      this.closeAllDropdowns();
+    });
+
+    // 3. Escape → close all dropdowns
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeAllDropdowns();
+      }
+    });
+
+    this.log("🔒 Dropdown behavior configured");
+  }
+
+  closeAllDropdowns() {
+    if (!this.floatingMenu) return;
+    const radios = this.floatingMenu.querySelectorAll('input[type="radio"][name="options"]');
+    radios.forEach((radio) => {
+      if (radio.checked) {
+        radio.checked = false;
+      }
+    });
   }
 
   updateButtonStates() {

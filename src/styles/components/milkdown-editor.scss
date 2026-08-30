@@ -1,0 +1,469 @@
+// src/styles/components/milkdown-editor.scss
+// Milkdown editor styles — integrates with TomaNote's theme system
+// Overrides nord theme defaults to match TomaNote's CSS variables
+
+// ==========================================
+// Editor container — replaces contenteditable
+// ==========================================
+.tab-list__item--content.milkdown-editor {
+  padding: var(--tn-padding-base) !important;
+  border: none !important;
+  outline: none !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // Milkdown's editor wrapper
+  >.milkdown {
+    width: 100%;
+    min-height: 100%;
+    padding-bottom: 2em; // Space below for cursor after last block
+  }
+
+  // ProseMirror editor area
+  .ProseMirror {
+    outline: none !important;
+    min-height: 100%;
+    padding: 0 0 4em 0 !important; // 4em bottom padding for click-to-type below blocks
+    font-family: var(--tn-font-family-default) !important;
+    font-size: var(--tn-editor-font-size) !important;
+    color: var(--tn-color-text) !important;
+    caret-color: var(--tn-color-text) !important;
+
+    // Focus ring removal
+    &:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    // ==========================================
+    // Typography overrides (match TomaNote)
+    // ==========================================
+
+    h1 {
+      font-size: 2em !important;
+      font-weight: 700 !important;
+      margin: 0.8em 0 0.4em 0 !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    h2 {
+      font-size: 1.5em !important;
+      font-weight: 600 !important;
+      margin: 0.7em 0 0.35em 0 !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    h3 {
+      font-size: 1.25em !important;
+      font-weight: 600 !important;
+      margin: 0.6em 0 0.3em 0 !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    p {
+      margin: 0.5em 0 !important;
+      line-height: 1.75 !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    // ==========================================
+    // Lists
+    // ==========================================
+    ul,
+    ol {
+      margin: 0.5em 0 !important;
+      padding-left: 1.5em !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    ul {
+      list-style-type: disc !important;
+    }
+
+    ol {
+      list-style-type: decimal !important;
+    }
+
+    li {
+      margin: 0.25em 0 !important;
+      line-height: 1.75 !important;
+    }
+
+    // ==========================================
+    // Blockquotes
+    // ==========================================
+    blockquote {
+      border-left: 3px solid var(--tn-theme-contrast) !important;
+      margin: 0.8em 0 !important;
+      padding: 0.3em 0 0.3em 1em !important;
+      color: var(--tn-color-text) !important;
+      opacity: 0.85;
+      font-style: italic;
+    }
+
+    // ==========================================
+    // Code — inline and blocks
+    // ==========================================
+    code {
+      font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace !important;
+      font-size: 0.9em !important;
+      background-color: var(--tn-theme-accent) !important;
+      border-radius: var(--tn-border-radius-small) !important;
+      padding: 2px 6px !important;
+      color: var(--tn-color-text) !important;
+    }
+
+    pre {
+      background-color: var(--tn-theme-primary) !important;
+      border-radius: var(--tn-border-radius) !important;
+      padding: .25em !important;
+      margin: 0.8em 0 !important;
+      overflow-x: auto !important;
+      border: 1px solid var(--tn-theme-contrast) !important;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      code {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        height: 100%;
+        background-color: var(--tn-theme-Secondary) !important;
+        padding-inline: 2em 1em !important;
+        padding-block: .25em !important;
+        font-size: 0.85em !important;
+        color: var(--tn-color-text) !important;
+      }
+    }
+
+    // ==========================================
+    // Tables (GFM)
+    // ==========================================
+    .table-wrapper {
+      margin: 0.8em 0 !important;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      margin: 0.5em 0 !important;
+      font-size: 0.95em !important;
+
+      th,
+      td {
+        border: 1px solid var(--tn-theme-contrast) !important;
+        padding: 0.5em 0.75em !important;
+        text-align: left !important;
+        color: var(--tn-color-text) !important;
+        min-width: 80px;
+      }
+
+      th {
+        background-color: var(--tn-theme-secondary) !important;
+        font-weight: 600 !important;
+      }
+
+      td {
+        background-color: transparent !important;
+      }
+
+      // Selected cell highlight
+      .selectedCell {
+        background-color: var(--tn-theme-accent) !important;
+        opacity: 0.7;
+      }
+    }
+
+    // ==========================================
+    // Links
+    // ==========================================
+    a {
+      color: var(--tn-neutral-link-color) !important;
+      text-decoration: underline !important;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    // ==========================================
+    // Images (GFM)
+    // ==========================================
+    .image-block {
+      margin: 0.8em 0 !important;
+      max-width: 100% !important;
+
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: var(--tn-border-radius) !important;
+        cursor: pointer;
+      }
+
+      // Image caption
+      figcaption {
+        text-align: center;
+        font-size: 0.85em;
+        color: var(--tn-color-text);
+        opacity: 0.7;
+        margin-top: 0.25em;
+      }
+    }
+
+    // Inline images
+    img {
+      max-width: 500px !important;
+      height: auto !important;
+      border-radius: var(--tn-border-radius) !important;
+    }
+
+    // ==========================================
+    // Horizontal rules
+    // ==========================================
+    hr {
+      border: none !important;
+      border-top: 1px solid var(--tn-theme-contrast) !important;
+      margin: 1.5em 0 !important;
+      opacity: 0.5;
+    }
+
+    // ==========================================
+    // Selection styling
+    // ==========================================
+    ::selection {
+      background-color: var(--tn-theme-contrast) !important;
+      color: var(--tn-neutral-tertiary-color) !important;
+    }
+  }
+
+  // ==========================================
+  // Milkdown tooltip (for links)
+  // ==========================================
+  .milkdown-tooltip {
+    background: var(--tn-theme-primary) !important;
+    border: 1px solid var(--tn-theme-contrast) !important;
+    border-radius: var(--tn-border-radius) !important;
+    color: var(--tn-color-text) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    z-index: 100 !important;
+
+    input {
+      background: var(--tn-theme-secondary) !important;
+      border: 1px solid var(--tn-theme-contrast) !important;
+      border-radius: var(--tn-border-radius-small) !important;
+      color: var(--tn-color-text) !important;
+      padding: 0.4em 0.6em !important;
+      font-family: var(--tn-font-family-default) !important;
+      font-size: 0.875em !important;
+      outline: none !important;
+
+      &:focus {
+        border-color: var(--tn-theme-contrast) !important;
+      }
+
+      &::placeholder {
+        color: var(--tn-color-text);
+        opacity: 0.5;
+      }
+    }
+
+    button {
+      background: var(--tn-theme-contrast) !important;
+      border: none !important;
+      border-radius: var(--tn-border-radius-small) !important;
+      color: var(--tn-neutral-tertiary-color) !important;
+      padding: 0.4em 0.8em !important;
+      cursor: pointer !important;
+      font-size: 0.875em !important;
+
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Theme-specific overrides
+// ==========================================
+html[data-theme="light"] {
+  .tab-list__item--content.milkdown-editor .ProseMirror {
+    color: var(--tn-neutral-primary-color) !important;
+    caret-color: var(--tn-neutral-primary-color) !important;
+
+    ::selection {
+      background-color: var(--tn-theme-contrast) !important;
+      color: var(--tn-neutral-tertiary-color) !important;
+    }
+  }
+}
+
+html[data-theme="neon-orbit"] {
+  .tab-list__item--content.milkdown-editor .ProseMirror {
+    color: var(--tn-neutral-tertiary-color) !important;
+    caret-color: var(--tn-neutral-tertiary-color) !important;
+  }
+}
+
+// ==========================================
+// Font size variants (match existing system)
+// ==========================================
+.tab-list__item--content.milkdown-editor.base-text .ProseMirror {
+  font-size: var(--tn-font-size-base) !important;
+}
+
+.tab-list__item--content.milkdown-editor.medium-text .ProseMirror {
+  font-size: var(--tn-font-size-medium) !important;
+}
+
+.tab-list__item--content.milkdown-editor.large-text .ProseMirror {
+  font-size: var(--tn-font-size-large) !important;
+}
+
+// ==========================================
+// Editor width (stretch mode)
+// ==========================================
+.tab-list__item--content.milkdown-editor .ProseMirror.stretch {
+  @media (min-width: 768px) {
+    width: 60% !important;
+    margin: 0 auto;
+  }
+}
+
+// ==========================================
+// Drag-and-drop feedback
+// ==========================================
+.tab-list__item--content.milkdown-editor.milkdown-editor--drag-over {
+  outline: 2px dashed var(--tn-theme-contrast) !important;
+  outline-offset: -4px;
+  background-color: var(--tn-theme-accent) !important;
+  opacity: 0.8;
+}
+
+// ==========================================
+// Image block (GFM) enhancements
+// ==========================================
+.tab-list__item--content.milkdown-editor .ProseMirror {
+  .image-block {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--tn-border-radius);
+      transition: box-shadow 0.2s ease;
+
+      &:hover {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    // Resize handles
+    .image-handle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--tn-theme-contrast);
+      border: 2px solid var(--tn-neutral-tertiary-color);
+      border-radius: 2px;
+      cursor: nwse-resize;
+      z-index: 10;
+
+      &.image-handle--tl {
+        top: -5px;
+        left: -5px;
+        cursor: nwse-resize;
+      }
+
+      &.image-handle--tr {
+        top: -5px;
+        right: -5px;
+        cursor: nesw-resize;
+      }
+
+      &.image-handle--bl {
+        bottom: -5px;
+        left: -5px;
+        cursor: nesw-resize;
+      }
+
+      &.image-handle--br {
+        bottom: -5px;
+        right: -5px;
+        cursor: nwse-resize;
+      }
+    }
+  }
+
+  // ==========================================
+  // Table enhancements (GFM)
+  // ==========================================
+  .table-wrapper {
+    table {
+
+      // Selected cell visual feedback
+      td.selectedCell,
+      th.selectedCell {
+        background-color: var(--tn-theme-accent) !important;
+        opacity: 0.7;
+      }
+
+      // Cell edit mode
+      td:focus,
+      th:focus {
+        outline: 2px solid var(--tn-theme-contrast);
+        outline-offset: -2px;
+      }
+    }
+  }
+
+  // ==========================================
+  // Code block language label
+  // ==========================================
+  pre>code {
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      height: 0;
+    }
+  }
+
+  // ==========================================
+  // Link tooltip positioning
+  // ==========================================
+  a {
+    position: relative;
+    cursor: pointer;
+
+    &::after {
+      content: attr(href);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 6px;
+      background: var(--tn-theme-primary);
+      border: 1px solid var(--tn-theme-contrast);
+      border-radius: 4px;
+      font-size: 0.75em;
+      color: var(--tn-color-text);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
