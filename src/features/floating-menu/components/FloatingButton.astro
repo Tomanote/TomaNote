@@ -15,7 +15,7 @@ import Icon from "../../../components/icons/Icon.astro";
 ---
 
 <div class="group relative">
-  <button tabindex="0" aria-label={tooltip} class={`tn-btn p-3! rounded-2xl hover:bg-(--tn-theme-secondary) border border-transparent hover:border hover:border-(--tn-theme-contrast) ${className}`} data-floating-action={action} onclick={onClick}>
+  <button tabindex="0" aria-label={tooltip} class={`tn-btn p-3 rounded-2xl hover:bg-(--tn-theme-secondary) border border-transparent hover:border hover:border-(--tn-theme-contrast) ${className}`} data-floating-action={action} onclick={onClick}>
     <Icon name={iconName} className="text-(--tn-theme-contrast)" />
   </button>
   <span data-i18n={`context-menu.${action}`} class="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-(--tn-theme-primary) px-1! py-1/2! text-xs! text-(--tn-neutral-tertiary-color) opacity-0 transition-opacity group-hover:opacity-100 border border-(--tn-theme-contrast)! z-50">

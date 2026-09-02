@@ -42,28 +42,59 @@
     h1 {
       font-size: 2em !important;
       font-weight: 700 !important;
-      margin: 0.8em 0 0.4em 0 !important;
+      margin: 0.8em 0 0 0 !important;
       color: var(--tn-color-text) !important;
+
+      &:has(code) {
+        display: inline-flex;
+        align-items: center;
+      }
     }
 
     h2 {
       font-size: 1.5em !important;
       font-weight: 600 !important;
-      margin: 0.7em 0 0.35em 0 !important;
+      margin: 0.7em 0 0 0 !important;
       color: var(--tn-color-text) !important;
+
+      &:has(code) {
+        display: inline-flex;
+        align-items: center;
+      }
     }
 
     h3 {
       font-size: 1.25em !important;
       font-weight: 600 !important;
-      margin: 0.6em 0 0.3em 0 !important;
+      margin: 0.6em 0 0 0 !important;
       color: var(--tn-color-text) !important;
+
+      &:has(code) {
+        display: inline-flex;
+        align-items: center;
+      }
     }
 
     p {
-      margin: 0.5em 0 !important;
+      margin: 0.25em 0 !important;
       line-height: 1.75 !important;
       color: var(--tn-color-text) !important;
+
+      &:has(code) {
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+
+    strong {
+      &:has(code) {
+        display: inline-flex;
+        align-items: center;
+
+        code {
+          margin-inline: .25em;
+        }
+      }
     }
 
     // ==========================================
@@ -71,7 +102,7 @@
     // ==========================================
     ul,
     ol {
-      margin: 0.5em 0 !important;
+      margin: 0.25em 0 !important;
       padding-left: 1.5em !important;
       color: var(--tn-color-text) !important;
     }

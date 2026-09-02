@@ -11,15 +11,13 @@ export class KeyboardShortcuts {
       ...options,
     };
 
-    this.isDesktop = typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(pointer: fine)').matches
-      : true;
+    this.isDesktop = typeof window !== "undefined" && window.matchMedia ? window.matchMedia("(pointer: fine)").matches : true;
     this.shortcuts = [];
     this.boundHandler = null;
   }
 
   async init() {
-    this.log('init() llamado. isDesktop =', this.isDesktop, '| matchMedia(pointer:fine) =', window.matchMedia?.('(pointer: fine)').matches);
+    this.log("init() llamado. isDesktop =", this.isDesktop, "| matchMedia(pointer:fine) =", window.matchMedia?.("(pointer: fine)").matches);
 
     if (!this.isDesktop) {
       this.log("❌ ABORTANDO init — isDesktop es false. No se registrará keydown.");
@@ -52,32 +50,32 @@ export class KeyboardShortcuts {
   }
 
   handleKeydown(e) {
-    this.log('🔑 Tecla presionada:', { key: e.key, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location, target: e.target?.tagName });
+    this.log("🔑 Tecla presionada:", { key: e.key, altKey: e.altKey, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location, target: e.target?.tagName });
 
     if (!document.hasFocus()) {
-      this.log('🚫 BLOQUEADO por !document.hasFocus()');
+      this.log("🚫 BLOQUEADO por !document.hasFocus()");
       return;
     }
 
     for (const s of this.shortcuts) {
       if (!this.matchesKey(e, s)) {
         if (s.key === e.key) {
-          this.log('⚡ Key coincide pero modifiers NO:', s.label || s.key, 'modifiers esperados:', JSON.stringify(s.modifiers), '| estado real:', { ctrlKey: e.ctrlKey, altKey: e.altKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location });
+          this.log("⚡ Key coincide pero modifiers NO:", s.label || s.key, "modifiers esperados:", JSON.stringify(s.modifiers), "| estado real:", { ctrlKey: e.ctrlKey, altKey: e.altKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location });
         }
         continue;
       }
 
       if (s.scope !== "system" && this.isModalOpen()) {
-        this.log('🚫 BLOQUEADO por modal abierto:', s.label || s.key);
+        this.log("🚫 BLOQUEADO por modal abierto:", s.label || s.key);
         continue;
       }
 
       if (s.skipWhenInputFocused && this.isInputFocused()) {
-        this.log('🚫 BLOQUEADO por input enfocado:', s.label || s.key, 'activeElement:', document.activeElement?.tagName, 'contentEditable:', document.activeElement?.isContentEditable);
+        this.log("🚫 BLOQUEADO por input enfocado:", s.label || s.key, "activeElement:", document.activeElement?.tagName, "contentEditable:", document.activeElement?.isContentEditable);
         continue;
       }
 
-      this.log('✅ EJECUTANDO shortcut:', s.label || s.key);
+      this.log("✅ EJECUTANDO shortcut:", s.label || s.key);
       if (s.preventDefault) e.preventDefault();
       s.handler(e);
       return;
@@ -109,12 +107,12 @@ export class KeyboardShortcuts {
   isInputFocused() {
     const el = document.activeElement;
     if (!el) {
-      this.log('isInputFocused: no activeElement → false');
+      this.log("isInputFocused: no activeElement → false");
       return false;
     }
     const tag = el.tagName;
     const result = tag === "INPUT" || tag === "TEXTAREA";
-    this.log('isInputFocused:', result, '| tag:', tag, '| isContentEditable:', el.isContentEditable);
+    this.log("isInputFocused:", result, "| tag:", tag, "| isContentEditable:", el.isContentEditable);
     return result;
   }
 
@@ -350,37 +348,34 @@ export class KeyboardShortcuts {
     });
 
     // --- Ctrl+Z: Undo ---
+    // Always call e.preventDefault() to stop the browser's native undo from
+    // interfering. Then route through executeFormatCommand which handles both
+    // Milkdown (via milkdownEditor.undo) and legacy (via execCommand) tabs.
     this.registerShortcut({
       key: "z",
       modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      preventDefault: false,
       label: "Ctrl+Z",
       description: "shortcuts.desc.undo",
       category: "editor",
-      handler: () => {
+      handler: (e) => {
+        e.preventDefault(); // Prevent browser native undo for all tab types
         this.executeFormatCommand("undo");
       },
     });
 
-    // --- Ctrl+Shift+Z: Redo ---
-    this.registerShortcut({
-      key: "z",
-      modifiers: { ctrl: true, alt: false, shift: true, meta: false },
-      label: "Ctrl+Shift+Z",
-      description: "shortcuts.desc.redo",
-      category: "editor",
-      handler: () => {
-        this.executeFormatCommand("redo");
-      },
-    });
-
-    // --- Ctrl+Y: Redo (alternative) ---
+    // --- Ctrl+Y: Redo ---
+    // Same logic as Ctrl+Z — always preventDefault and route through
+    // executeFormatCommand for Milkdown (via milkdownEditor.redo) or legacy.
     this.registerShortcut({
       key: "y",
       modifiers: { ctrl: true, alt: false, shift: false, meta: false },
+      preventDefault: false,
       label: "Ctrl+Y",
       description: "shortcuts.desc.redo",
       category: "editor",
-      handler: () => {
+      handler: (e) => {
+        e.preventDefault(); // Prevent browser native redo for all tab types
         this.executeFormatCommand("redo");
       },
     });
@@ -491,6 +486,19 @@ export class KeyboardShortcuts {
       activeTab.checked = false;
       document.dispatchEvent(new CustomEvent("tabsChanged"));
     }
+  }
+
+  // ===== HELPERS =====
+
+  /**
+   * Check if the currently active tab is a Milkdown (markdown) tab.
+   * Used by shortcuts that should be handled by ProseMirror natively.
+   */
+  _isActiveTabMilkdown() {
+    const activeInput = document.querySelector('.tab-list input[type="radio"]:checked');
+    if (!activeInput) return false;
+    const tabElement = activeInput.closest(".tab-list__item");
+    return tabElement?.dataset?.format === "markdown";
   }
 
   // ===== CLEANUP =====

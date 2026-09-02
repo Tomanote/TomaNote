@@ -172,7 +172,7 @@
     align-items: center;
     width: 40px !important;
     height: 40px !important;
-    padding: 8px !important;
+    padding: unset !important;
     min-width: 40px;
     min-height: 40px;
     border-radius: 0.75rem !important;
@@ -187,8 +187,8 @@
     }
 
     svg {
-      width: 18px !important;
-      height: 18px !important;
+      width: 20px !important;
+      height: 20px !important;
     }
   }
 }

@@ -486,6 +486,257 @@ describe("KeyboardShortcuts", () => {
     });
   });
 
+  // ─── CTRL+Z UNDO SHORTCUT ───
+  describe("Ctrl+Z (undo) via handleKeydown()", () => {
+    let preventDefault;
+    let originalExecCommand;
+    let mockMilkdownEditor;
+
+    function fireCtrlZ(mods = {}) {
+      ks.handleKeydown({
+        key: "z",
+        ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0,
+        preventDefault,
+        ...mods,
+      });
+    }
+
+    // Helper: mock active tab as legacy (contenteditable)
+    function setActiveLegacyTab() {
+      const tabEl = { dataset: {} }; // no format = legacy
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { checked: true, closest: vi.fn().mockReturnValue(tabEl) };
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+    }
+
+    // Helper: mock active tab as Milkdown (markdown)
+    function setActiveMilkdownTab() {
+      const tabEl = { dataset: { format: "markdown" } };
+      const mockEditor = { undo: vi.fn() };
+      mockMilkdownEditor = { hasEditor: vi.fn().mockReturnValue(true), undo: vi.fn() };
+      window.milkdownEditor = mockMilkdownEditor;
+
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') {
+          return { id: "body-tab-1", checked: true, closest: vi.fn().mockReturnValue(tabEl) };
+        }
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+    }
+
+    beforeEach(async () => {
+      preventDefault = vi.fn();
+      originalExecCommand = document.execCommand;
+      document.execCommand = vi.fn().mockImplementation(() => true);
+
+      Object.defineProperty(document, "activeElement", { value: document.body, configurable: true });
+
+      ks = makeKS();
+      await ks.init();
+    });
+
+    afterEach(() => {
+      document.execCommand = originalExecCommand;
+      delete window.milkdownEditor;
+    });
+
+    it("legacy tab: calls document.execCommand('undo')", () => {
+      setActiveLegacyTab();
+      fireCtrlZ();
+      expect(document.execCommand).toHaveBeenCalledWith("undo", false, null);
+    });
+
+    it("legacy tab: calls preventDefault", () => {
+      setActiveLegacyTab();
+      fireCtrlZ();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("Milkdown tab: does NOT call document.execCommand", () => {
+      setActiveMilkdownTab();
+      fireCtrlZ();
+      expect(document.execCommand).not.toHaveBeenCalledWith("undo", false, null);
+    });
+
+    it("Milkdown tab: calls preventDefault to stop browser native undo", () => {
+      setActiveMilkdownTab();
+      fireCtrlZ();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("no active tab: does not call execCommand undo (early return in executeFormatCommand)", () => {
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return null;
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+      fireCtrlZ();
+      expect(document.execCommand).not.toHaveBeenCalled();
+      // Note: preventDefault IS called by handleKeydown before executeFormatCommand returns.
+      // This is acceptable — no tab means no undo action.
+    });
+
+    it("modal open: blocked — does not call execCommand", () => {
+      setActiveLegacyTab();
+      window.commandPalette.isOpen = true;
+      fireCtrlZ();
+      expect(document.execCommand).not.toHaveBeenCalled();
+    });
+
+    it("input focused: blocked (skipWhenInputFocused defaults to true)", () => {
+      setActiveLegacyTab();
+      const input = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: input, configurable: true });
+      fireCtrlZ();
+      expect(document.execCommand).not.toHaveBeenCalled();
+    });
+
+    it("Ctrl+Z shortcut is registered with correct modifiers", () => {
+      const shortcut = ks.shortcuts.find(s => s.key === 'z' && s.modifiers?.ctrl === true && s.modifiers?.shift === false);
+      expect(shortcut).toBeDefined();
+      expect(shortcut.label).toBe('Ctrl+Z');
+      expect(shortcut.description).toBe('shortcuts.desc.undo');
+      expect(shortcut.category).toBe('editor');
+    });
+
+    it("Ctrl+Z handler calls Milkdown undo for Milkdown tab", () => {
+      setActiveMilkdownTab();
+      fireCtrlZ();
+      expect(mockMilkdownEditor.undo).toHaveBeenCalled();
+    });
+  });
+
+  // ─── CTRL+Y REDO SHORTCUT ───
+  describe("Ctrl+Y (redo) via handleKeydown()", () => {
+    let preventDefault;
+    let originalExecCommand;
+    let mockMilkdownEditor;
+
+    function fireCtrlY(mods = {}) {
+      ks.handleKeydown({
+        key: "y",
+        ctrlKey: true, altKey: false, shiftKey: false, metaKey: false, location: 0,
+        preventDefault,
+        ...mods,
+      });
+    }
+
+    function setActiveLegacyTab() {
+      const tabEl = { dataset: {} };
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return { checked: true, closest: vi.fn().mockReturnValue(tabEl) };
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+    }
+
+    function setActiveMilkdownTab() {
+      const tabEl = { dataset: { format: "markdown" } };
+      mockMilkdownEditor = { hasEditor: vi.fn().mockReturnValue(true), redo: vi.fn() };
+      window.milkdownEditor = mockMilkdownEditor;
+
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') {
+          return { id: "body-tab-1", checked: true, closest: vi.fn().mockReturnValue(tabEl) };
+        }
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+    }
+
+    beforeEach(async () => {
+      preventDefault = vi.fn();
+      originalExecCommand = document.execCommand;
+      document.execCommand = vi.fn().mockImplementation(() => true);
+
+      Object.defineProperty(document, "activeElement", { value: document.body, configurable: true });
+
+      ks = makeKS();
+      await ks.init();
+    });
+
+    afterEach(() => {
+      document.execCommand = originalExecCommand;
+      delete window.milkdownEditor;
+    });
+
+    it("legacy tab: calls document.execCommand('redo')", () => {
+      setActiveLegacyTab();
+      fireCtrlY();
+      expect(document.execCommand).toHaveBeenCalledWith("redo", false, null);
+    });
+
+    it("legacy tab: calls preventDefault", () => {
+      setActiveLegacyTab();
+      fireCtrlY();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("Milkdown tab: does NOT call document.execCommand", () => {
+      setActiveMilkdownTab();
+      fireCtrlY();
+      expect(document.execCommand).not.toHaveBeenCalledWith("redo", false, null);
+    });
+
+    it("Milkdown tab: calls preventDefault to stop browser native redo", () => {
+      setActiveMilkdownTab();
+      fireCtrlY();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("no active tab: does not call execCommand redo (early return in executeFormatCommand)", () => {
+      document.querySelector = vi.fn((sel) => {
+        if (sel === '.tab-list input[type="radio"]:checked') return null;
+        if (sel === "dialog#info-notepad") return document.getElementById("info-notepad");
+        return null;
+      });
+      fireCtrlY();
+      expect(document.execCommand).not.toHaveBeenCalled();
+    });
+
+    it("modal open: blocked — does not call execCommand", () => {
+      setActiveLegacyTab();
+      window.commandPalette.isOpen = true;
+      fireCtrlY();
+      expect(document.execCommand).not.toHaveBeenCalled();
+    });
+
+    it("input focused: blocked", () => {
+      setActiveLegacyTab();
+      const input = document.createElement("input");
+      Object.defineProperty(document, "activeElement", { value: input, configurable: true });
+      fireCtrlY();
+      expect(document.execCommand).not.toHaveBeenCalled();
+    });
+
+    it("Ctrl+Y shortcut is registered with correct modifiers", () => {
+      const shortcut = ks.shortcuts.find(s => s.key === 'y' && s.modifiers?.ctrl === true);
+      expect(shortcut).toBeDefined();
+      expect(shortcut.label).toBe('Ctrl+Y');
+      expect(shortcut.description).toBe('shortcuts.desc.redo');
+      expect(shortcut.category).toBe('editor');
+    });
+
+    it("Ctrl+Y handler calls Milkdown redo for Milkdown tab", () => {
+      setActiveMilkdownTab();
+      fireCtrlY();
+      expect(mockMilkdownEditor.redo).toHaveBeenCalled();
+    });
+  });
+
+  // ─── CTRL+SHIFT+Z REMOVED ───
+  describe("Ctrl+Shift+Z removed", () => {
+    it("Ctrl+Shift+Z shortcut should NOT be registered", async () => {
+      ks = makeKS();
+      await ks.init();
+      const shortcut = ks.shortcuts.find(s => s.key === 'z' && s.modifiers?.ctrl === true && s.modifiers?.shift === true);
+      expect(shortcut).toBeUndefined();
+    });
+  });
+
   // ─── CTRL+B/I/U FORMATTING SHORTCUTS ───
   describe("Ctrl+B/I/U formatting shortcuts", () => {
     let preventDefault;
