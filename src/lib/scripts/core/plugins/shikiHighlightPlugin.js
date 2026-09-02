@@ -7,7 +7,6 @@
 // to keep the initial bundle small.
 
 import { Plugin, PluginKey } from "@milkdown/prose/state";
-import { Decoration } from "@milkdown/prose/view";
 import { $prose } from "@milkdown/utils";
 import { schemaCtx } from "@milkdown/core";
 
@@ -133,64 +132,8 @@ async function highlightCode(code, lang, theme = "dark") {
 function createPlugin(schema) {
   if (!schema.nodes.code_block) return null;
 
-  // Track pending decorations per node
-  const pendingDecorations = new Map();
-
   return new Plugin({
     key: shikiHighlightKey,
-
-    props: {
-      decorations(state) {
-        const decorations = [];
-        const isDark = !document.documentElement?.dataset?.theme ||
-                       document.documentElement.dataset.theme !== "light";
-
-        // Walk through the document looking for code_block nodes
-        state.doc.descendants((node, pos) => {
-          if (node.type !== schema.nodes.code_block) return;
-
-          const code = node.textContent;
-          const lang = node.attrs.language || "";
-          const decorationKey = `${pos}-${code.length}-${lang}`;
-
-          // Check if we already have decorations for this node
-          if (pendingDecorations.has(decorationKey)) {
-            const cached = pendingDecorations.get(decorationKey);
-            if (cached.html) {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  shinyHtml: cached.html,
-                  shinyLang: cached.lang,
-                  lineCount: cached.lineCount,
-                })
-              );
-            }
-            return;
-          }
-
-          // Start async highlight (will trigger a re-render when done)
-          if (!pendingDecorations.has(decorationKey)) {
-            pendingDecorations.set(decorationKey, { html: null, lang, lineCount: 0 });
-
-            highlightCode(code, lang, isDark ? "dark" : "light").then((html) => {
-              if (html) {
-                pendingDecorations.set(decorationKey, {
-                  html,
-                  lang: normalizeLang(lang) || lang,
-                  lineCount: code.split("\n").length,
-                });
-                // Request a view update to apply the new decorations
-                // This is done by returning a new decoration set in the next render
-              }
-            });
-          }
-        });
-
-        return decorations.length > 0
-          ? DecorationSet.create(state.doc, decorations)
-          : DecorationSet.empty;
-      },
-    },
 
     // Transform the DOM node rendered by ProseMirror for code_block nodes
     nodeView: {
