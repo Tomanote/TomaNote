@@ -1,10 +1,15 @@
 // src/lib/scripts/core/plugins/shikiHighlightPlugin.js
-// ProseMirror plugin: adds syntax highlighting, language labels, and
-// line numbers to code_block nodes using Shiki (loaded on-demand).
+// ProseMirror nodeView plugin: highlights code_block nodes using Shiki.
 //
-// The plugin decorates code_block nodes with highlighted HTML via
-// ProseMirror's DecorationSet. Shiki is loaded lazily on first use
-// to keep the initial bundle small.
+// HOW IT WORKS:
+// 1. On first code_block encounter, Shiki is loaded asynchronously
+//    via dynamic import(). While loading, code shows as plain text.
+// 2. Once loaded, ALL subsequent code blocks are highlighted synchronously.
+// 3. When a code_block is edited, the nodeView re-highlights on update.
+// 4. Language labels and line numbers are added via CSS.
+//
+// IMPORTANT: Shiki must be loaded BEFORE the first code_block is rendered.
+// We trigger loading when the editor is created (via the Milkdown plugin).
 
 import { Plugin, PluginKey } from "@milkdown/prose/state";
 import { $prose } from "@milkdown/utils";
@@ -12,7 +17,7 @@ import { schemaCtx } from "@milkdown/core";
 
 export const shikiHighlightKey = new PluginKey("shikiHighlight");
 
-// Language alias map: common aliases → Shiki language IDs
+// ── Language alias map ──
 const LANG_ALIASES = {
   js: "javascript",
   ts: "typescript",
@@ -32,42 +37,31 @@ const LANG_ALIASES = {
   plain: "text",
 };
 
-// Languages we won't attempt to highlight
 const SKIP_LANGS = new Set(["text", "txt", "plain", ""]);
 
-/**
- * Normalize a language identifier to a Shiki language name.
- * @param {string} lang
- * @returns {string}
- */
 function normalizeLang(lang) {
   if (!lang) return "";
   const lower = lang.toLowerCase().trim();
   return LANG_ALIASES[lower] || lower;
 }
 
-/**
- * Lazily loaded Shiki highlighter instance.
- * @type {import('shiki').Highlighter | null}
- */
-let shikiInstance = null;
-let shikiLoading = null;
+// ── Shiki singleton ──
+let shikiHighlighter = null;
+let shikiReady = false;
+let shikiLoadingPromise = null;
 
 /**
- * Get or create the Shiki highlighter (singleton, loaded once).
- * @returns {Promise<import('shiki').Highlighter>}
+ * Load Shiki eagerly. Call this once when the editor initializes.
+ * Returns a promise that resolves when Shiki is ready.
  */
-async function getHighlighter() {
-  if (shikiInstance) return shikiInstance;
-  if (shikiLoading) return shikiLoading;
+export function loadShiki() {
+  if (shikiReady) return Promise.resolve(shikiHighlighter);
+  if (shikiLoadingPromise) return shikiLoadingPromise;
 
-  shikiLoading = (async () => {
+  shikiLoadingPromise = (async () => {
     try {
       const shiki = await import("shiki");
-      // Use a theme that adapts to TomaNote's theming.
-      // We use "github-dark" as a reasonable default; the plugin
-      // wraps the output so CSS can override colors via variables.
-      shikiInstance = await shiki.createHighlighter({
+      shikiHighlighter = await shiki.createHighlighter({
         themes: ["github-dark", "github-light"],
         langs: [
           "javascript", "typescript", "python", "java", "c", "cpp",
@@ -76,68 +70,79 @@ async function getHighlighter() {
           "markdown", "docker", "xml", "jsx", "tsx", "toml",
         ],
       });
-      return shikiInstance;
+      shikiReady = true;
+      console.log("[ShikiHighlight] ✅ Shiki loaded successfully");
+      return shikiHighlighter;
     } catch (err) {
-      console.warn("[ShikiHighlight] Failed to load Shiki:", err);
-      shikiLoading = null;
+      console.warn("[ShikiHighlight] ❌ Failed to load Shiki:", err);
+      shikiLoadingPromise = null;
       return null;
     }
   })();
 
-  return shikiLoading;
+  return shikiLoadingPromise;
 }
 
 /**
- * Highlight a code string with Shiki.
- * @param {string} code - Source code
- * @param {string} lang - Language identifier
- * @param {string} theme - 'light' or 'dark'
- * @returns {Promise<string>} HTML string
+ * Synchronous highlight. Returns HTML or null if Shiki isn't ready.
  */
-async function highlightCode(code, lang, theme = "dark") {
-  const highlighter = await getHighlighter();
-  if (!highlighter) return null;
+function highlightSync(code, lang, theme = "dark") {
+  if (!shikiReady || !shikiHighlighter) return null;
 
   const normalized = normalizeLang(lang);
   if (SKIP_LANGS.has(normalized)) return null;
 
-  // Check if the language is loaded
-  const loadedLangs = highlighter.getLoadedLanguages();
-  if (!loadedLangs.includes(normalized)) {
-    // Try loading it
+  // Check if language is loaded
+  const loaded = shikiHighlighter.getLoadedLanguages();
+  if (!loaded.includes(normalized)) {
     try {
-      await highlighter.loadLanguage(normalized);
+      shikiHighlighter.loadLanguage(normalized);
     } catch {
-      return null; // Language not supported
+      return null;
     }
   }
 
   const themeName = theme === "light" ? "github-light" : "github-dark";
-
   try {
-    return highlighter.codeToHtml(code, {
-      lang: normalized,
-      theme: themeName,
-    });
+    return shikiHighlighter.codeToHtml(code, { lang: normalized, theme: themeName });
   } catch {
     return null;
   }
 }
 
 /**
- * Create the ProseMirror plugin.
- * @param {import('prosemirror-model').Schema} schema
- * @returns {Plugin|null}
+ * Get the current theme (dark/light) from the document.
  */
+function getCurrentTheme() {
+  const theme = document.documentElement?.dataset?.theme;
+  return theme === "light" ? "light" : "dark";
+}
+
+// ── ProseMirror Plugin ──
+
 function createPlugin(schema) {
   if (!schema.nodes.code_block) return null;
+
+  // Track which nodes have been highlighted
+  const highlightedNodes = new WeakSet();
 
   return new Plugin({
     key: shikiHighlightKey,
 
-    // Transform the DOM node rendered by ProseMirror for code_block nodes
+    // Start loading Shiki when the editor is created
+    state: {
+      init() {
+        loadShiki();
+        return null;
+      },
+      apply() {
+        return null;
+      },
+    },
+
     nodeView: {
       code_block(node, view, getPos) {
+        // ── Build the DOM structure ──
         const dom = document.createElement("div");
         dom.className = "shiki-code-block";
         dom.setAttribute("data-language", node.attrs.language || "");
@@ -148,8 +153,8 @@ function createPlugin(schema) {
         pre.appendChild(code);
         dom.appendChild(pre);
 
-        // Add language label if present
-        const lang = node.attrs.language;
+        // Language label
+        const lang = node.attrs.language || "";
         if (lang) {
           const label = document.createElement("span");
           label.className = "shiki-lang-label";
@@ -157,56 +162,91 @@ function createPlugin(schema) {
           dom.appendChild(label);
         }
 
-        // Add line numbers via CSS counters
-        const lineCount = node.textContent.split("\n").length;
-        if (lineCount > 1) {
-          dom.setAttribute("data-line-count", String(lineCount));
-          dom.classList.add("shiki-with-line-numbers");
-        }
+        // Line numbers class
+        const updateLineNumbers = () => {
+          const lineCount = code.textContent.split("\n").length;
+          if (lineCount > 1) {
+            dom.setAttribute("data-line-count", String(lineCount));
+            dom.classList.add("shiki-with-line-numbers");
+          } else {
+            dom.classList.remove("shiki-with-line-numbers");
+          }
+        };
+        updateLineNumbers();
 
-        // Highlight asynchronously
-        let highlighted = false;
-        const doHighlight = async () => {
-          if (highlighted) return;
-          const isDark = !document.documentElement?.dataset?.theme ||
-                         document.documentElement.dataset.theme !== "light";
-          const html = await highlightCode(node.textContent, lang, isDark ? "dark" : "light");
-          if (html) {
-            // Parse the Shiki HTML and extract the <code> content
+        // ── Highlight function ──
+        let lastHighlightedText = "";
+
+        const applyHighlight = () => {
+          const text = node.textContent;
+          const html = highlightSync(text, lang, getCurrentTheme());
+          if (html && text !== lastHighlightedText) {
+            // Parse Shiki HTML and extract <code> innerHTML
             const temp = document.createElement("div");
             temp.innerHTML = html;
             const highlightedCode = temp.querySelector("code");
             if (highlightedCode) {
               code.innerHTML = highlightedCode.innerHTML;
               code.className = highlightedCode.className || "";
-              highlighted = true;
+              lastHighlightedText = text;
             }
           }
         };
 
-        doHighlight();
+        // Try immediate highlight (Shiki might already be loaded)
+        applyHighlight();
+
+        // If Shiki wasn't ready, poll until it is
+        if (!shikiReady) {
+          const pollInterval = setInterval(() => {
+            if (shikiReady) {
+              clearInterval(pollInterval);
+              applyHighlight();
+            }
+          }, 100);
+
+          // Stop polling after 10 seconds
+          setTimeout(() => clearInterval(pollInterval), 10000);
+        }
 
         return {
           dom,
+
           update(updatedNode) {
             if (updatedNode.type !== node.type) return false;
-            code.textContent = updatedNode.textContent;
 
-            // Update line count
-            const newLineCount = updatedNode.textContent.split("\n").length;
-            dom.setAttribute("data-line-count", String(newLineCount));
-            if (newLineCount > 1) {
-              dom.classList.add("shiki-with-line-numbers");
-            } else {
-              dom.classList.remove("shiki-with-line-numbers");
+            // Update text content
+            const newText = updatedNode.textContent;
+            code.textContent = newText;
+            lastHighlightedText = ""; // Force re-highlight
+
+            // Update language label
+            const newLang = updatedNode.attrs.language || "";
+            const existingLabel = dom.querySelector(".shiki-lang-label");
+            if (newLang) {
+              if (existingLabel) {
+                existingLabel.textContent = normalizeLang(newLang) || newLang;
+              } else {
+                const label = document.createElement("span");
+                label.className = "shiki-lang-label";
+                label.textContent = normalizeLang(newLang) || newLang;
+                dom.appendChild(label);
+              }
+              dom.setAttribute("data-language", newLang);
+            } else if (existingLabel) {
+              existingLabel.remove();
+              dom.removeAttribute("data-language");
             }
 
+            // Update line numbers
+            updateLineNumbers();
+
             // Re-highlight
-            highlighted = false;
-            doHighlight();
+            applyHighlight();
 
             return true;
           },
+
           stopEvent() { return false; },
           ignoreMutation() { return true; },
           destroy() {},
@@ -225,5 +265,4 @@ export const shikiHighlight = $prose((ctx) => {
   return createPlugin(schema);
 });
 
-// Export for testing
 export { createPlugin };
