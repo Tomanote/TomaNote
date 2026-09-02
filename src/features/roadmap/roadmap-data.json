@@ -9,42 +9,148 @@
       "isNext": true,
       "items": {
         "es": [
-          { "summary": "Markdown en tiempo real", "description": "Vista previa de Markdown en tiempo real usando Milkdown, con edición WYSIWYG y soporte completo de sintaxis." },
-          { "summary": "Soporte para escritura con lápiz", "description": "Integración nativa con dispositivos táctiles y lápiz óptico para tabletas y celulares, mejorando la experiencia de escritura manuscrita." },
-          { "summary": "Sincronización en red LAN", "description": "Sincronización de notas entre dispositivos en la misma red local sin base de datos, usando el dispositivo principal como servidor." },
-          { "summary": "Precarga offline", "description": "Sistema de precarga cuando falla la conexión, mostrando alertas amigables y ofreciendo acceso a versiones anteriores sin pérdida de datos." },
-          { "summary": "Service Worker Connection-recovery", "description": "Service worker para recuperación automática de conexión, cacheo inteligente y modo offline." },
-          { "summary": "Más atajos de teclado", "description": "Nuevos atajos de teclado usando left_Alt para acciones rápidas, integrados con el command palette." }
+          {
+            "summary": "Markdown en tiempo real",
+            "description": "Vista previa de Markdown en tiempo real usando Milkdown, con edición WYSIWYG y soporte completo de sintaxis."
+          },
+          {
+            "summary": "Soporte para escritura con lápiz",
+            "description": "Integración nativa con dispositivos táctiles y lápiz óptico para tabletas y celulares, mejorando la experiencia de escritura manuscrita."
+          },
+          {
+            "summary": "Sincronización en red LAN",
+            "description": "Sincronización de notas entre dispositivos en la misma red local sin base de datos, usando el dispositivo principal como servidor."
+          },
+          {
+            "summary": "Precarga offline",
+            "description": "Sistema de precarga cuando falla la conexión, mostrando alertas amigables y ofreciendo acceso a versiones anteriores sin pérdida de datos."
+          },
+          {
+            "summary": "Service Worker Connection-recovery",
+            "description": "Service worker para recuperación automática de conexión, cacheo inteligente y modo offline."
+          },
+          {
+            "summary": "Más atajos de teclado",
+            "description": "Nuevos atajos de teclado usando left_Alt para acciones rápidas, integrados con el command palette."
+          }
         ],
         "en": [
-          { "summary": "Live Markdown preview", "description": "Real-time Markdown preview using Milkdown, with WYSIWYG editing and full syntax support." },
-          { "summary": "Stylus/pen input support", "description": "Native integration with touch devices and stylus for tablets and phones, improving handwritten note experience." },
-          { "summary": "LAN sync", "description": "Note synchronization between devices on the same local network without database, using the primary device as server." },
-          { "summary": "Offline pre-loading", "description": "Pre-loading system when connection fails, showing friendly alerts and offering access to previous versions without data loss." },
-          { "summary": "Service Worker Connection-recovery", "description": "Service worker for automatic connection recovery, intelligent caching and offline mode." },
-          { "summary": "More keyboard shortcuts", "description": "New keyboard shortcuts using left_Alt for quick actions, integrated with the command palette." }
+          {
+            "summary": "Live Markdown preview",
+            "description": "Real-time Markdown preview using Milkdown, with WYSIWYG editing and full syntax support."
+          },
+          {
+            "summary": "Stylus/pen input support",
+            "description": "Native integration with touch devices and stylus for tablets and phones, improving handwritten note experience."
+          },
+          {
+            "summary": "LAN sync",
+            "description": "Note synchronization between devices on the same local network without database, using the primary device as server."
+          },
+          {
+            "summary": "Offline pre-loading",
+            "description": "Pre-loading system when connection fails, showing friendly alerts and offering access to previous versions without data loss."
+          },
+          {
+            "summary": "Service Worker Connection-recovery",
+            "description": "Service worker for automatic connection recovery, intelligent caching and offline mode."
+          },
+          {
+            "summary": "More keyboard shortcuts",
+            "description": "New keyboard shortcuts using left_Alt for quick actions, integrated with the command palette."
+          }
+        ]
+      }
+    },
+    {
+      "id": "release-056",
+      "type": "current",
+      "versionNumber": "0.5.6",
+      "date": "2026-09-02",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          {
+            "summary": "Editor Milkdown",
+            "description": "Integración completa del editor Milkdown con edición Markdown basada en ProseMirror."
+          },
+          {
+            "summary": "Resaltado de sintaxis",
+            "description": "Resaltado de sintaxis con Shiki para bloques de código con etiquetas de idioma y números de línea."
+          },
+          {
+            "summary": "Barra de formato",
+            "description": "Barra lateral derecha con 12 botones de formato (negrita, cursiva, subrayado, encabezados, código, blockquote, listas, enlaces)."
+          },
+          {
+            "summary": "Atajos de teclado",
+            "description": "Ctrl+B/I/U para formato, Ctrl+Z/Y para deshacer/rehacer, Ctrl+S para feedback de guardado."
+          }
+        ],
+        "en": [
+          {
+            "summary": "Milkdown editor",
+            "description": "Full Milkdown editor integration with ProseMirror-based Markdown editing."
+          },
+          {
+            "summary": "Syntax highlighting",
+            "description": "Shiki-powered syntax highlighting for code blocks with language labels and line numbers."
+          },
+          {
+            "summary": "Formatting toolbar",
+            "description": "Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links)."
+          },
+          {
+            "summary": "Keyboard shortcuts",
+            "description": "Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback."
+          }
         ]
       }
     },
     {
       "id": "release-055",
-      "type": "current",
+      "type": "past",
       "versionNumber": "0.5.5",
       "date": "2026-08-28",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [
-          { "summary": "Botones de enlace externo", "description": "Tres nuevos botones de enlace externo en la barra lateral, modal de ajustes y ayuda de atajos: Blog, Reportar Bug y Solicitar Feature." },
-          { "summary": "Plantilla de Feature Request", "description": "Nuevo template de issue en GitHub para solicitar features con estructura guiada." },
-          { "summary": "Blog oficial en línea", "description": "El blog de TomaNote (blog.tomanote.app) está oficialmente en línea con artículos, changelogs y consejos de productividad." },
-          { "summary": "Iconos accesibles en temas oscuros", "description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad." }
+          {
+            "summary": "Botones de enlace externo",
+            "description": "Tres nuevos botones de enlace externo en la barra lateral, modal de ajustes y ayuda de atajos: Blog, Reportar Bug y Solicitar Feature."
+          },
+          {
+            "summary": "Plantilla de Feature Request",
+            "description": "Nuevo template de issue en GitHub para solicitar features con estructura guiada."
+          },
+          {
+            "summary": "Blog oficial en línea",
+            "description": "El blog de TomaNote (blog.tomanote.app) está oficialmente en línea con artículos, changelogs y consejos de productividad."
+          },
+          {
+            "summary": "Iconos accesibles en temas oscuros",
+            "description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad."
+          }
         ],
         "en": [
-          { "summary": "External link buttons", "description": "Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature." },
-          { "summary": "Feature Request template", "description": "New GitHub issue template for requesting features with guided structure." },
-          { "summary": "Official blog live", "description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips." },
-          { "summary": "Accessible icons on dark themes", "description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility." }
+          {
+            "summary": "External link buttons",
+            "description": "Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature."
+          },
+          {
+            "summary": "Feature Request template",
+            "description": "New GitHub issue template for requesting features with guided structure."
+          },
+          {
+            "summary": "Official blog live",
+            "description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips."
+          },
+          {
+            "summary": "Accessible icons on dark themes",
+            "description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility."
+          }
         ]
       }
     },
@@ -57,30 +163,96 @@
       "isNext": false,
       "items": {
         "es": [
-          { "summary": "Correcciones del menú contextual", "description": "El menú contextual ya no suprime el clic derecho nativo fuera de las pestañas y muestra las acciones correctas al hacer clic derecho en el nombre de una pestaña." },
-          { "summary": "Tooltip de fijar/desfijar dinámico", "description": "El botón de fijar ahora alterna dinámicamente entre 'Fijar pestaña' y 'Desfijar pestaña' según el estado de la pestaña activa." },
-          { "summary": "Atajos de formato Ctrl+B/I/U", "description": "Nuevos atajos de teclado para negrita (Ctrl+B), cursiva (Ctrl+I) y subrayado (Ctrl+U) centralizados en el sistema de atajos." },
-          { "summary": "Descripciones de atajos localizadas", "description": "Las descripciones de los atajos de teclado ahora se muestran en el idioma del usuario en lugar de estar en inglés hardcodeado." },
-          { "summary": "Diálogo de cierre corregido", "description": "El diálogo de confirmación de cierre de pestaña ya no muestra caracteres de interrogación invertidos (¿) en inglés." },
-          { "summary": "Botón de documentación", "description": "Nuevo botón de documentación en la barra lateral izquierda que enlaza a docs.tomanote.app." },
-          { "summary": "Soporte share_target PWA", "description": "Soporte para la API Web Share Target de PWA — el texto compartido crea una nueva pestaña automáticamente." },
-          { "summary": "Corrección de seguridad CVE-2026-18446", "description": "fast-uri actualizado a ^3.1.5 para resolver la vulnerabilidad CVE-2026-18446." },
-          { "summary": "Inauguración de la documentación", "description": "Nuevo sitio de documentación oficial en docs.tomanote.app con guías de uso, atajos de teclado y referencia completa de la aplicación." },
-          { "summary": "Enlace a la documentación", "description": "Acceso directo a la documentación desde el botón de la barra lateral izquierda. Visítala en: https://docs.tomanote.app/" },
-          { "summary": "574 tests pasando", "description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato." }
+          {
+            "summary": "Correcciones del menú contextual",
+            "description": "El menú contextual ya no suprime el clic derecho nativo fuera de las pestañas y muestra las acciones correctas al hacer clic derecho en el nombre de una pestaña."
+          },
+          {
+            "summary": "Tooltip de fijar/desfijar dinámico",
+            "description": "El botón de fijar ahora alterna dinámicamente entre 'Fijar pestaña' y 'Desfijar pestaña' según el estado de la pestaña activa."
+          },
+          {
+            "summary": "Atajos de formato Ctrl+B/I/U",
+            "description": "Nuevos atajos de teclado para negrita (Ctrl+B), cursiva (Ctrl+I) y subrayado (Ctrl+U) centralizados en el sistema de atajos."
+          },
+          {
+            "summary": "Descripciones de atajos localizadas",
+            "description": "Las descripciones de los atajos de teclado ahora se muestran en el idioma del usuario en lugar de estar en inglés hardcodeado."
+          },
+          {
+            "summary": "Diálogo de cierre corregido",
+            "description": "El diálogo de confirmación de cierre de pestaña ya no muestra caracteres de interrogación invertidos (¿) en inglés."
+          },
+          {
+            "summary": "Botón de documentación",
+            "description": "Nuevo botón de documentación en la barra lateral izquierda que enlaza a docs.tomanote.app."
+          },
+          {
+            "summary": "Soporte share_target PWA",
+            "description": "Soporte para la API Web Share Target de PWA — el texto compartido crea una nueva pestaña automáticamente."
+          },
+          {
+            "summary": "Corrección de seguridad CVE-2026-18446",
+            "description": "fast-uri actualizado a ^3.1.5 para resolver la vulnerabilidad CVE-2026-18446."
+          },
+          {
+            "summary": "Inauguración de la documentación",
+            "description": "Nuevo sitio de documentación oficial en docs.tomanote.app con guías de uso, atajos de teclado y referencia completa de la aplicación."
+          },
+          {
+            "summary": "Enlace a la documentación",
+            "description": "Acceso directo a la documentación desde el botón de la barra lateral izquierda. Visítala en: https://docs.tomanote.app/"
+          },
+          {
+            "summary": "574 tests pasando",
+            "description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato."
+          }
         ],
         "en": [
-          { "summary": "Context menu fixes", "description": "Context menu no longer suppresses native right-click outside tab areas and shows correct actions on tab label right-click." },
-          { "summary": "Dynamic pin/unpin tooltip", "description": "The pin button now dynamically toggles between 'Pin Tab' and 'Unpin Tab' based on the active tab's pinned state." },
-          { "summary": "Ctrl+B/I/U formatting shortcuts", "description": "New keyboard shortcuts for bold (Ctrl+B), italic (Ctrl+I), and underline (Ctrl+U) centralized in the shortcuts system." },
-          { "summary": "Localized shortcut descriptions", "description": "Keyboard shortcut descriptions now display in the user's language instead of hardcoded English." },
-          { "summary": "Fixed close-tab dialog", "description": "The close-tab confirmation dialog no longer shows Spanish inverted question marks in English." },
-          { "summary": "Documentation button", "description": "New documentation button in the left sidebar linking to docs.tomanote.app." },
-          { "summary": "PWA share_target support", "description": "Web Share Target API support — shared text automatically creates a new tab." },
-          { "summary": "CVE-2026-18446 security fix", "description": "fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability." },
-          { "summary": "Documentation launch", "description": "Official documentation site launched at docs.tomanote.app with usage guides, keyboard shortcuts reference, and full app documentation." },
-          { "summary": "Documentation link", "description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/" },
-          { "summary": "574 tests passing", "description": "Expanded test coverage with fix for state pollution in formatting shortcut tests." }
+          {
+            "summary": "Context menu fixes",
+            "description": "Context menu no longer suppresses native right-click outside tab areas and shows correct actions on tab label right-click."
+          },
+          {
+            "summary": "Dynamic pin/unpin tooltip",
+            "description": "The pin button now dynamically toggles between 'Pin Tab' and 'Unpin Tab' based on the active tab's pinned state."
+          },
+          {
+            "summary": "Ctrl+B/I/U formatting shortcuts",
+            "description": "New keyboard shortcuts for bold (Ctrl+B), italic (Ctrl+I), and underline (Ctrl+U) centralized in the shortcuts system."
+          },
+          {
+            "summary": "Localized shortcut descriptions",
+            "description": "Keyboard shortcut descriptions now display in the user's language instead of hardcoded English."
+          },
+          {
+            "summary": "Fixed close-tab dialog",
+            "description": "The close-tab confirmation dialog no longer shows Spanish inverted question marks in English."
+          },
+          {
+            "summary": "Documentation button",
+            "description": "New documentation button in the left sidebar linking to docs.tomanote.app."
+          },
+          {
+            "summary": "PWA share_target support",
+            "description": "Web Share Target API support — shared text automatically creates a new tab."
+          },
+          {
+            "summary": "CVE-2026-18446 security fix",
+            "description": "fast-uri bumped to ^3.1.5 to resolve CVE-2026-18446 vulnerability."
+          },
+          {
+            "summary": "Documentation launch",
+            "description": "Official documentation site launched at docs.tomanote.app with usage guides, keyboard shortcuts reference, and full app documentation."
+          },
+          {
+            "summary": "Documentation link",
+            "description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/"
+          },
+          {
+            "summary": "574 tests passing",
+            "description": "Expanded test coverage with fix for state pollution in formatting shortcut tests."
+          }
         ]
       }
     },
@@ -93,28 +265,88 @@
       "isNext": false,
       "items": {
         "es": [
-          { "summary": "Nuevo branding", "description": "Nuevo logo, iconos, capturas de pantalla y favicon renovados en toda la aplicación." },
-          { "summary": "Contraste de bloques de código", "description": "Los bloques de código ahora usan colores legibles en todos los temas." },
-          { "summary": "Tamaño de fuente heredado", "description": "Las pestañas nuevas vacías heredan el tamaño de fuente global configurado." },
-          { "summary": "Edición del nombre de pestaña", "description": "El nombre completo se muestra mientras se edita y el cursor se coloca al inicio." },
-          { "summary": "Pegado como texto plano", "description": "Pegar en el nombre de una pestaña inserta texto plano sin formato." },
-          { "summary": "Pegado deshacible", "description": "Pegar en el editor ahora se puede deshacer y respeta la posición del cursor." },
-          { "summary": "Emoji preservado al fijar", "description": "Alt+P conserva el emoji existente de la pestaña al fijarla." },
-          { "summary": "Tooltips en controles contraídos", "description": "Los botones del panel derecho contraído ahora muestran tooltips." },
-          { "summary": "Indicador de guardado", "description": "Un indicador 'Guardado' aparece tras pausar la escritura." },
-          { "summary": "Atajo Ctrl+S", "description": "Ctrl+S muestra feedback visual de guardado al instante." }
+          {
+            "summary": "Nuevo branding",
+            "description": "Nuevo logo, iconos, capturas de pantalla y favicon renovados en toda la aplicación."
+          },
+          {
+            "summary": "Contraste de bloques de código",
+            "description": "Los bloques de código ahora usan colores legibles en todos los temas."
+          },
+          {
+            "summary": "Tamaño de fuente heredado",
+            "description": "Las pestañas nuevas vacías heredan el tamaño de fuente global configurado."
+          },
+          {
+            "summary": "Edición del nombre de pestaña",
+            "description": "El nombre completo se muestra mientras se edita y el cursor se coloca al inicio."
+          },
+          {
+            "summary": "Pegado como texto plano",
+            "description": "Pegar en el nombre de una pestaña inserta texto plano sin formato."
+          },
+          {
+            "summary": "Pegado deshacible",
+            "description": "Pegar en el editor ahora se puede deshacer y respeta la posición del cursor."
+          },
+          {
+            "summary": "Emoji preservado al fijar",
+            "description": "Alt+P conserva el emoji existente de la pestaña al fijarla."
+          },
+          {
+            "summary": "Tooltips en controles contraídos",
+            "description": "Los botones del panel derecho contraído ahora muestran tooltips."
+          },
+          {
+            "summary": "Indicador de guardado",
+            "description": "Un indicador 'Guardado' aparece tras pausar la escritura."
+          },
+          {
+            "summary": "Atajo Ctrl+S",
+            "description": "Ctrl+S muestra feedback visual de guardado al instante."
+          }
         ],
         "en": [
-          { "summary": "New branding", "description": "New logo, icons, screenshots and favicon renewed across the whole app." },
-          { "summary": "Code block contrast", "description": "Code blocks now use readable colors across all themes." },
-          { "summary": "Inherited font size", "description": "New empty tabs inherit the configured global font size." },
-          { "summary": "Tab name editing", "description": "The full name is shown while editing and the caret is placed at the start." },
-          { "summary": "Plain-text paste", "description": "Pasting into a tab name inserts plain text without formatting." },
-          { "summary": "Undoable paste", "description": "Pasting in the editor is now undoable and respects the cursor position." },
-          { "summary": "Pin emoji preservation", "description": "Alt+P keeps the tab's existing emoji when pinning." },
-          { "summary": "Collapsed controls tooltips", "description": "The collapsed right panel buttons now show tooltips." },
-          { "summary": "Saved indicator", "description": "A 'Saved' indicator appears after you pause typing." },
-          { "summary": "Ctrl+S shortcut", "description": "Ctrl+S shows instant save feedback." }
+          {
+            "summary": "New branding",
+            "description": "New logo, icons, screenshots and favicon renewed across the whole app."
+          },
+          {
+            "summary": "Code block contrast",
+            "description": "Code blocks now use readable colors across all themes."
+          },
+          {
+            "summary": "Inherited font size",
+            "description": "New empty tabs inherit the configured global font size."
+          },
+          {
+            "summary": "Tab name editing",
+            "description": "The full name is shown while editing and the caret is placed at the start."
+          },
+          {
+            "summary": "Plain-text paste",
+            "description": "Pasting into a tab name inserts plain text without formatting."
+          },
+          {
+            "summary": "Undoable paste",
+            "description": "Pasting in the editor is now undoable and respects the cursor position."
+          },
+          {
+            "summary": "Pin emoji preservation",
+            "description": "Alt+P keeps the tab's existing emoji when pinning."
+          },
+          {
+            "summary": "Collapsed controls tooltips",
+            "description": "The collapsed right panel buttons now show tooltips."
+          },
+          {
+            "summary": "Saved indicator",
+            "description": "A 'Saved' indicator appears after you pause typing."
+          },
+          {
+            "summary": "Ctrl+S shortcut",
+            "description": "Ctrl+S shows instant save feedback."
+          }
         ]
       }
     },
@@ -127,16 +359,40 @@
       "isNext": false,
       "items": {
         "es": [
-          { "summary": "Vista previa de notas recientes", "description": "El command palette muestra tus 3 notas editadas más recientes al abrirlo, ordenadas por fecha de modificación." },
-          { "summary": "Marcas de tiempo por pestaña", "description": "Cada pestaña registra su última fecha de modificación para ordenar las notas recientes, preservada en cada guardado." },
-          { "summary": "Pie del command palette responsivo", "description": "El pie del command palette se adapta al dispositivo — atajos de teclado en escritorio y sugerencias táctiles en pantallas táctiles." },
-          { "summary": "Legibilidad del command palette", "description": "Los textos del command palette usan el color de texto del tema con pesos de fuente más fuertes, legibles en todos los temas." }
+          {
+            "summary": "Vista previa de notas recientes",
+            "description": "El command palette muestra tus 3 notas editadas más recientes al abrirlo, ordenadas por fecha de modificación."
+          },
+          {
+            "summary": "Marcas de tiempo por pestaña",
+            "description": "Cada pestaña registra su última fecha de modificación para ordenar las notas recientes, preservada en cada guardado."
+          },
+          {
+            "summary": "Pie del command palette responsivo",
+            "description": "El pie del command palette se adapta al dispositivo — atajos de teclado en escritorio y sugerencias táctiles en pantallas táctiles."
+          },
+          {
+            "summary": "Legibilidad del command palette",
+            "description": "Los textos del command palette usan el color de texto del tema con pesos de fuente más fuertes, legibles en todos los temas."
+          }
         ],
         "en": [
-          { "summary": "Recent notes preview", "description": "The command palette now shows your 3 most recently edited notes on open, sorted by last modified time." },
-          { "summary": "Per-tab timestamps", "description": "Each tab tracks its last modified timestamp to sort recent notes, preserved on every save." },
-          { "summary": "Responsive command palette footer", "description": "The command palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens." },
-          { "summary": "Command palette legibility", "description": "Command palette text now uses the theme's text color with stronger font weights, readable across all themes." }
+          {
+            "summary": "Recent notes preview",
+            "description": "The command palette now shows your 3 most recently edited notes on open, sorted by last modified time."
+          },
+          {
+            "summary": "Per-tab timestamps",
+            "description": "Each tab tracks its last modified timestamp to sort recent notes, preserved on every save."
+          },
+          {
+            "summary": "Responsive command palette footer",
+            "description": "The command palette footer adapts to the device — keyboard hints on desktop and tap hints on touch screens."
+          },
+          {
+            "summary": "Command palette legibility",
+            "description": "Command palette text now uses the theme's text color with stronger font weights, readable across all themes."
+          }
         ]
       }
     },
@@ -151,32 +407,104 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Refactor de atajos de teclado", "description": "Sistema centralizado de atajos con registro por clases, verificación de modificadores (Ctrl/Alt/Shift/Meta), guards por ámbito (system/global) y detección automática de escritorio." },
-          { "summary": "Superposición de ayuda de teclado", "description": "Nueva superposición interactiva que lista todos los atajos del teclado agrupados por categoría (Pestañas, Navegación, Editor). Accesible vía botón en la barra lateral o Alt+/." },
-          { "summary": "Navegación del modal de configuración", "description": "Mejora en la navegación del modal de ajustes — Enter/Space salta al contenido de la pestaña, Escape regresa a la barra lateral, las flechas ya no se interceptan dentro de controles de formulario." },
-          { "summary": "Corrección Command Palette", "description": "Escape en el command palette ya no se propaga al sistema global, previniendo el cierre accidental de pestañas." },
-          { "summary": "Radios de color de tema en el orden de tabulación", "description": "Los radios de color de tema vuelven a estar en el orden de tabulación dentro del modal de configuración." },
-          { "summary": "Navegación por flechas en configuración", "description": "Las flechas del teclado navegan desde el elemento enfocado de la barra lateral del modal de ajustes." },
-          { "summary": "Anillos de foco visibles", "description": "Anillos de foco visibles añadidos para la barra de navegación, guardar y las etiquetas de tamaño de fuente." },
-          { "summary": "Atajos de teclado ignoran el teclado numérico", "description": "Los atajos Alt+número ya no se disparan desde el teclado numérico." },
-          { "summary": "Corrección de auto-desplazamiento en móvil", "description": "El editor ya no se desplaza automáticamente al cambiar el tamaño de fuente en dispositivos móviles." },
-          { "summary": "Tamaño de fuente aplicado a pestañas nuevas", "description": "Las pestañas nuevas aplican el tamaño de fuente guardado en la configuración." },
-          { "summary": "Enlace del changelog restaurado", "description": "El enlace 'Ver changelog completo' vuelve a apuntar a la URL correcta." },
-          { "summary": "Registros de consola solo en desarrollo", "description": "Los registros de consola quedan restringidos a los builds de desarrollo para mantener limpio el bundle de producción." }
+          {
+            "summary": "Refactor de atajos de teclado",
+            "description": "Sistema centralizado de atajos con registro por clases, verificación de modificadores (Ctrl/Alt/Shift/Meta), guards por ámbito (system/global) y detección automática de escritorio."
+          },
+          {
+            "summary": "Superposición de ayuda de teclado",
+            "description": "Nueva superposición interactiva que lista todos los atajos del teclado agrupados por categoría (Pestañas, Navegación, Editor). Accesible vía botón en la barra lateral o Alt+/."
+          },
+          {
+            "summary": "Navegación del modal de configuración",
+            "description": "Mejora en la navegación del modal de ajustes — Enter/Space salta al contenido de la pestaña, Escape regresa a la barra lateral, las flechas ya no se interceptan dentro de controles de formulario."
+          },
+          {
+            "summary": "Corrección Command Palette",
+            "description": "Escape en el command palette ya no se propaga al sistema global, previniendo el cierre accidental de pestañas."
+          },
+          {
+            "summary": "Radios de color de tema en el orden de tabulación",
+            "description": "Los radios de color de tema vuelven a estar en el orden de tabulación dentro del modal de configuración."
+          },
+          {
+            "summary": "Navegación por flechas en configuración",
+            "description": "Las flechas del teclado navegan desde el elemento enfocado de la barra lateral del modal de ajustes."
+          },
+          {
+            "summary": "Anillos de foco visibles",
+            "description": "Anillos de foco visibles añadidos para la barra de navegación, guardar y las etiquetas de tamaño de fuente."
+          },
+          {
+            "summary": "Atajos de teclado ignoran el teclado numérico",
+            "description": "Los atajos Alt+número ya no se disparan desde el teclado numérico."
+          },
+          {
+            "summary": "Corrección de auto-desplazamiento en móvil",
+            "description": "El editor ya no se desplaza automáticamente al cambiar el tamaño de fuente en dispositivos móviles."
+          },
+          {
+            "summary": "Tamaño de fuente aplicado a pestañas nuevas",
+            "description": "Las pestañas nuevas aplican el tamaño de fuente guardado en la configuración."
+          },
+          {
+            "summary": "Enlace del changelog restaurado",
+            "description": "El enlace 'Ver changelog completo' vuelve a apuntar a la URL correcta."
+          },
+          {
+            "summary": "Registros de consola solo en desarrollo",
+            "description": "Los registros de consola quedan restringidos a los builds de desarrollo para mantener limpio el bundle de producción."
+          }
         ],
         "en": [
-          { "summary": "Keyboard shortcuts refactor", "description": "Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards (system/global), and automatic desktop detection." },
-          { "summary": "Keyboard shortcuts help overlay", "description": "New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/." },
-          { "summary": "Settings modal navigation", "description": "Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls." },
-          { "summary": "Command Palette fix", "description": "Escape in the command palette no longer propagates to the global shortcut system, preventing accidental tab closing." },
-          { "summary": "Theme color radios back in tab order", "description": "Theme color radio buttons restored to the tab order inside the settings modal." },
-          { "summary": "Arrow-key navigation in settings", "description": "Arrow keys navigate from the focused settings sidebar item." },
-          { "summary": "Focus-visible rings", "description": "Focus-visible rings added for the navigation bar, save and font-size labels." },
-          { "summary": "Keyboard shortcuts ignore numpad", "description": "Alt+number shortcuts no longer trigger from the numeric keypad." },
-          { "summary": "Mobile auto-scroll fix", "description": "Editor no longer auto-scrolls when changing the font size on mobile." },
-          { "summary": "Saved font size applied to new tabs", "description": "New tabs now apply the saved font size." },
-          { "summary": "Changelog link restored", "description": "The 'View full changelog' link points back to the correct URL." },
-          { "summary": "Console logs gated to development", "description": "Console logs are now restricted to development builds to keep the production bundle clean." }
+          {
+            "summary": "Keyboard shortcuts refactor",
+            "description": "Centralized class-based shortcut system with modifier matching (Ctrl/Alt/Shift/Meta), scope guards (system/global), and automatic desktop detection."
+          },
+          {
+            "summary": "Keyboard shortcuts help overlay",
+            "description": "New interactive overlay listing all keyboard shortcuts grouped by category (Tabs, Navigation, Editor). Accessible via sidebar button or Alt+/."
+          },
+          {
+            "summary": "Settings modal navigation",
+            "description": "Enhanced settings modal navigation — Enter/Space jumps into tab content, Escape returns to sidebar, arrows no longer intercepted inside form controls."
+          },
+          {
+            "summary": "Command Palette fix",
+            "description": "Escape in the command palette no longer propagates to the global shortcut system, preventing accidental tab closing."
+          },
+          {
+            "summary": "Theme color radios back in tab order",
+            "description": "Theme color radio buttons restored to the tab order inside the settings modal."
+          },
+          {
+            "summary": "Arrow-key navigation in settings",
+            "description": "Arrow keys navigate from the focused settings sidebar item."
+          },
+          {
+            "summary": "Focus-visible rings",
+            "description": "Focus-visible rings added for the navigation bar, save and font-size labels."
+          },
+          {
+            "summary": "Keyboard shortcuts ignore numpad",
+            "description": "Alt+number shortcuts no longer trigger from the numeric keypad."
+          },
+          {
+            "summary": "Mobile auto-scroll fix",
+            "description": "Editor no longer auto-scrolls when changing the font size on mobile."
+          },
+          {
+            "summary": "Saved font size applied to new tabs",
+            "description": "New tabs now apply the saved font size."
+          },
+          {
+            "summary": "Changelog link restored",
+            "description": "The 'View full changelog' link points back to the correct URL."
+          },
+          {
+            "summary": "Console logs gated to development",
+            "description": "Console logs are now restricted to development builds to keep the production bundle clean."
+          }
         ]
       }
     },
@@ -191,20 +519,56 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Configuración del editor", "description": "Nuevo panel de configuración con control de ancho del editor y personalización de color de fondo de papel." },
-          { "summary": "Command palette", "description": "Búsqueda global con interfaz estilo Spotlight — busca notas por título o contenido instantáneamente." },
-          { "summary": "Diseño responsivo", "description": "Barra lateral izquierda en escritorio, navegación inferior en móvil, menú flotante reorganizado como barra lateral derecha." },
-          { "summary": "Sistema de temas", "description": "Variables CSS aplicadas consistentemente en UI incluyendo command palette y vistas previas." },
-          { "summary": "Tooltips inteligentes", "description": "Todos los botones ahora tienen tooltips con posicionamiento inteligente según la barra lateral." },
-          { "summary": "Cobertura de tests", "description": "455 tests pasando — cobertura expandida para configuración del editor, command palette, menú flotante y utilidades." }
+          {
+            "summary": "Configuración del editor",
+            "description": "Nuevo panel de configuración con control de ancho del editor y personalización de color de fondo de papel."
+          },
+          {
+            "summary": "Command palette",
+            "description": "Búsqueda global con interfaz estilo Spotlight — busca notas por título o contenido instantáneamente."
+          },
+          {
+            "summary": "Diseño responsivo",
+            "description": "Barra lateral izquierda en escritorio, navegación inferior en móvil, menú flotante reorganizado como barra lateral derecha."
+          },
+          {
+            "summary": "Sistema de temas",
+            "description": "Variables CSS aplicadas consistentemente en UI incluyendo command palette y vistas previas."
+          },
+          {
+            "summary": "Tooltips inteligentes",
+            "description": "Todos los botones ahora tienen tooltips con posicionamiento inteligente según la barra lateral."
+          },
+          {
+            "summary": "Cobertura de tests",
+            "description": "455 tests pasando — cobertura expandida para configuración del editor, command palette, menú flotante y utilidades."
+          }
         ],
         "en": [
-          { "summary": "Editor settings", "description": "New settings panel with editor width control and paper background color customization." },
-          { "summary": "Command palette", "description": "Global search with Spotlight-style UI — search notes by title or content instantly." },
-          { "summary": "Responsive layout", "description": "Left sidebar on desktop, bottom navigation on mobile, floating menu reorganized as right sidebar." },
-          { "summary": "Theme system", "description": "CSS variables applied consistently across UI including command palette and previews." },
-          { "summary": "Smart tooltips", "description": "All buttons now have smart tooltips with sidebar-aware positioning." },
-          { "summary": "Test coverage", "description": "455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities." }
+          {
+            "summary": "Editor settings",
+            "description": "New settings panel with editor width control and paper background color customization."
+          },
+          {
+            "summary": "Command palette",
+            "description": "Global search with Spotlight-style UI — search notes by title or content instantly."
+          },
+          {
+            "summary": "Responsive layout",
+            "description": "Left sidebar on desktop, bottom navigation on mobile, floating menu reorganized as right sidebar."
+          },
+          {
+            "summary": "Theme system",
+            "description": "CSS variables applied consistently across UI including command palette and previews."
+          },
+          {
+            "summary": "Smart tooltips",
+            "description": "All buttons now have smart tooltips with sidebar-aware positioning."
+          },
+          {
+            "summary": "Test coverage",
+            "description": "455 tests passing — expanded coverage for editor settings, command palette, floating menu, and utilities."
+          }
         ]
       }
     },
@@ -219,18 +583,48 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Actualización de dependencias", "description": "Dependencias críticas actualizadas mediante dependabot: Vite y grupo de dependencias npm_and_yarn" },
-          { "summary": "Corrección de estilos para Vite", "description": "Ajustes de estilos requeridos tras la última actualización de Vite para mantener la compatibilidad visual" },
-          { "summary": "Parche de seguridad CVE-2026-33532", "description": "Resuelta vulnerabilidad CVE-2026-33532 y vulnerabilidades relacionadas mediante overrides en npm" },
-          { "summary": "Internacionalización completa en páginas SEO", "description": "Las páginas Acerca de, Términos y Privacidad ahora se renderizan en el idioma del usuario mediante useTranslations()" },
-          { "summary": "Limpieza de código", "description": "Eliminado archivo duplicado contextMenu.js, strings hardcodeados en español reemplazados por claves i18n, corregido parpadeo de idioma incorrecto" }
+          {
+            "summary": "Actualización de dependencias",
+            "description": "Dependencias críticas actualizadas mediante dependabot: Vite y grupo de dependencias npm_and_yarn"
+          },
+          {
+            "summary": "Corrección de estilos para Vite",
+            "description": "Ajustes de estilos requeridos tras la última actualización de Vite para mantener la compatibilidad visual"
+          },
+          {
+            "summary": "Parche de seguridad CVE-2026-33532",
+            "description": "Resuelta vulnerabilidad CVE-2026-33532 y vulnerabilidades relacionadas mediante overrides en npm"
+          },
+          {
+            "summary": "Internacionalización completa en páginas SEO",
+            "description": "Las páginas Acerca de, Términos y Privacidad ahora se renderizan en el idioma del usuario mediante useTranslations()"
+          },
+          {
+            "summary": "Limpieza de código",
+            "description": "Eliminado archivo duplicado contextMenu.js, strings hardcodeados en español reemplazados por claves i18n, corregido parpadeo de idioma incorrecto"
+          }
         ],
         "en": [
-          { "summary": "Dependency updates", "description": "Critical dependencies updated via dependabot: Vite and npm_and_yarn dependency group" },
-          { "summary": "Vite style fix", "description": "Style adjustments required after the latest Vite update to maintain visual compatibility" },
-          { "summary": "Security patch CVE-2026-33532", "description": "Resolved CVE-2026-33532 vulnerability and related issues via npm overrides" },
-          { "summary": "Full i18n on SEO pages", "description": "About, Terms and Privacy pages now render in the user's language via useTranslations()" },
-          { "summary": "Code cleanup", "description": "Removed duplicate contextMenu.js, replaced hardcoded Spanish strings with i18n keys, fixed language flash on settings tabs" }
+          {
+            "summary": "Dependency updates",
+            "description": "Critical dependencies updated via dependabot: Vite and npm_and_yarn dependency group"
+          },
+          {
+            "summary": "Vite style fix",
+            "description": "Style adjustments required after the latest Vite update to maintain visual compatibility"
+          },
+          {
+            "summary": "Security patch CVE-2026-33532",
+            "description": "Resolved CVE-2026-33532 vulnerability and related issues via npm overrides"
+          },
+          {
+            "summary": "Full i18n on SEO pages",
+            "description": "About, Terms and Privacy pages now render in the user's language via useTranslations()"
+          },
+          {
+            "summary": "Code cleanup",
+            "description": "Removed duplicate contextMenu.js, replaced hardcoded Spanish strings with i18n keys, fixed language flash on settings tabs"
+          }
         ]
       }
     },
@@ -245,30 +639,96 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Modularización completa", "description": "Todos los componentes se reestructuraron en src/features/ como módulos independientes: FloatingMenu, ContextualMenu, ModalInfo, CreateTab, CloseTabConfirmation y Roadmap" },
-          { "summary": "Modal de confirmación", "description": "Nuevo diálogo <dialog> personalizado para eliminar pestañas, reemplazando el obsoleto confirm() nativo del navegador" },
-          { "summary": "Mejoras de accesibilidad", "description": "Atributos ARIA en modales, navegación por teclado mejorada, soporte para lectores de pantalla" },
-          { "summary": "Optimización SEO", "description": "Meta tag de verificación de Google Search Console, esquemas BreadcrumbList y HowTo, 3 nuevas vistas SEO, hreflang por defecto en 'en', indexación para agentes IA (Google, GPT, Anthropic)" },
-          { "summary": "Correcciones de UI", "description": "Posición del menú flotante se ajusta según modo de instalación (PWA vs navegador), correcciones en tablet y móvil, texto pegado preserva su estructura original" },
-          { "summary": "Internacionalización", "description": "Todos los comentarios y descripciones de tests traducidos al inglés, traducciones para menú contextual y modal de confirmación" },
-          { "summary": "Actualización de estilos", "description": "Eliminado outline en [contenteditable]:focus, agregado dialog::backdrop global, ajuste de --nav-bottom a 1rem, eliminados estilos de fuente redundantes" },
-          { "summary": "Nuevos iconos", "description": "6 iconos añadidos: botón cerrar, cohete, file-text, chevron-right, alerta y papelera" },
-          { "summary": "Roadmap", "description": "Nueva pestaña Roadmap reemplaza la pestaña Novedades, con integración i18n y sincronización automatizada desde roadmap-data.json" },
-          { "summary": "Automatización", "description": "Scripts para sincronización automática de traducciones del roadmap y generación de CHANGELOG.md" },
-          { "summary": "Limpieza", "description": "Scripts huérfanos eliminados (roadmap-gen.js), claves de traducción roadmap.old-* sin uso removidas, archivos duplicados eliminados" }
+          {
+            "summary": "Modularización completa",
+            "description": "Todos los componentes se reestructuraron en src/features/ como módulos independientes: FloatingMenu, ContextualMenu, ModalInfo, CreateTab, CloseTabConfirmation y Roadmap"
+          },
+          {
+            "summary": "Modal de confirmación",
+            "description": "Nuevo diálogo <dialog> personalizado para eliminar pestañas, reemplazando el obsoleto confirm() nativo del navegador"
+          },
+          {
+            "summary": "Mejoras de accesibilidad",
+            "description": "Atributos ARIA en modales, navegación por teclado mejorada, soporte para lectores de pantalla"
+          },
+          {
+            "summary": "Optimización SEO",
+            "description": "Meta tag de verificación de Google Search Console, esquemas BreadcrumbList y HowTo, 3 nuevas vistas SEO, hreflang por defecto en 'en', indexación para agentes IA (Google, GPT, Anthropic)"
+          },
+          {
+            "summary": "Correcciones de UI",
+            "description": "Posición del menú flotante se ajusta según modo de instalación (PWA vs navegador), correcciones en tablet y móvil, texto pegado preserva su estructura original"
+          },
+          {
+            "summary": "Internacionalización",
+            "description": "Todos los comentarios y descripciones de tests traducidos al inglés, traducciones para menú contextual y modal de confirmación"
+          },
+          {
+            "summary": "Actualización de estilos",
+            "description": "Eliminado outline en [contenteditable]:focus, agregado dialog::backdrop global, ajuste de --nav-bottom a 1rem, eliminados estilos de fuente redundantes"
+          },
+          {
+            "summary": "Nuevos iconos",
+            "description": "6 iconos añadidos: botón cerrar, cohete, file-text, chevron-right, alerta y papelera"
+          },
+          {
+            "summary": "Roadmap",
+            "description": "Nueva pestaña Roadmap reemplaza la pestaña Novedades, con integración i18n y sincronización automatizada desde roadmap-data.json"
+          },
+          {
+            "summary": "Automatización",
+            "description": "Scripts para sincronización automática de traducciones del roadmap y generación de CHANGELOG.md"
+          },
+          {
+            "summary": "Limpieza",
+            "description": "Scripts huérfanos eliminados (roadmap-gen.js), claves de traducción roadmap.old-* sin uso removidas, archivos duplicados eliminados"
+          }
         ],
         "en": [
-          { "summary": "Full modularization", "description": "All components restructured into src/features/ as self-contained modules: FloatingMenu, ContextualMenu, ModalInfo, CreateTab, CloseTabConfirmation, and Roadmap" },
-          { "summary": "Confirmation modal", "description": "Custom <dialog> element for tab deletion, replacing the native browser confirm()" },
-          { "summary": "Accessibility improvements", "description": "ARIA attributes on modals, improved keyboard navigation, screen reader support" },
-          { "summary": "SEO optimization", "description": "Google Search Console verification meta tag, BreadcrumbList and HowTo schemas, 3 new SEO views, default hreflang set to 'en', AI agent indexing (Google, GPT, Anthropic)" },
-          { "summary": "UI fixes", "description": "Floating menu position auto-adjusts based on install mode (PWA vs browser), tablet and mobile display corrections, pasted text preserves its original structure" },
-          { "summary": "Internationalization", "description": "All comments and test descriptions translated to English, contextual menu and confirmation modal translation" },
-          { "summary": "Style updates", "description": "Removed outline on [contenteditable]:focus, added global dialog::backdrop, --nav-bottom adjusted to 1rem, removed redundant font styles" },
-          { "summary": "New icons", "description": "6 icons added: close button, rocket, file-text, chevron-right, alert, and trash" },
-          { "summary": "Roadmap", "description": "New Roadmap tab replacing the News tab, with i18n integration and automated sync from roadmap-data.json" },
-          { "summary": "Automation", "description": "Scripts for automated roadmap translation sync and CHANGELOG.md generation" },
-          { "summary": "Cleanup", "description": "Removed orphaned scripts (roadmap-gen.js), unused roadmap.old-* translation keys, duplicate files deleted" }
+          {
+            "summary": "Full modularization",
+            "description": "All components restructured into src/features/ as self-contained modules: FloatingMenu, ContextualMenu, ModalInfo, CreateTab, CloseTabConfirmation, and Roadmap"
+          },
+          {
+            "summary": "Confirmation modal",
+            "description": "Custom <dialog> element for tab deletion, replacing the native browser confirm()"
+          },
+          {
+            "summary": "Accessibility improvements",
+            "description": "ARIA attributes on modals, improved keyboard navigation, screen reader support"
+          },
+          {
+            "summary": "SEO optimization",
+            "description": "Google Search Console verification meta tag, BreadcrumbList and HowTo schemas, 3 new SEO views, default hreflang set to 'en', AI agent indexing (Google, GPT, Anthropic)"
+          },
+          {
+            "summary": "UI fixes",
+            "description": "Floating menu position auto-adjusts based on install mode (PWA vs browser), tablet and mobile display corrections, pasted text preserves its original structure"
+          },
+          {
+            "summary": "Internationalization",
+            "description": "All comments and test descriptions translated to English, contextual menu and confirmation modal translation"
+          },
+          {
+            "summary": "Style updates",
+            "description": "Removed outline on [contenteditable]:focus, added global dialog::backdrop, --nav-bottom adjusted to 1rem, removed redundant font styles"
+          },
+          {
+            "summary": "New icons",
+            "description": "6 icons added: close button, rocket, file-text, chevron-right, alert, and trash"
+          },
+          {
+            "summary": "Roadmap",
+            "description": "New Roadmap tab replacing the News tab, with i18n integration and automated sync from roadmap-data.json"
+          },
+          {
+            "summary": "Automation",
+            "description": "Scripts for automated roadmap translation sync and CHANGELOG.md generation"
+          },
+          {
+            "summary": "Cleanup",
+            "description": "Removed orphaned scripts (roadmap-gen.js), unused roadmap.old-* translation keys, duplicate files deleted"
+          }
         ]
       }
     },
@@ -283,16 +743,40 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Modal de confirmación", "description": "Diálogo modal personalizado para eliminar pestañas, reemplazando el obsoleto confirm() de los navegadores" },
-          { "summary": "Mejoras para móviles y PWA", "description": "Posicionamiento dinámico del menú flotante, soporte para áreas seguras en iOS PWA, detección de teclado virtual y corrección de posición en modo standalone" },
-          { "summary": "Nuevos iconos", "description": "Iconos agregados: alerta y papelera" },
-          { "summary": "Pruebas", "description": "19 nuevas pruebas añadidas para los módulos de confirmación, eliminación de pestañas y posicionamiento del menú flotante. Total: 163 pruebas exitosas" }
+          {
+            "summary": "Modal de confirmación",
+            "description": "Diálogo modal personalizado para eliminar pestañas, reemplazando el obsoleto confirm() de los navegadores"
+          },
+          {
+            "summary": "Mejoras para móviles y PWA",
+            "description": "Posicionamiento dinámico del menú flotante, soporte para áreas seguras en iOS PWA, detección de teclado virtual y corrección de posición en modo standalone"
+          },
+          {
+            "summary": "Nuevos iconos",
+            "description": "Iconos agregados: alerta y papelera"
+          },
+          {
+            "summary": "Pruebas",
+            "description": "19 nuevas pruebas añadidas para los módulos de confirmación, eliminación de pestañas y posicionamiento del menú flotante. Total: 163 pruebas exitosas"
+          }
         ],
         "en": [
-          { "summary": "Confirmation modal", "description": "Custom modal dialog for tab deletion, replacing deprecated browser confirm()" },
-          { "summary": "Mobile & PWA improvements", "description": "Dynamic floating menu positioning, safe area insets support for iOS PWA, virtual keyboard detection, fixed positioning in standalone mode" },
-          { "summary": "New icons", "description": "Added alert and trash icons" },
-          { "summary": "Testing", "description": "19 new tests added for confirmation, tab deletion and floating menu modules. Total: 163 passing tests" }
+          {
+            "summary": "Confirmation modal",
+            "description": "Custom modal dialog for tab deletion, replacing deprecated browser confirm()"
+          },
+          {
+            "summary": "Mobile & PWA improvements",
+            "description": "Dynamic floating menu positioning, safe area insets support for iOS PWA, virtual keyboard detection, fixed positioning in standalone mode"
+          },
+          {
+            "summary": "New icons",
+            "description": "Added alert and trash icons"
+          },
+          {
+            "summary": "Testing",
+            "description": "19 new tests added for confirmation, tab deletion and floating menu modules. Total: 163 passing tests"
+          }
         ]
       }
     },
@@ -307,18 +791,48 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Corrección de pegado de texto", "description": "El texto pegado ahora se inserta en la posición del cursor usando Selection API en lugar de execCommand" },
-          { "summary": "Seguridad", "description": "Resueltas 7 vulnerabilidades críticas y altas (minimatch, rollup, svgo, immutable, ajv, devalue). Regenerado package-lock.json" },
-          { "summary": "Migración de Sass", "description": "Funciones globales obsoletas de Sass migradas a la API modular (map-get → map.get, etc.)" },
-          { "summary": "Automatización", "description": "Nuevos scripts de seguridad y GitHub Action para auditorías automáticas" },
-          { "summary": "Pruebas", "description": "Pruebas exhaustivas para la funcionalidad de pegado. Total: 146 pruebas exitosas" }
+          {
+            "summary": "Corrección de pegado de texto",
+            "description": "El texto pegado ahora se inserta en la posición del cursor usando Selection API en lugar de execCommand"
+          },
+          {
+            "summary": "Seguridad",
+            "description": "Resueltas 7 vulnerabilidades críticas y altas (minimatch, rollup, svgo, immutable, ajv, devalue). Regenerado package-lock.json"
+          },
+          {
+            "summary": "Migración de Sass",
+            "description": "Funciones globales obsoletas de Sass migradas a la API modular (map-get → map.get, etc.)"
+          },
+          {
+            "summary": "Automatización",
+            "description": "Nuevos scripts de seguridad y GitHub Action para auditorías automáticas"
+          },
+          {
+            "summary": "Pruebas",
+            "description": "Pruebas exhaustivas para la funcionalidad de pegado. Total: 146 pruebas exitosas"
+          }
         ],
         "en": [
-          { "summary": "Paste text fix", "description": "Pasted text now inserts at cursor position using Selection API instead of execCommand" },
-          { "summary": "Security", "description": "Resolved 7 critical and high severity vulnerabilities (minimatch, rollup, svgo, immutable, ajv, devalue). Regenerated package-lock.json" },
-          { "summary": "Sass migration", "description": "Migrated deprecated Sass global functions to modular API (map-get → map.get, etc.)" },
-          { "summary": "Development automation", "description": "Added security scripts and GitHub Action for automated security audits" },
-          { "summary": "Testing", "description": "Comprehensive tests for paste functionality. Total: 146 passing tests" }
+          {
+            "summary": "Paste text fix",
+            "description": "Pasted text now inserts at cursor position using Selection API instead of execCommand"
+          },
+          {
+            "summary": "Security",
+            "description": "Resolved 7 critical and high severity vulnerabilities (minimatch, rollup, svgo, immutable, ajv, devalue). Regenerated package-lock.json"
+          },
+          {
+            "summary": "Sass migration",
+            "description": "Migrated deprecated Sass global functions to modular API (map-get → map.get, etc.)"
+          },
+          {
+            "summary": "Development automation",
+            "description": "Added security scripts and GitHub Action for automated security audits"
+          },
+          {
+            "summary": "Testing",
+            "description": "Comprehensive tests for paste functionality. Total: 146 passing tests"
+          }
         ]
       }
     },
@@ -333,22 +847,64 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Menú flotante", "description": "Menú flotante con acciones agrupadas (contenido, fuente, pestañas)" },
-          { "summary": "Reordenamiento de pestañas", "description": "Arrastrar y soltar pestañas mediante SortableJS" },
-          { "summary": "Selector de tamaño de fuente", "description": "Opciones: Base, Mediano, Grande" },
-          { "summary": "Fuentes de Google", "description": "Soporte para fuentes personalizadas mediante URL" },
-          { "summary": "Internacionalización", "description": "Sistema i18n completo con inglés (EE.UU.) y español (Colombia)" },
-          { "summary": "Modal de configuración", "description": "Pestañas dedicadas: Acerca de, Licencia, Términos, Novedades, Tipografía, Apariencia, Idioma" },
-          { "summary": "Rediseño de modales", "description": "Rediseño completo del modal de configuración y nuevos iconos" }
+          {
+            "summary": "Menú flotante",
+            "description": "Menú flotante con acciones agrupadas (contenido, fuente, pestañas)"
+          },
+          {
+            "summary": "Reordenamiento de pestañas",
+            "description": "Arrastrar y soltar pestañas mediante SortableJS"
+          },
+          {
+            "summary": "Selector de tamaño de fuente",
+            "description": "Opciones: Base, Mediano, Grande"
+          },
+          {
+            "summary": "Fuentes de Google",
+            "description": "Soporte para fuentes personalizadas mediante URL"
+          },
+          {
+            "summary": "Internacionalización",
+            "description": "Sistema i18n completo con inglés (EE.UU.) y español (Colombia)"
+          },
+          {
+            "summary": "Modal de configuración",
+            "description": "Pestañas dedicadas: Acerca de, Licencia, Términos, Novedades, Tipografía, Apariencia, Idioma"
+          },
+          {
+            "summary": "Rediseño de modales",
+            "description": "Rediseño completo del modal de configuración y nuevos iconos"
+          }
         ],
         "en": [
-          { "summary": "Floating menu", "description": "Floating menu with grouped actions (content, font, tabs)" },
-          { "summary": "Tab reordering", "description": "Drag & drop tab reordering powered by SortableJS" },
-          { "summary": "Font size selector", "description": "Options: Base, Medium, Large" },
-          { "summary": "Custom Google Fonts", "description": "Support for custom fonts via URL paste" },
-          { "summary": "Internationalization", "description": "Full i18n system: English (US) & Spanish (CO)" },
-          { "summary": "Settings modal", "description": "Dedicated tabs: About, License, Terms, News, Typography, Appearance, Language" },
-          { "summary": "Modal redesign", "description": "Complete settings modal redesign and new icons" }
+          {
+            "summary": "Floating menu",
+            "description": "Floating menu with grouped actions (content, font, tabs)"
+          },
+          {
+            "summary": "Tab reordering",
+            "description": "Drag & drop tab reordering powered by SortableJS"
+          },
+          {
+            "summary": "Font size selector",
+            "description": "Options: Base, Medium, Large"
+          },
+          {
+            "summary": "Custom Google Fonts",
+            "description": "Support for custom fonts via URL paste"
+          },
+          {
+            "summary": "Internationalization",
+            "description": "Full i18n system: English (US) & Spanish (CO)"
+          },
+          {
+            "summary": "Settings modal",
+            "description": "Dedicated tabs: About, License, Terms, News, Typography, Appearance, Language"
+          },
+          {
+            "summary": "Modal redesign",
+            "description": "Complete settings modal redesign and new icons"
+          }
         ]
       }
     },
@@ -363,18 +919,48 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Correcciones críticas", "description": "7 problemas resueltos: accesibilidad del botón nueva pestaña, responsividad móvil, formato negrita, eliminación de fuentes personalizadas, persistencia de dominio, alertas duplicadas y advertencias de Apple" },
-          { "summary": "Infraestructura de pruebas", "description": "Framework Vitest con jsdom, suites para ThemeManager, FontManager, TabManager y ContextMenu" },
-          { "summary": "Idioma predeterminado", "description": "Cambio de español a inglés en toda la interfaz" },
-          { "summary": "Actualizaciones de seguridad", "description": "Dependencias críticas actualizadas (diff, h3, devalue) y política SECURITY.md añadida" },
-          { "summary": "Optimización de rendimiento", "description": "Tree-shaking, minificación, eliminación de listeners duplicados y precarga de fuentes" }
+          {
+            "summary": "Correcciones críticas",
+            "description": "7 problemas resueltos: accesibilidad del botón nueva pestaña, responsividad móvil, formato negrita, eliminación de fuentes personalizadas, persistencia de dominio, alertas duplicadas y advertencias de Apple"
+          },
+          {
+            "summary": "Infraestructura de pruebas",
+            "description": "Framework Vitest con jsdom, suites para ThemeManager, FontManager, TabManager y ContextMenu"
+          },
+          {
+            "summary": "Idioma predeterminado",
+            "description": "Cambio de español a inglés en toda la interfaz"
+          },
+          {
+            "summary": "Actualizaciones de seguridad",
+            "description": "Dependencias críticas actualizadas (diff, h3, devalue) y política SECURITY.md añadida"
+          },
+          {
+            "summary": "Optimización de rendimiento",
+            "description": "Tree-shaking, minificación, eliminación de listeners duplicados y precarga de fuentes"
+          }
         ],
         "en": [
-          { "summary": "Critical fixes", "description": "7 issues resolved: new tab accessibility, mobile responsiveness, bold formatting, custom font removal, domain persistence, duplicate alerts and Apple warnings" },
-          { "summary": "Testing infrastructure", "description": "Vitest framework with jsdom, test suites for ThemeManager, FontManager, TabManager and ContextMenu" },
-          { "summary": "Default language", "description": "Changed default language from Spanish to English across the interface" },
-          { "summary": "Security updates", "description": "Updated critical dependencies (diff, h3, devalue) and added SECURITY.md policy" },
-          { "summary": "Performance optimization", "description": "Tree-shaking, minification, removed duplicate listeners and font preconnect" }
+          {
+            "summary": "Critical fixes",
+            "description": "7 issues resolved: new tab accessibility, mobile responsiveness, bold formatting, custom font removal, domain persistence, duplicate alerts and Apple warnings"
+          },
+          {
+            "summary": "Testing infrastructure",
+            "description": "Vitest framework with jsdom, test suites for ThemeManager, FontManager, TabManager and ContextMenu"
+          },
+          {
+            "summary": "Default language",
+            "description": "Changed default language from Spanish to English across the interface"
+          },
+          {
+            "summary": "Security updates",
+            "description": "Updated critical dependencies (diff, h3, devalue) and added SECURITY.md policy"
+          },
+          {
+            "summary": "Performance optimization",
+            "description": "Tree-shaking, minification, removed duplicate listeners and font preconnect"
+          }
         ]
       }
     },
@@ -389,16 +975,40 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Selector de temas", "description": "6 estilos visuales disponibles para personalizar la apariencia" },
-          { "summary": "Soporte PWA", "description": "Instalación como aplicación en PC y dispositivos móviles" },
-          { "summary": "Rediseño UX", "description": "Mejoras significativas para desktop y tablets" },
-          { "summary": "Optimización SEO", "description": "Mejoras para aumentar la visibilidad del aplicativo" }
+          {
+            "summary": "Selector de temas",
+            "description": "6 estilos visuales disponibles para personalizar la apariencia"
+          },
+          {
+            "summary": "Soporte PWA",
+            "description": "Instalación como aplicación en PC y dispositivos móviles"
+          },
+          {
+            "summary": "Rediseño UX",
+            "description": "Mejoras significativas para desktop y tablets"
+          },
+          {
+            "summary": "Optimización SEO",
+            "description": "Mejoras para aumentar la visibilidad del aplicativo"
+          }
         ],
         "en": [
-          { "summary": "Theme selector", "description": "6 visual styles available to customize the appearance" },
-          { "summary": "PWA support", "description": "Install as application on PC and mobile devices" },
-          { "summary": "UX redesign", "description": "Significant improvements for desktop and tablets" },
-          { "summary": "SEO optimization", "description": "Improvements to increase application visibility" }
+          {
+            "summary": "Theme selector",
+            "description": "6 visual styles available to customize the appearance"
+          },
+          {
+            "summary": "PWA support",
+            "description": "Install as application on PC and mobile devices"
+          },
+          {
+            "summary": "UX redesign",
+            "description": "Significant improvements for desktop and tablets"
+          },
+          {
+            "summary": "SEO optimization",
+            "description": "Improvements to increase application visibility"
+          }
         ]
       }
     },
@@ -412,8 +1022,18 @@
       "isOld": true,
       "showInTab": false,
       "items": {
-        "es": [{ "summary": "Preparación de entorno", "description": "Entorno de preview preparado para actualización a versión 0.3.0" }],
-        "en": [{ "summary": "Environment preparation", "description": "Preview environment prepared for update to version 0.3.0" }]
+        "es": [
+          {
+            "summary": "Preparación de entorno",
+            "description": "Entorno de preview preparado para actualización a versión 0.3.0"
+          }
+        ],
+        "en": [
+          {
+            "summary": "Environment preparation",
+            "description": "Preview environment prepared for update to version 0.3.0"
+          }
+        ]
       }
     },
     {
@@ -427,14 +1047,32 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Ajustes de texto", "description": "Ajustes menores de texto en el modal de información" },
-          { "summary": "Seguridad en CI", "description": "Límites de seguridad agregados al flujo de trabajo de GitHub Actions" },
-          { "summary": "Vulnerabilidades corregidas", "description": "Vulnerabilidades en automatización de despliegue corregidas" }
+          {
+            "summary": "Ajustes de texto",
+            "description": "Ajustes menores de texto en el modal de información"
+          },
+          {
+            "summary": "Seguridad en CI",
+            "description": "Límites de seguridad agregados al flujo de trabajo de GitHub Actions"
+          },
+          {
+            "summary": "Vulnerabilidades corregidas",
+            "description": "Vulnerabilidades en automatización de despliegue corregidas"
+          }
         ],
         "en": [
-          { "summary": "Text adjustments", "description": "Minor text adjustments in the information modal" },
-          { "summary": "CI security", "description": "Security limits added to GitHub Actions workflow" },
-          { "summary": "Vulnerabilities fixed", "description": "Deployment automation vulnerabilities fixed" }
+          {
+            "summary": "Text adjustments",
+            "description": "Minor text adjustments in the information modal"
+          },
+          {
+            "summary": "CI security",
+            "description": "Security limits added to GitHub Actions workflow"
+          },
+          {
+            "summary": "Vulnerabilities fixed",
+            "description": "Deployment automation vulnerabilities fixed"
+          }
         ]
       }
     },
@@ -449,16 +1087,40 @@
       "showInTab": false,
       "items": {
         "es": [
-          { "summary": "Refactorización completa", "description": "Reescritura total del proyecto para mejorar estructura y mantenibilidad" },
-          { "summary": "Velocidad de carga", "description": "Optimizaciones significativas en el tiempo de carga inicial" },
-          { "summary": "Modularización", "description": "Scripts organizados en módulos independientes y reutilizables" },
-          { "summary": "Mantenibilidad", "description": "Código más limpio y preparado para futuras funcionalidades" }
+          {
+            "summary": "Refactorización completa",
+            "description": "Reescritura total del proyecto para mejorar estructura y mantenibilidad"
+          },
+          {
+            "summary": "Velocidad de carga",
+            "description": "Optimizaciones significativas en el tiempo de carga inicial"
+          },
+          {
+            "summary": "Modularización",
+            "description": "Scripts organizados en módulos independientes y reutilizables"
+          },
+          {
+            "summary": "Mantenibilidad",
+            "description": "Código más limpio y preparado para futuras funcionalidades"
+          }
         ],
         "en": [
-          { "summary": "Complete refactor", "description": "Full project rewrite to improve structure and maintainability" },
-          { "summary": "Load speed", "description": "Significant optimizations in initial loading time" },
-          { "summary": "Modularization", "description": "Scripts organized into independent and reusable modules" },
-          { "summary": "Maintainability", "description": "Cleaner code ready for future features" }
+          {
+            "summary": "Complete refactor",
+            "description": "Full project rewrite to improve structure and maintainability"
+          },
+          {
+            "summary": "Load speed",
+            "description": "Significant optimizations in initial loading time"
+          },
+          {
+            "summary": "Modularization",
+            "description": "Scripts organized into independent and reusable modules"
+          },
+          {
+            "summary": "Maintainability",
+            "description": "Cleaner code ready for future features"
+          }
         ]
       }
     }

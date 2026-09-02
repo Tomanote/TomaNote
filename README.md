@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.5-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.6-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,14 +20,32 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.5
+## 🚀 What's new — v0.5.6
 
-External link buttons, accessible dark-theme icons, blog launch, and feature request template.
+Milkdown editor integration, syntax highlighting, formatting toolbar, and UI cleanup.
 
 ### ✨ New features
-- **External link buttons** — Blog, Report a Bug, and Request a Feature in the sidebar, settings modal, and shortcuts help
-- **Feature Request GitHub template** — structured issue template for suggesting new features
-- **Official blog** — [blog.tomanote.app](https://blog.tomanote.app) with articles, changelogs, and productivity tips
+- **Milkdown editor** — Full ProseMirror-based Markdown editor replacing the legacy contenteditable system
+- **GFM support** — Tables, images with upload, links, and code blocks via @milkdown/kit
+- **Syntax highlighting** — Shiki-powered code block highlighting with language labels and line numbers
+- **Formatting toolbar** — Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links, horizontal rules)
+- **Keyboard shortcuts** — Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback
+- **Auto-empty lines** — Automatic empty paragraphs around code blocks and blockquotes for better cursor positioning
+- **Dual format support** — Markdown (Milkdown) and HTML (legacy) tabs coexist
+
+### 🔧 Improvements
+- **Code block styling** — Polished visual design with language labels, line numbers, and theme-aware colors
+- **Editor UX** — Improved cursor behavior after blockquotes and code blocks
+- **Bug fixes** — Fixed schema context key mismatch, stale state capture, and position validation errors
+
+### 📦 Dependencies
+- Added `@milkdown/kit` ^7.22.1, `@milkdown/plugin-tooltip` ^7.22.1, `@milkdown/theme-nord` ^7.22.1
+- Added `shiki` ^4.4.3 for syntax highlighting
+- Removed `marked` (replaced by Milkdown)
+
+### 🧪 Testing
+- Added 677 automated tests across 26 test files
+- New test suites for autoEmptyLines plugin, floating menu Milkdown route, and Shiki highlighting
 
 ### ♿ Accessibility
 - Sidebar and bottom bar icons now display **white with a subtle tinted background** on dark themes for better visibility

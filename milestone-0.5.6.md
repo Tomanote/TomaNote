@@ -1,6 +1,6 @@
 # Milestone 0.5.6 — Milkdown Integration & UI Cleanup
 
-> **Estado**: EN PROGRESO — FASES 0-5 completadas. Bugs conocidos pendientes.
+> **Estado**: EN PROGRESO — FASES 0-4.2, 6 completadas. FASES 7, 8 pendientes.
 
 ---
 
@@ -14,9 +14,10 @@
 | FASE 3 — Formatting Toolbar          | ✅ Completada | Right Sidebar con 12 botones de formato             |
 | FASE 4 — Dropdowns                   | ✅ Completada | Toggle, click outside, escape, tab change           |
 | FASE 4.1 — Fix funcionalidades rotas | ✅ Completada | Underline plugin, headings, undo/redo, context menu |
-| FASE 4.2 — Code Blocks + Shiki       | ⏳ Pendiente  | Syntax highlighting, line numbers                   |
+| FASE 4.1b — Integration bug fixes     | ✅ Completada | schemaCtx key, stale state, position validation    |
+| FASE 4.2 — Code Blocks + Shiki       | ✅ Completada | Shiki lazy load, lang labels, line numbers, CSS   |
 | FASE 5 — Left Sidebar cleanup        | ✅ Completada | Solo logo, search, help, settings                   |
-| FASE 6 — Documentación               | ⏳ Pendiente  | README, CHANGELOG, AI_CONTEXT                       |
+| FASE 6 — Documentación               | ✅ Completada | README, CHANGELOG, AI_CONTEXT, roadmap, modal      |
 | FASE 7 — Playwright E2E              | ⏳ Pendiente  | Tests de UI real                                    |
 | FASE 8 — Git Flow                    | ⏳ Pendiente  | Commits, push, PR                                   |
 

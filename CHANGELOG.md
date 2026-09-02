@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.6] - September 2, 2026
+
+### Added
+- Full Milkdown editor integration with ProseMirror-based Markdown editing.
+- GFM support: tables, images with upload, links, and code blocks.
+- Shiki-powered syntax highlighting for code blocks with language labels and line numbers.
+- Formatting toolbar in right sidebar with 12 buttons (bold, italic, underline, headings, code, blockquote, lists, links, horizontal rules).
+- Keyboard shortcuts: Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback.
+- Auto-empty lines plugin for better cursor positioning around code blocks and blockquotes.
+- Dual format support: Markdown (Milkdown) and HTML (legacy) tabs coexist.
+- 677 automated tests across 26 test files.
+
+### Changed
+- Replaced `marked` with `@milkdown/kit` for Markdown rendering.
+- Improved code block styling with theme-aware colors and monospace fonts.
+- Enhanced floating menu to route commands through Milkdown for markdown tabs.
+
+### Fixed
+- Fixed schema context key mismatch that crashed editor creation.
+- Fixed stale state capture in executeCommand causing position errors.
+- Added position validation and try-catch for all block commands.
+
 ## [0.5.5] - August 28, 2026
 
 ### Added
