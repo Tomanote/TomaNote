@@ -31,6 +31,7 @@ export class MilkdownEditor {
       const { history } = await import("@milkdown/kit/prose/history");
       const proseHistory = $prose(() => history());
       const { autoEmptyLines } = await import("./plugins/autoEmptyLinesPlugin.js");
+      const { shikiHighlight } = await import("./plugins/shikiHighlightPlugin.js");
 
       // Pre-load command modules to avoid async yield in executeCommand
       const { editorViewCtx } = await import("@milkdown/kit/core");
@@ -38,7 +39,7 @@ export class MilkdownEditor {
       const { TextSelection } = await import("@milkdown/kit/prose/state");
       const { undo, redo } = await import("@milkdown/kit/prose/history");
 
-      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, editorViewCtx, toggleMark, wrapIn, lift, TextSelection, undo, redo };
+      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, shikiHighlight, editorViewCtx, toggleMark, wrapIn, lift, TextSelection, undo, redo };
       this._initialized = true;
 
       this.log("✅ MilkdownEditor initialized — modules pre-loaded");
@@ -85,7 +86,7 @@ export class MilkdownEditor {
     }
 
     const { Editor, defaultValueCtx, rootCtx } = await import("@milkdown/kit/core");
-    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines } = this._modules;
+    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, shikiHighlight } = this._modules;
 
     this.log(`📝 Creating editor for ${tabId}, container:`, container?.tagName, container?.className?.substring(0, 50));
 
@@ -100,6 +101,7 @@ export class MilkdownEditor {
         .use(gfm)
         .use(proseHistory)
         .use(autoEmptyLines)
+        .use(shikiHighlight)
         .use(tooltipFactory("tomanote-tooltip"))
         .use(underline)
         .create();
