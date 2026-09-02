@@ -500,96 +500,36 @@ html[data-theme="neon-orbit"] {
 }
 
 // ==========================================
-// Shiki syntax highlighting — code blocks
+// Code block language label (pure CSS)
 // ==========================================
 .tab-list__item--content.milkdown-editor .ProseMirror {
-
-  // ── Code block wrapper ──
-  .shiki-code-block {
-    position: relative;
-    margin: 0.8em 0;
-    border-radius: var(--tn-border-radius);
-    border: 1px solid var(--tn-theme-contrast);
-    background-color: var(--tn-theme-primary);
-    overflow: hidden;
-
-    pre {
-      margin: 0;
-      padding: 1em 1.25em;
-      overflow-x: auto;
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      display: block;
-
-      code {
-        display: block;
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: 0.85em;
-        line-height: 1.65;
-        color: var(--tn-color-text);
-        white-space: pre;
-
-        // Override Shiki inline styles with CSS variables
-        span {
-          color: inherit;
-        }
-      }
-    }
-
-    // ── Language label ──
-    .shiki-lang-label {
-      position: absolute;
-      top: 0;
-      right: 0;
-      padding: 0.2em 0.6em;
-      font-size: 0.7em;
-      font-family: var(--tn-font-family-default);
-      font-weight: 500;
-      color: var(--tn-neutral-tertiary-color);
-      background-color: color-mix(in srgb, var(--tn-theme-contrast) 10%, transparent);
-      border-radius: 0 0 0 var(--tn-border-radius-small);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    // ── Line numbers (CSS counters) ──
-    &.shiki-with-line-numbers pre code {
-      counter-reset: line-number;
-      padding-left: 3.5em;
-
-      &::before {
-        // Counter reset is handled per-line via pseudo-elements
-      }
-    }
-
-    // Line numbers via left border + counter
-    &.shiki-with-line-numbers {
-      pre {
-        padding-left: 3.5em;
-        position: relative;
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 3em;
-          background-color: color-mix(in srgb, var(--tn-theme-contrast) 5%, transparent);
-          border-right: 1px solid var(--tn-theme-contrast);
-          pointer-events: none;
-        }
-      }
-    }
+  // Language label via CSS attr() — Milkdown sets data-language on <code>
+  pre > code[data-language]::before {
+    content: attr(data-language);
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.2em 0.6em;
+    font-size: 0.7em;
+    font-family: var(--tn-font-family-default);
+    font-weight: 500;
+    color: var(--tn-neutral-tertiary-color);
+    background-color: color-mix(in srgb, var(--tn-theme-contrast) 10%, transparent);
+    border-radius: 0 0 0 var(--tn-border-radius-small);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 1;
   }
 
-  // ── Inline code (keep existing style, just ensure it works) ──
+  // Ensure pre is positioned for the label
+  pre {
+    position: relative;
+  }
+
+  // Inline code override
   code:not(pre code) {
     font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
     font-size: 0.9em;
