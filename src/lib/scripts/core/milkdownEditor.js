@@ -30,8 +30,15 @@ export class MilkdownEditor {
       const { $prose } = await import("@milkdown/utils");
       const { history } = await import("@milkdown/kit/prose/history");
       const proseHistory = $prose(() => history());
+      const { autoEmptyLines } = await import("./plugins/autoEmptyLinesPlugin.js");
 
-      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory };
+      // Pre-load command modules to avoid async yield in executeCommand
+      const { editorViewCtx } = await import("@milkdown/kit/core");
+      const { toggleMark, wrapIn, lift } = await import("@milkdown/kit/prose/commands");
+      const { TextSelection } = await import("@milkdown/kit/prose/state");
+      const { undo, redo } = await import("@milkdown/kit/prose/history");
+
+      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, editorViewCtx, toggleMark, wrapIn, lift, TextSelection, undo, redo };
       this._initialized = true;
 
       this.log("✅ MilkdownEditor initialized — modules pre-loaded");
@@ -78,7 +85,7 @@ export class MilkdownEditor {
     }
 
     const { Editor, defaultValueCtx, rootCtx } = await import("@milkdown/kit/core");
-    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory } = this._modules;
+    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines } = this._modules;
 
     this.log(`📝 Creating editor for ${tabId}, container:`, container?.tagName, container?.className?.substring(0, 50));
 
@@ -92,6 +99,7 @@ export class MilkdownEditor {
         .use(commonmark)
         .use(gfm)
         .use(proseHistory)
+        .use(autoEmptyLines)
         .use(tooltipFactory("tomanote-tooltip"))
         .use(underline)
         .create();
@@ -213,14 +221,15 @@ export class MilkdownEditor {
     if (!entry) return;
 
     try {
-      const { editorViewCtx, schemaCtx } = await import("@milkdown/kit/core");
-      const { toggleMark, wrapIn, lift } = await import("@milkdown/kit/prose/commands");
-      const { TextSelection } = await import("@milkdown/kit/prose/state");
+      const { editorViewCtx, toggleMark, wrapIn, lift, TextSelection } = this._modules || {};
+      if (!editorViewCtx) return;
 
       const view = entry.editor.ctx.get(editorViewCtx);
       if (!view) return;
 
-      const { state, dispatch } = view;
+      // Always read the LIVE state — never cache across async boundaries
+      const state = view.state;
+      const { dispatch } = view;
       const { schema } = state;
 
       switch (command) {
@@ -252,17 +261,20 @@ export class MilkdownEditor {
         case "codeInline": {
           const markType = schema.marks.inlineCode;
           if (!markType) break;
-          const hasSelection = !state.selection.empty;
-          if (hasSelection) {
-            toggleMark(markType)(state, dispatch);
-          } else {
-            // No selection: insert backticks with cursor between them
-            const tr = state.tr
-              .insertText("``")
-              .setSelection(TextSelection.near(state.doc.resolve(state.selection.from - 1)))
-              .scrollIntoView();
-            dispatch(tr);
-          }
+          try {
+            const hasSelection = !state.selection.empty;
+            if (hasSelection) {
+              toggleMark(markType)(state, dispatch);
+            } else {
+              // No selection: insert backticks with cursor between them
+              const safePos = Math.max(1, Math.min(state.selection.from, state.doc.content.size));
+              const tr = state.tr
+                .insertText("``")
+                .setSelection(TextSelection.near(state.doc.resolve(safePos - 1)))
+                .scrollIntoView();
+              dispatch(tr);
+            }
+          } catch (_) { /* position invalid — ignore */ }
           view.focus();
           break;
         }
@@ -275,24 +287,25 @@ export class MilkdownEditor {
           const headingType = schema.nodes.heading;
           if (!headingType) break;
 
-          // Check if current block is already this heading level
-          const $from = state.selection.$from;
-          const currentBlock = $from.node($from.depth);
-          const isCurrentHeading = currentBlock?.type === headingType;
-          const isCurrentLevel = currentBlock?.attrs?.level === level;
+          try {
+            const $hFrom = state.selection.$from;
+            let depth = $hFrom.depth;
+            while (depth > 0 && !$hFrom.parent.inlineContent) depth--;
+            const currentBlock = $hFrom.node(depth);
+            const isCurrentHeading = currentBlock?.type === headingType;
+            const isCurrentLevel = currentBlock?.attrs?.level === level;
 
-          if (isCurrentHeading && isCurrentLevel) {
-            // Toggle off: heading → paragraph
-            const paragraphType = schema.nodes.paragraph;
-            if (paragraphType) {
-              const tr = state.tr.setBlockType($from.start($from.depth), $from.end($from.depth), paragraphType);
+            if (isCurrentHeading && isCurrentLevel) {
+              const paragraphType = schema.nodes.paragraph;
+              if (paragraphType) {
+                const tr = state.tr.setBlockType($hFrom.start(depth), $hFrom.end(depth), paragraphType);
+                dispatch(tr);
+              }
+            } else {
+              const tr = state.tr.setBlockType($hFrom.start(depth), $hFrom.end(depth), headingType, { level });
               dispatch(tr);
             }
-          } else {
-            // Apply heading at this level
-            const tr = state.tr.setBlockType($from.start($from.depth), $from.end($from.depth), headingType, { level });
-            dispatch(tr);
-          }
+          } catch (_) { /* position invalid — ignore */ }
           view.focus();
           break;
         }
@@ -301,9 +314,16 @@ export class MilkdownEditor {
         case "codeBlock": {
           const codeBlockType = schema.nodes.code_block;
           if (!codeBlockType) break;
-          const $from = state.selection.$from;
-          const tr = state.tr.setBlockType($from.start($from.depth), $from.end($from.depth), codeBlockType);
-          dispatch(tr);
+          try {
+            const $cbFrom = state.selection.$from;
+            // Walk up to find the nearest block-typeable depth
+            let depth = $cbFrom.depth;
+            while (depth > 0 && !$cbFrom.parent.inlineContent) depth--;
+            const from = $cbFrom.start(depth);
+            const to = $cbFrom.end(depth);
+            const tr = state.tr.setBlockType(from, to, codeBlockType);
+            dispatch(tr);
+          } catch (_) { /* position invalid — ignore */ }
           view.focus();
           break;
         }
@@ -320,8 +340,20 @@ export class MilkdownEditor {
               return;
             }
           }
-          // Otherwise wrap in blockquote
-          wrapIn(blockquoteType)(state, dispatch);
+          // Otherwise wrap in blockquote (ProseMirror command handles validation)
+          const wrapResult = wrapIn(blockquoteType)(state, dispatch);
+          if (!wrapResult) {
+            // Fallback: try setBlockType approach
+            try {
+              const from = $bqFrom.start($bqFrom.depth);
+              const to = $bqFrom.end($bqFrom.depth);
+              const tr = state.tr.wrap(
+                { from, to, depth: $bqFrom.depth },
+                [blockquoteType.create()]
+              );
+              dispatch(tr);
+            } catch (_) { /* position invalid — ignore */ }
+          }
           view.focus();
           break;
         }
@@ -329,16 +361,17 @@ export class MilkdownEditor {
         case "bulletList": {
           const listType = schema.nodes.bullet_list;
           if (!listType) break;
-          // Check if already in bullet list → lift out
-          const $blFrom = state.selection.$from;
-          for (let d = $blFrom.depth; d >= 0; d--) {
-            if ($blFrom.node(d).type === listType) {
-              lift(state, dispatch);
-              view.focus();
-              return;
+          try {
+            const $blFrom = state.selection.$from;
+            for (let d = $blFrom.depth; d >= 0; d--) {
+              if ($blFrom.node(d).type === listType) {
+                lift(state, dispatch);
+                view.focus();
+                return;
+              }
             }
-          }
-          wrapIn(listType)(state, dispatch);
+            wrapIn(listType)(state, dispatch);
+          } catch (_) { /* position invalid — ignore */ }
           view.focus();
           break;
         }
@@ -346,15 +379,17 @@ export class MilkdownEditor {
         case "orderedList": {
           const listType = schema.nodes.ordered_list;
           if (!listType) break;
-          const $olFrom = state.selection.$from;
-          for (let d = $olFrom.depth; d >= 0; d--) {
-            if ($olFrom.node(d).type === listType) {
-              lift(state, dispatch);
-              view.focus();
-              return;
+          try {
+            const $olFrom = state.selection.$from;
+            for (let d = $olFrom.depth; d >= 0; d--) {
+              if ($olFrom.node(d).type === listType) {
+                lift(state, dispatch);
+                view.focus();
+                return;
+              }
             }
-          }
-          wrapIn(listType)(state, dispatch);
+            wrapIn(listType)(state, dispatch);
+          } catch (_) { /* position invalid — ignore */ }
           view.focus();
           break;
         }
@@ -439,8 +474,8 @@ export class MilkdownEditor {
     const entry = this.editors.get(tabId);
     if (!entry) return;
     try {
-      const { undo } = await import("@milkdown/kit/prose/history");
-      const { editorViewCtx } = await import("@milkdown/kit/core");
+      const { editorViewCtx, undo } = this._modules || {};
+      if (!editorViewCtx || !undo) return;
       const view = entry.editor.ctx.get(editorViewCtx);
       if (view) undo(view.state, view.dispatch, view);
     } catch (e) {
@@ -456,8 +491,8 @@ export class MilkdownEditor {
     const entry = this.editors.get(tabId);
     if (!entry) return;
     try {
-      const { redo } = await import("@milkdown/kit/prose/history");
-      const { editorViewCtx } = await import("@milkdown/kit/core");
+      const { editorViewCtx, redo } = this._modules || {};
+      if (!editorViewCtx || !redo) return;
       const view = entry.editor.ctx.get(editorViewCtx);
       if (view) redo(view.state, view.dispatch, view);
     } catch (e) {
@@ -474,10 +509,12 @@ export class MilkdownEditor {
     const entry = this.editors.get(tabId);
     if (!entry) return;
     try {
-      const { editorViewCtx } = await import("@milkdown/kit/core");
+      const { editorViewCtx } = this._modules || {};
+      if (!editorViewCtx) return;
       const view = entry.editor.ctx.get(editorViewCtx);
       if (!view) return;
-      const { state, dispatch } = view;
+      const state = view.state;
+      const { dispatch } = view;
       const tr = state.tr.insertText(text);
       dispatch(tr);
       view.focus();
@@ -495,9 +532,8 @@ export class MilkdownEditor {
     if (!entry) return;
 
     try {
-      // Get ProseMirror EditorView from Milkdown context
-      const { editorViewCtx } = await import("@milkdown/kit/core");
-      const { TextSelection } = await import("@milkdown/kit/prose/state");
+      const { editorViewCtx, TextSelection } = this._modules || {};
+      if (!editorViewCtx || !TextSelection) return;
 
       const view = entry.editor.ctx.get(editorViewCtx);
       if (!view || !view.state) {
@@ -508,7 +544,7 @@ export class MilkdownEditor {
       // Focus the editor
       view.focus();
 
-      // Position caret at end of document
+      // Position caret at end of document — always read LIVE state
       const endPos = view.state.doc.content.size;
       const resolvedPos = view.state.doc.resolve(endPos > 1 ? endPos - 1 : 0);
       const selection = TextSelection.near(resolvedPos);

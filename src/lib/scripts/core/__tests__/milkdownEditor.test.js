@@ -70,15 +70,13 @@ describe("MilkdownEditor - Caret Positioning", () => {
     const editor = new MilkdownEditorClass();
     const view = createMockEditorView(1); // size 1 = empty doc
 
-    // Mock the editorViewCtx import
-    vi.doMock("@milkdown/kit/core", () => ({
+    // Set up pre-loaded modules (new code reads from this._modules)
+    editor._modules = {
       editorViewCtx: { _isEditorViewCtx: true },
-    }));
-    vi.doMock("@milkdown/kit/prose/state", () => ({
       TextSelection: {
         near: (pos) => ({ type: "text", anchor: pos.pos }),
       },
-    }));
+    };
 
     // Manually set up the editor entry
     editor.editors.set("test-tab", {
@@ -112,14 +110,13 @@ describe("MilkdownEditor - Caret Positioning", () => {
     const contentSize = 42; // Simulated content size
     const view = createMockEditorView(contentSize);
 
-    vi.doMock("@milkdown/kit/core", () => ({
+    // Set up pre-loaded modules
+    editor._modules = {
       editorViewCtx: { _isEditorViewCtx: true },
-    }));
-    vi.doMock("@milkdown/kit/prose/state", () => ({
       TextSelection: {
         near: (pos) => ({ type: "text", anchor: pos.pos }),
       },
-    }));
+    };
 
     editor.editors.set("test-tab-2", {
       editor: {
@@ -147,10 +144,7 @@ describe("MilkdownEditor - Caret Positioning", () => {
 
   it("should handle missing ProseMirror view gracefully", async () => {
     const editor = new MilkdownEditorClass();
-
-    vi.doMock("@milkdown/kit/core", () => ({
-      editorViewCtx: { _isEditorViewCtx: true },
-    }));
+    editor._modules = { editorViewCtx: { _isEditorViewCtx: true } };
 
     // Editor with no ctx.get returning null
     editor.editors.set("test-tab-3", {
