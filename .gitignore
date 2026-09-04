@@ -154,4 +154,4 @@ opencode.json
 
 #Freebuff
 /.freebuff
-/.freebuff/**
+/.freebuff/**test-results/
