@@ -14,6 +14,7 @@
     "astro": "astro",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
     "coverage": "vitest run --coverage",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
@@ -38,6 +39,7 @@
     "vite": "^8.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@vitest/coverage-v8": "^4.1.10",
     "gh-pages": "^6.3.0",

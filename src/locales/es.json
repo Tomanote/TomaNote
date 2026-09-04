@@ -300,12 +300,12 @@
   "roadmap.release-054.9.description": "Acceso directo a la documentación desde el botón de la barra lateral izquierda. Visítala en: https://docs.tomanote.app/",
   "roadmap.release-054.10.summary": "574 tests pasando",
   "roadmap.release-054.10.description": "Cobertura de pruebas expandida con corrección de contaminación de estado en tests de atajos de formato.",
-  "roadmap.release-055.0.summary": "Botones de enlace externo",
-  "roadmap.release-055.0.description": "Tres nuevos botones de enlace externo en la barra lateral, modal de ajustes y ayuda de atajos: Blog, Reportar Bug y Solicitar Feature.",
-  "roadmap.release-055.1.summary": "Plantilla de Feature Request",
-  "roadmap.release-055.1.description": "Nuevo template de issue en GitHub para solicitar features con estructura guiada.",
-  "roadmap.release-055.2.summary": "Blog oficial en línea",
-  "roadmap.release-055.2.description": "El blog de TomaNote (blog.tomanote.app) está oficialmente en línea con artículos, changelogs y consejos de productividad.",
-  "roadmap.release-055.3.summary": "Iconos accesibles en temas oscuros",
-  "roadmap.release-055.3.description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad."
+  "roadmap.release-056.0.summary": "Editor Milkdown",
+  "roadmap.release-056.0.description": "Integración completa del editor Milkdown con edición Markdown basada en ProseMirror.",
+  "roadmap.release-056.1.summary": "Resaltado de sintaxis",
+  "roadmap.release-056.1.description": "Resaltado de sintaxis con Shiki para bloques de código con etiquetas de idioma y números de línea.",
+  "roadmap.release-056.2.summary": "Barra de formato",
+  "roadmap.release-056.2.description": "Barra lateral derecha con 12 botones de formato (negrita, cursiva, subrayado, encabezados, código, blockquote, listas, enlaces).",
+  "roadmap.release-056.3.summary": "Atajos de teclado",
+  "roadmap.release-056.3.description": "Ctrl+B/I/U para formato, Ctrl+Z/Y para deshacer/rehacer, Ctrl+S para feedback de guardado."
 }

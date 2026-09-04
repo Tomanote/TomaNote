@@ -299,12 +299,12 @@
   "roadmap.release-054.9.description": "Direct access to documentation from the left sidebar button. Visit: https://docs.tomanote.app/",
   "roadmap.release-054.10.summary": "574 tests passing",
   "roadmap.release-054.10.description": "Expanded test coverage with fix for state pollution in formatting shortcut tests.",
-  "roadmap.release-055.0.summary": "External link buttons",
-  "roadmap.release-055.0.description": "Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature.",
-  "roadmap.release-055.1.summary": "Feature Request template",
-  "roadmap.release-055.1.description": "New GitHub issue template for requesting features with guided structure.",
-  "roadmap.release-055.2.summary": "Official blog live",
-  "roadmap.release-055.2.description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips.",
-  "roadmap.release-055.3.summary": "Accessible icons on dark themes",
-  "roadmap.release-055.3.description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility."
+  "roadmap.release-056.0.summary": "Milkdown editor",
+  "roadmap.release-056.0.description": "Full Milkdown editor integration with ProseMirror-based Markdown editing.",
+  "roadmap.release-056.1.summary": "Syntax highlighting",
+  "roadmap.release-056.1.description": "Shiki-powered syntax highlighting for code blocks with language labels and line numbers.",
+  "roadmap.release-056.2.summary": "Formatting toolbar",
+  "roadmap.release-056.2.description": "Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links).",
+  "roadmap.release-056.3.summary": "Keyboard shortcuts",
+  "roadmap.release-056.3.description": "Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback."
 }
