@@ -4,35 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.6] - September 2, 2026
+## [0.5.6] - September 4, 2026
 
 ### Added
 - Full Milkdown editor integration with ProseMirror-based Markdown editing.
-- GFM support: tables, images with upload, links, and code blocks.
-- Shiki-powered syntax highlighting for code blocks with language labels and line numbers.
-- Formatting toolbar in right sidebar with 12 buttons (bold, italic, underline, headings, code, blockquote, lists, links, horizontal rules).
-- Keyboard shortcuts: Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback.
+- Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links).
+- Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback.
+- Playwright E2E testing with 56 tests covering editor, UI, and persistence.
 - Auto-empty lines plugin for better cursor positioning around code blocks and blockquotes.
-- Dual format support: Markdown (Milkdown) and HTML (legacy) tabs coexist.
-- 677 automated tests across 26 test files.
+- Pre-loaded command modules for synchronous editor command execution.
 
 ### Changed
-- Replaced `marked` with `@milkdown/kit` for Markdown rendering.
-- Improved code block styling with theme-aware colors and monospace fonts.
-- Enhanced floating menu to route commands through Milkdown for markdown tabs.
+- Replaced legacy contenteditable system with Milkdown/ProseMirror for Markdown tabs.
+- Dual format support: Markdown (Milkdown) and HTML (legacy) tabs coexist.
+- Code block styling with language labels, line numbers, and theme-aware colors.
 
 ### Fixed
-- Fixed schema context key mismatch that crashed editor creation.
-- Fixed stale state capture in executeCommand causing position errors.
-- Added position validation and try-catch for all block commands.
+- Schema context key mismatch (`schemaCtx` → `schemaCtx` slice) that crashed editor creation.
+- Stale state capture in `executeCommand` by pre-loading modules during init.
+- Position validation in `autoEmptyLinesPlugin` to prevent `RangeError: Position out of range`.
+- Tab restore not activating Milkdown editor after page reload.
 
-## [0.5.5] - August 28, 2026
+### Removed
+- Shiki dependency (evaluated and removed due to async timing issues with ProseMirror).
+- `marked` dependency (replaced by Milkdown).
 
-### Added
-- Three new external link buttons in the sidebar, settings modal, and shortcuts help: Blog, Report a Bug, and Request a Feature.
-- New GitHub issue template for requesting features with guided structure.
-- The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips.
-- Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility.
+### Testing
+- 723 total tests: 667 unit tests (Vitest) + 56 E2E tests (Playwright).
 
 ## [0.5.4] - August 19, 2026
 

@@ -27,7 +27,7 @@ Milkdown editor integration, syntax highlighting, formatting toolbar, and UI cle
 ### ✨ New features
 - **Milkdown editor** — Full ProseMirror-based Markdown editor replacing the legacy contenteditable system
 - **GFM support** — Tables, images with upload, links, and code blocks via @milkdown/kit
-- **Syntax highlighting** — Shiki-powered code block highlighting with language labels and line numbers
+- **Code block styling** — Polished code blocks with language labels, line numbers, and theme-aware colors
 - **Formatting toolbar** — Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links, horizontal rules)
 - **Keyboard shortcuts** — Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback
 - **Auto-empty lines** — Automatic empty paragraphs around code blocks and blockquotes for better cursor positioning
@@ -40,18 +40,19 @@ Milkdown editor integration, syntax highlighting, formatting toolbar, and UI cle
 
 ### 📦 Dependencies
 - Added `@milkdown/kit` ^7.22.1, `@milkdown/plugin-tooltip` ^7.22.1, `@milkdown/theme-nord` ^7.22.1
-- Added `shiki` ^4.4.3 for syntax highlighting
 - Removed `marked` (replaced by Milkdown)
 
 ### 🧪 Testing
-- Added 677 automated tests across 26 test files
-- New test suites for autoEmptyLines plugin, floating menu Milkdown route, and Shiki highlighting
+- Added Playwright E2E testing with 56 tests across editor, UI, and persistence suites
+- New test suites for autoEmptyLines plugin, floating menu Milkdown route, and code block formatting
 
-### ♿ Accessibility
-- Sidebar and bottom bar icons now display **white with a subtle tinted background** on dark themes for better visibility
+### 🧪 Playwright E2E
+- 25 editor tests: loading, typing, formatting, headings, code blocks, blockquotes, lists, links, undo/redo, tables, multi-tab
+- 22 UI tests: sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts help, context menu, tab switching
+- 9 persistence tests: auto-save, localStorage, reload, multi-tab persistence, markdown recovery
 
 ### 🧪 Test coverage
-574 tests passing.
+723 total tests: 667 unit tests (Vitest) + 56 E2E tests (Playwright).
 
 ## 🛠️ Tech Stack
 

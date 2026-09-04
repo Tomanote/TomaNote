@@ -1,6 +1,6 @@
 # AI Context — TomaNote
 
-> **Last updated**: 2026-09-02 | **Version**: 0.5.6 (milestone) | **Branch**: milestone-0.5.6
+> **Last updated**: 2026-09-04 | **Version**: 0.5.6 (milestone) | **Branch**: milestone-0.5.6
 
 ---
 
@@ -16,16 +16,17 @@ Free, privacy-first, offline-capable notepad PWA. Runs 100% in the browser — n
 
 ## Tech Stack
 
-| Technology    | Version  | Purpose                    |
-| ------------- | -------- | -------------------------- |
-| Astro         | ^7.1.0   | Framework / SSG            |
-| TypeScript    | ^5.9.3   | Type checking              |
-| Tailwind CSS  | ^4.0.16  | Utility CSS                |
-| Sass          | ^1.86.0  | SCSS styles                |
-| Vite          | ^8.1.0   | Bundler                    |
-| Vitest        | ^4.1.0   | Unit testing               |
-| @milkdown/kit | ^7.22.1  | Markdown editor (PM)       |
-| sortablejs    | ^1.15.7  | Drag-and-drop              |
+| Technology    | Version | Purpose              |
+| ------------- | ------- | -------------------- |
+| Astro         | ^7.1.0  | Framework / SSG      |
+| TypeScript    | ^5.9.3  | Type checking        |
+| Tailwind CSS  | ^4.0.16 | Utility CSS          |
+| Sass          | ^1.86.0 | SCSS styles          |
+| Vite          | ^8.1.0  | Bundler              |
+| Vitest        | ^4.1.0  | Unit testing         |
+| Playwright    | ^1.62.1 | E2E testing          |
+| @milkdown/kit | ^7.22.1 | Markdown editor (PM) |
+| sortablejs    | ^1.15.7 | Drag-and-drop        |
 
 **Node.js**: >= 22.12.0
 
@@ -42,7 +43,7 @@ src/
 │   ├── contextual-menu/         # Right-click menus
 │   ├── editor/                  # Editor wrapper & settings
 │   ├── floating-menu/           # Action button with format groups
-│   ├── keyboard-shortcuts-help/ # Shortcuts overlay (Ctrl+/)
+│   ├── keyboard-shortcuts-help/ # Shortcuts overlay (Alt+/)
 │   ├── modal-info/              # Settings/info modal
 │   ├── roadmap/                 # Version history tab
 │   ├── save-indicator/          # Auto-save feedback
@@ -80,13 +81,15 @@ src/
 
 ## Current State
 
-| Field              | Value                                      |
-| ------------------ | ------------------------------------------ |
-| Production version | 0.5.4 (deployed via `gh-pages`)            |
-| Active branch      | `milestone-0.5.6`                          |
-| Default branch     | `master`                                   |
-| Tests passing      | 667                                        |
-| Test framework     | Vitest + jsdom + @testing-library/jest-dom |
+| Field              | Value                                         |
+| ------------------ | --------------------------------------------- |
+| Production version | 0.5.4 (deployed via `gh-pages`)               |
+| Active branch      | `milestone-0.5.6`                             |
+| Default branch     | `master`                                      |
+| Tests (unit)       | 667 passing (25 files, Vitest)                |
+| Tests (E2E)        | 56 passing (3 files, Playwright)              |
+| Tests (total)      | 723                                           |
+| Test framework     | Vitest + jsdom + Playwright + @testing-library |
 
 ---
 
@@ -96,23 +99,23 @@ src/
 
 `milkdownEditor.js` — singleton (`window.milkdownEditor`) that manages one Milkdown editor per tab.
 
-| Method            | Description                                                    |
-| ----------------- | -------------------------------------------------------------- |
-| `init()`          | Pre-loads all modules (commonmark, gfm, plugins, commands)    |
-| `createEditor()`  | Creates Milkdown editor in a container (one per tab)           |
-| `destroyEditor()` | Removes editor + observers for a tab                          |
-| `getContent()`    | Returns markdown from ProseMirror state                        |
-| `executeCommand()` | Runs formatting commands (bold, italic, headings, etc.)       |
-| `undo()` / `redo()` | History navigation via @milkdown/kit/prose/history           |
-| `pasteText()`     | Inserts text at cursor position                                |
-| `focus()`         | Focuses editor and positions caret at end                      |
+| Method              | Description                                                |
+| ------------------- | ---------------------------------------------------------- |
+| `init()`            | Pre-loads all modules (commonmark, gfm, plugins, commands) |
+| `createEditor()`    | Creates Milkdown editor in a container (one per tab)       |
+| `destroyEditor()`   | Removes editor + observers for a tab                       |
+| `getContent()`      | Returns markdown from ProseMirror state                    |
+| `executeCommand()`  | Runs formatting commands (bold, italic, headings, etc.)    |
+| `undo()` / `redo()` | History navigation via @milkdown/kit/prose/history         |
+| `pasteText()`       | Inserts text at cursor position                            |
+| `focus()`           | Focuses editor and positions caret at end                  |
 
 ### Plugins
 
-| Plugin                  | File                            | Purpose                                    |
-| ----------------------- | ------------------------------- | ------------------------------------------ |
-| autoEmptyLines          | `autoEmptyLinesPlugin.js`       | Inserts empty `<p>` before/after code blocks and blockquotes |
-| underline               | `underlinePlugin.js`            | Custom `<u>` mark (not in commonmark)     |
+| Plugin         | File                      | Purpose                                                      |
+| -------------- | ------------------------- | ------------------------------------------------------------ |
+| autoEmptyLines | `autoEmptyLinesPlugin.js` | Inserts empty `<p>` before/after code blocks and blockquotes |
+| underline      | `underlinePlugin.js`      | Custom `<u>` mark (not in commonmark)                        |
 
 ### Commands (via `executeCommand`)
 
@@ -132,7 +135,9 @@ All commands use ProseMirror's Transform API directly (not Milkdown command syst
 
 ---
 
-## Test Files (25 files, 667 tests)
+## Test Files
+
+### Unit Tests (Vitest) — 25 files, 667 tests
 
 ```
 close-tab-confirmation.test.js      # 10 tests
@@ -162,49 +167,73 @@ emojiDetector.test.js               # 18 tests — emoji detection
 formatting.test.js                  # 6 tests — text formatting
 ```
 
+### E2E Tests (Playwright) — 3 files, 56 tests
+
+```
+e2e/editor.spec.js                  # 25 tests — editor loading, formatting, headings, code blocks, lists, links, undo/redo, tables, multi-tab
+e2e/ui.spec.js                      # 22 tests — sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts, context menu, tab switching, responsive
+e2e/persistence.spec.js             # 9 tests — auto-save, localStorage, reload, multi-tab persistence, markdown recovery
+```
+
 ---
 
 ## Recent Work (v0.5.6 milestone)
 
-### FASE 0 — Setup
+### PHASE 0 — Setup
+
 - Installed `@milkdown/kit`, `@milkdown/theme-nord`, `@milkdown/plugin-tooltip`
 - Removed `marked` dependency (replaced by Milkdown)
 
-### FASE 1 — Core Editor
+### PHASE 1 — Core Editor
+
 - `MilkdownEditor` class: singleton managing per-tab editors
 - ProseMirror-based Markdown editing with auto-save
 
-### FASE 2 — GFM Support
+### PHASE 2 — GFM Support
+
 - Tables, images (with upload), links, code blocks via `@milkdown/kit/preset/gfm`
 
-### FASE 3 — Formatting Toolbar
+### PHASE 3 — Formatting Toolbar
+
 - Right sidebar with 12 format buttons (bold, italic, headings, lists, etc.)
 - Floating menu with grouped actions
 
-### FASE 4 — Dropdowns & UX
+### PHASE 4 — Dropdowns & UX
+
 - Toggle, click-outside, escape, tab change handling
 
-### FASE 4.1 — Broken Functionality Fixes
+### PHASE 4.1 — Broken Functionality Fixes
+
 - Underline plugin (`underlinePlugin.js`) — custom `<u>` mark
 - Heading toggle (same-level heading → paragraph)
 - Undo/redo via `@milkdown/kit/prose/history`
 - Context menu integration
 
-### FASE 4.1b — Integration Bug Fixes
+### PHASE 4.1b — Integration Bug Fixes
+
 - **schemaCtx key fix**: `ctx.get("schemaCtx")` → `ctx.get(schemaCtx)` (imported from `@milkdown/core`)
 - **Module pre-loading**: Moved all imports into `init()` to eliminate async yield in `executeCommand()`
 - **Live state reading**: All methods now read `view.state` fresh instead of caching
 - **Position validation**: Block commands wrapped in try-catch with depth-walking
 
-### FASE 4.2 — Code Blocks
+### PHASE 4.2 — Code Blocks
+
 - Pure CSS code block styling (background, border, monospace font)
 - Language labels via `attr(data-language)` CSS
-- Shiki evaluated and removed (async issues with ProseMirror)
 
-### FASE 5 — Left Sidebar Cleanup
+### PHASE 5 — Left Sidebar Cleanup
+
 - Simplified to: logo, search, help, settings
 
-### FASE 6 — Documentation
+### PHASE 6 — Playwright E2E Testing
+
+- 25 editor tests: loading, typing, formatting, headings, code blocks, blockquotes, lists, links, undo/redo, tables, multi-tab
+- 22 UI tests: sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts help, context menu, tab switching
+- 9 persistence tests: auto-save, localStorage, reload, multi-tab persistence, markdown recovery
+- Bug discovered: `restoreTabs()` doesn't check any radio button after restoring tabs, preventing Milkdown editor auto-initialization
+
+### PHASE 7 — Documentation
+
 - README, CHANGELOG, AI_CONTEXT, roadmap-data.json, modal-info updated to v0.5.6
 
 ---
@@ -212,9 +241,6 @@ formatting.test.js                  # 6 tests — text formatting
 ## Git History (v0.5.6)
 
 ```
-2a7ece1 refactor(v0.5.6): remove Shiki, use pure CSS code blocks
-98b670e fix(v0.5.6): rewrite Shiki plugin for reliable syntax highlighting
-2c3887b fix(v0.5.6): fix DecorationSet not defined in Shiki plugin
 004bf18 docs(v0.5.6): update documentation for v0.5.6 release
 25cdc34 feat(v0.5.6): add Shiki syntax highlighting for code blocks
 73ad011 feat(v0.5.6): formatting toolbar, keyboard shortcuts, and editor styling
@@ -225,54 +251,36 @@ f755b03 feat(v0.5.6): Milkdown integration, formatting toolbar, tab persistence 
 
 ---
 
-## Previous Notable Work (v0.5.4 released)
-
-- `fix(context-menu)`: No longer suppresses native right-click outside tab areas (#71)
-- `fix(tab-label)`: Right-click now shows correct context menu (#65)
-- `fix(pin-tooltip)`: Dynamically switches between Pin/Unpin (#70)
-- `fix(close-tab)`: English dialog no longer shows Spanish inverted question marks (#68)
-- `fix(shortcuts-i18n)`: Help overlay now shows localized descriptions (#69)
-- `feat(formatting)`: Ctrl+B / Ctrl+I / Ctrl+U shortcuts (#67)
-- `feat(pwa)`: share_target support — shared text creates new tab (#66)
-- `security`: Bumped fast-uri to ^3.1.5 to resolve CVE-2026-18446 (#61)
-
----
-
 ## What's Next
 
-### Phase 7 — Playwright E2E Tests
-- Setup Playwright
-- Editor tests (create, write, format, persist)
-- UI tests (sidebar, modals, mobile)
-- Persistence tests (localStorage, reload, migration)
-
 ### Phase 8 — Git Flow
+
 - Merge milestone-0.5.6 → dev
 - PR dev → master
 
 ### v0.6.0 Roadmap
 
-| Feature                                    | Status  |
-| ------------------------------------------ | ------- |
-| Live Markdown preview (Milkdown)           | Done    |
-| Formatting toolbar (12 buttons)            | Done    |
-| Keyboard shortcuts (27 shortcuts)          | Done    |
-| Auto-empty lines around blocks             | Done    |
-| More keyboard shortcuts (left_Alt)         | Pending |
-| Offline pre-loading / fallback             | Pending |
-| Service Worker connection-recovery         | Pending |
-| Automatic Backup System, import/export     | Pending |
-| LAN sync (no database)                     | Pending |
-| Local Data Encryption (Web Crypto API)     | Pending |
-| Migrate from LocalStorage to IndexedDB     | Pending |
-| Recycling Bin System (Trash Can)           | Pending |
-| Categorization by Tags and Folders         | Pending |
-| Real-Time Writing Statistics               | Pending |
-| sanitize any text before rendering         | Pending |
-| Import/Export Word, PDF, TXT, MD           | Pending |
-| Resize Images                              | Pending |
-| Custom theme with color palette            | Pending |
-| Plugin / extension system                  | Pending |
+| Feature                                | Status  |
+| -------------------------------------- | ------- |
+| Live Markdown preview (Milkdown)       | Done    |
+| Formatting toolbar (12 buttons)        | Done    |
+| Keyboard shortcuts (27 shortcuts)      | Done    |
+| Auto-empty lines around blocks         | Done    |
+| More keyboard shortcuts (left_Alt)     | Pending |
+| Offline pre-loading / fallback         | Pending |
+| Service Worker connection-recovery     | Pending |
+| Automatic Backup System, import/export | Pending |
+| LAN sync (no database)                 | Pending |
+| Local Data Encryption (Web Crypto API) | Pending |
+| Migrate from LocalStorage to IndexedDB | Pending |
+| Recycling Bin System (Trash Can)       | Pending |
+| Categorization by Tags and Folders     | Pending |
+| Real-Time Writing Statistics           | Pending |
+| sanitize any text before rendering     | Pending |
+| Import/Export Word, PDF, TXT, MD       | Pending |
+| Resize Images                          | Pending |
+| Custom theme with color palette        | Pending |
+| Plugin / extension system              | Pending |
 
 ---
 
@@ -284,6 +292,7 @@ f755b03 feat(v0.5.6): Milkdown integration, formatting toolbar, tab persistence 
 | `npm run build`                 | Production build (sync + changelog + build) |
 | `npm run deploy`                | Manual deploy to gh-pages                   |
 | `npm test` / `npm run test:run` | Run tests (watch / single)                  |
+| `npm run test:e2e`              | Run Playwright E2E tests                    |
 | `npm run sync:roadmap`          | Sync roadmap translations                   |
 | `npm run changelog`             | Regenerate CHANGELOG.md                     |
 
