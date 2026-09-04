@@ -73,44 +73,68 @@
         "es": [
           {
             "summary": "Editor Milkdown",
-            "description": "Integración completa del editor Milkdown con edición Markdown basada en ProseMirror."
-          },
-          {
-            "summary": "Resaltado de sintaxis",
-            "description": "Resaltado de sintaxis con Shiki para bloques de código con etiquetas de idioma y números de línea."
+            "description": "Editor Markdown completo con ProseMirror, CommonMark + GFM (tablas, imágenes, enlaces, bloques de código)."
           },
           {
             "summary": "Barra de formato",
-            "description": "Barra lateral derecha con 12 botones de formato (negrita, cursiva, subrayado, encabezados, código, blockquote, listas, enlaces)."
+            "description": "Barra lateral derecha con 12 botones: negrita, cursiva, subrayado, encabezados (H1-H3), bloque de código, código en línea, blockquote, listas y enlace."
           },
           {
             "summary": "Atajos de teclado",
-            "description": "Ctrl+B/I/U para formato, Ctrl+Z/Y para deshacer/rehacer, Ctrl+S para feedback de guardado."
+            "description": "Ctrl+B/I/U para formato, Ctrl+Z/Y para deshacer/rehacer, Ctrl+S para feedback de guardado, 27 atajos registrados."
+          },
+          {
+            "summary": "Bloques de código",
+            "description": "Bloques de código con etiquetas de idioma, números de línea y colores adaptables al tema. Formato dual: pestañas Markdown (Milkdown) y HTML."
+          },
+          {
+            "summary": "Correcciones del editor",
+            "description": "Plugin de subrayado, toggle de encabezados, deshacer/rehacer, integración del menú contextual, líneas vacías alrededor de bloques."
+          },
+          {
+            "summary": "Limpieza de barra lateral",
+            "description": "Barra lateral izquierda simplificada: logo, búsqueda, ayuda y ajustes."
+          },
+          {
+            "summary": "Tests E2E",
+            "description": "56 tests Playwright E2E (editor, UI, persistencia). 723 tests totales: 667 unit + 56 E2E."
           }
         ],
         "en": [
           {
             "summary": "Milkdown editor",
-            "description": "Full Milkdown editor integration with ProseMirror-based Markdown editing."
-          },
-          {
-            "summary": "Syntax highlighting",
-            "description": "Shiki-powered syntax highlighting for code blocks with language labels and line numbers."
+            "description": "Full ProseMirror-based Markdown editor with CommonMark + GFM support (tables, images, links, code blocks)."
           },
           {
             "summary": "Formatting toolbar",
-            "description": "Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links)."
+            "description": "Right sidebar with 12 buttons: bold, italic, underline, headings (H1-H3), code block, inline code, blockquote, bullet/ordered lists, and link."
           },
           {
             "summary": "Keyboard shortcuts",
-            "description": "Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback."
+            "description": "Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback, and 27 total registered shortcuts."
+          },
+          {
+            "summary": "Code blocks",
+            "description": "Styled code blocks with language labels, line numbers, and theme-aware colors. Dual format: Markdown (Milkdown) and HTML tabs coexist."
+          },
+          {
+            "summary": "Editor fixes",
+            "description": "Underline plugin, heading toggle, undo/redo, context-menu integration, auto-empty lines around code blocks and blockquotes."
+          },
+          {
+            "summary": "Sidebar cleanup",
+            "description": "Left sidebar simplified to logo, search, help, and settings."
+          },
+          {
+            "summary": "E2E testing",
+            "description": "56 Playwright E2E tests (editor, UI, persistence). 723 total tests: 667 unit + 56 E2E."
           }
         ]
       }
     },
     {
       "id": "release-055",
-      "type": "past",
+      "type": "previous",
       "versionNumber": "0.5.5",
       "date": "2026-08-28",
       "isCurrent": false,
@@ -156,11 +180,13 @@
     },
     {
       "id": "release-054",
-      "type": "previous",
+      "type": "old",
       "versionNumber": "0.5.4",
       "date": "2026-08-19",
       "isCurrent": false,
       "isNext": false,
+      "isOld": true,
+      "showInTab": false,
       "items": {
         "es": [
           {

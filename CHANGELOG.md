@@ -32,6 +32,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Testing
 - 723 total tests: 667 unit tests (Vitest) + 56 E2E tests (Playwright).
 
+## [0.5.5] - August 28, 2026
+
+### Added
+- Three external link buttons (Blog, Report a Bug, Request a Feature) in the left sidebar, settings modal, and keyboard shortcuts help.
+- GitHub feature-request issue template with guided structure.
+- TomaNote Blog (blog.tomanote.app) — officially live with articles, changelogs, and productivity tips.
+
+### Changed
+- Sidebar and bottom bar icons now display white with a subtle tinted background on dark themes for better accessibility.
+
+### Fixed
+- Roadmap locale translations synced with updated roadmap-data.json.
+- Roadmap documentation links corrected.
+
 ## [0.5.4] - August 19, 2026
 
 ### Added
