@@ -6,11 +6,17 @@ import "../styles/components/ThemeSelector.scss";
 import "../styles/components/Animations.scss";
 import "../styles/components/Icons.scss";
 import "../styles/components/milkdown-editor.scss";
+import "../styles/components/info-pages.scss";
 
 // Components
 import EmptyState from "../components/EmptyState.astro";
 
 // ─── Dynamic locale logic ───────────────────────────────────────────────────
+
+interface Props {
+  isInfoPage?: boolean;
+}
+const { isInfoPage = false } = Astro.props;
 
 const locale = "en";
 const ogLocale = "en_US";
@@ -270,12 +276,39 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     </script>
   </head>
 
-  <body id="body" class="h-lvh relative">
+  <body id="body" class:list={["h-lvh relative", { "info-page-body": isInfoPage }]}>
     <a href="#main-content" class="skip-link">Skip to content</a>
     <EmptyState />
     <main id="main-content" role="main">
       <slot />
     </main>
+  <style is:global>
+    /* === Info page scroll override === */
+    body.info-page-body {
+      overflow-y: auto !important;
+      overflow-x: hidden;
+      max-height: none;
+      height: auto;
+    }
+    body.info-page-body #app-layout {
+      max-height: none;
+      height: auto;
+      overflow: visible;
+    }
+    body.info-page-body #app-layout .tn-app-content {
+      height: auto;
+      min-height: 100vh;
+      overflow: visible;
+    }
+    body.info-page-body .app-tabs-row,
+    body.info-page-body .sidebar-left,
+    body.info-page-body .tab-list,
+    body.info-page-body #floating-nav,
+    body.info-page-body #bottom-bar,
+    body.info-page-body .right-sidebar {
+      display: none !important;
+    }
+  </style>
   </body>
 </html>
 

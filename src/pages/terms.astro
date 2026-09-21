@@ -9,7 +9,7 @@ const title = t("seo.terms.title");
 const description = t("seo.terms.description");
 ---
 
-<Layout>
+<Layout isInfoPage={true}>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -20,112 +20,107 @@ const description = t("seo.terms.description");
       ]
     }
   </script>
-  <article id="tn-content-terms" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-    <div class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 lg:p-10">
-        <h1 class="text-4xl! md:text-5xl! font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">{t("terms.main-title")}</h1>
 
-        <div class="space-y-8">
-          <section>
-            <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600 p-4 rounded-r-lg">{t("terms.intro")}</p>
-          </section>
+  <article id="tn-content-terms" class="info-page-container" data-testid="info-page">
+    <div class="info-card">
+      <h1 class="info-page-title">{t("terms.main-title")}</h1>
 
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("terms.second-title1")}
-            </h2>
-            <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r-lg">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {t("terms.second-description1")}
-              </p>
-            </div>
-            <div class="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span>{t("terms.tip-export")}</span>
-            </div>
-          </section>
+      <div class="info-sections">
+        <section>
+          <div class="info-callout">
+            <p class="info-body-text lead">{t("terms.intro")}</p>
+          </div>
+        </section>
 
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("terms.second-title2")}
-            </h2>
-            <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {t("terms.second-description2")}
-              </p>
-            </div>
-            <div class="mt-4 flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-              <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-              </svg>
-              <span>{t("terms.security-note")}</span>
-            </div>
-          </section>
-
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("terms.second-title3")}
-            </h2>
-            <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded-r-lg">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {t("terms.second-description3")}
-              </p>
-            </div>
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div class="flex items-center gap-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-                <span>{t("terms.url-check")}</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span>{t("terms.url-wifi")}</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("terms.license-title")}
-            </h2>
-            <div class="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 p-4 rounded-r-lg">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {t("terms.license-description")}
-                <a href="https://www.gnu.org/licenses/agpl-3.0.en.html" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold underline decoration-2 underline-offset-2 transition-colors"> GNU Affero General Public License (AGPL) v3.0 </a>.
-              </p>
-            </div>
-            <div class="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-              </svg>
-              <span>{t("terms.license-open-source")}</span>
-            </div>
-          </section>
-
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-5 rounded-xl text-center">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{t("terms.license-agreement")}</p>
-            </div>
-          </section>
-        </div>
-
-        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <a href="/" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200 group">
-            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("terms.second-title1")}
+          </h2>
+          <div class="info-callout info-callout--highlight">
+            <p class="info-body-text">{t("terms.second-description1")}</p>
+          </div>
+          <div class="info-tip" style="margin-top: 1rem;">
+            <svg class="info-tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            {t("terms.back")}
-          </a>
-        </div>
+            <span>{t("terms.tip-export")}</span>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("terms.second-title2")}
+          </h2>
+          <div class="info-callout" style="border-left-color: #f87171;">
+            <p class="info-body-text">{t("terms.second-description2")}</p>
+          </div>
+          <div class="info-tip info-tip--warn" style="margin-top: 1rem;">
+            <svg class="info-tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <span>{t("terms.security-note")}</span>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("terms.second-title3")}
+          </h2>
+          <div class="info-callout" style="border-left-color: #eab308;">
+            <p class="info-body-text">{t("terms.second-description3")}</p>
+          </div>
+          <div class="info-tip-grid">
+            <div class="info-tip info-tip--safe">
+              <svg class="info-tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              <span>{t("terms.url-check")}</span>
+            </div>
+            <div class="info-tip info-tip--warn">
+              <svg class="info-tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{t("terms.url-wifi")}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("terms.license-title")}
+          </h2>
+          <div class="info-callout" style="border-left-color: #a78bfa;">
+            <p class="info-body-text">
+              {t("terms.license-description")}
+              <a href="https://www.gnu.org/licenses/agpl-3.0.en.html" target="_blank" rel="noopener noreferrer" style="font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">GNU Affero General Public License (AGPL) v3.0</a>.
+            </p>
+          </div>
+          <div class="info-tip" style="margin-top: 1rem;">
+            <svg class="info-tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #a78bfa;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+            <span>{t("terms.license-open-source")}</span>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <div class="info-callout info-callout--quote">
+            <p class="info-body-text">{t("terms.license-agreement")}</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="info-footer">
+        <a href="/">
+          <svg class="info-back-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          {t("terms.back")}
+        </a>
       </div>
     </div>
   </article>
