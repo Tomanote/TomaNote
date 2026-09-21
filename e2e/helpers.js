@@ -8,8 +8,13 @@ export async function waitForAppReady(page) {
   // Wait for the main app structure
   await page.waitForSelector("main", { timeout: 10_000 });
 
-  // Wait for the tab list container
-  await page.waitForSelector(".tab-list", { timeout: 10_000 });
+  // Wait for either the tab list or the empty state ("New tab" button)
+  try {
+    await page.waitForSelector(".tab-list, #create-tab", { timeout: 10_000 });
+  } catch {
+    // App not loaded — wait a bit more
+    await page.waitForTimeout(1000);
+  }
 
   // Check if any tab already exists
   let tabCount = await page.locator(".tab-list__item").count();
@@ -17,9 +22,9 @@ export async function waitForAppReady(page) {
   if (tabCount === 0) {
     // No tabs — click "New tab" button to create one
     const newTabBtn = page.locator("#create-tab");
-    if (await newTabBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    if (await newTabBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await newTabBtn.click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
     }
   }
 
