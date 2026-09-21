@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.7] - September 21, 2026
+
+### Fixed
+- Code block renders inline when preceded by inline code — changed `pre { display: inline-flex }` to `display: block !important` (#84).
+- Missing empty paragraph after code block and blockquote insertion — enhanced `autoEmptyLinesPlugin` to handle `setBlockType` conversions (#85).
+- Replaced native `prompt()` with custom TomaNote modal for link insertion (`linkModal.js`) (#87).
+- Inserted links not clickable — added Ctrl/Cmd+click handler opens link in new tab via `window.open()` (#88).
+- Keyboard shortcuts intermittently fail — `init()` now removes old listener and clears shortcuts before re-registration to prevent duplicate keydown handlers (#89).
+- User-provided emoji intermittently replaced with random emoji on pin — `FloatingMenu.handlePinTab()` now delegates to `window.tabManager.pinTab()` (TabPinHandler) as single source of truth (#90).
+- Save indicator appears too fast (~300ms) — `trigger()` now calls `schedule()` instead of `show()` directly, respecting the 5000ms debounce (#92).
+- Link modal stale state — re-reads `view.state` inside async modal callbacks to prevent invalid ProseMirror transactions.
+- Info page scroll bug — added `isInfoPage` prop to Layout.astro that overrides `overflow: hidden` on `<body>` and `#app-layout` for `/about`, `/privacy`, `/terms` routes.
+
+### Changed
+- Consolidated duplicated pin/unpin logic into `TabPinHandler` — removed redundant `pinTab()`/`unpinTab()` from `lib/scripts/ui/floatingMenu.js` (#91).
+- Redesigned `/about`, `/privacy`, `/terms` pages using TomaNote design tokens (`--tn-*` CSS custom properties) instead of Tailwind utilities.
+- Created `src/styles/components/info-pages.scss` with complete design system for informational pages.
+
+### DevOps
+- Added `--legacy-peer-deps` to `npm ci` in CI, security, and deploy workflows to resolve `@vitest/coverage-v8` peer dependency conflicts with vitest v5.
+- Added explicit `permissions` blocks and `timeout-minutes` to CI and security workflows.
+- Created `.github/dependabot.yml` with weekly schedule, dependency grouping, and labels.
+- Hardened `sync-version.yml` with error handling, `git diff --cached --quiet` skip logic, and step summaries.
+
+### Testing
+- 55 new Vitest unit tests: dependency validation (11), keyboard shortcut dedup (10), emoji pin behavior (11), pin/unpin architecture (15), save indicator debounce (12).
+- 38 new Playwright E2E tests for info pages (status, scrolling, content, navigation, responsive, design system).
+- 4 new Playwright E2E tests for link node validation (href, underline, color, text content).
+- 725 total tests passing (667 unit + 56 E2E from 0.5.6 + new additions).
+
 ## [0.5.6] - September 4, 2026
 
 ### Added

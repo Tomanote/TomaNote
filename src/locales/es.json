@@ -299,5 +299,19 @@
   "roadmap.release-055.2.summary": "Blog oficial en línea",
   "roadmap.release-055.2.description": "El blog de TomaNote (blog.tomanote.app) está oficialmente en línea con artículos, changelogs y consejos de productividad.",
   "roadmap.release-055.3.summary": "Iconos accesibles en temas oscuros",
-  "roadmap.release-055.3.description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad."
+  "roadmap.release-055.3.description": "Los iconos de la barra lateral y barra inferior ahora muestran color blanco con fondo sutil en temas oscuros para mejor legibilidad.",
+  "roadmap.release-057.0.summary": "Correcciones del editor",
+  "roadmap.release-057.0.description": "Bloques de código ahora renderizan como bloques, párrafo vacío después de inserciones, enlaces clickeables con Ctrl/Cmd+click.",
+  "roadmap.release-057.1.summary": "Modal de enlace personalizado",
+  "roadmap.release-057.1.description": "Reemplazo del prompt() nativo con modal personalizado de TomaNote para inserción de enlaces.",
+  "roadmap.release-057.2.summary": "Atajos de teclado",
+  "roadmap.release-057.2.description": "Corregida condición de carrera de listeners duplicados en init().",
+  "roadmap.release-057.3.summary": "Emoji al fijar",
+  "roadmap.release-057.3.description": "Consolidación de lógica de fijar/desfijar en TabPinHandler como única fuente de verdad.",
+  "roadmap.release-057.4.summary": "Indicador de guardado",
+  "roadmap.release-057.4.description": "Debounce corregido: trigger() ahora respeta los 5000ms.",
+  "roadmap.release-057.5.summary": "Páginas informativas",
+  "roadmap.release-057.6.summary": "Tests E2E",
+  "roadmap.release-057.6.description": "38 tests Playwright para páginas informativas, 4 tests de validación de enlaces. 725 tests totales.",
+  "roadmap.release-057.5.description": "Rediseño de /about, /privacy, /terms con tokens de diseño de TomaNote."
 }

@@ -298,5 +298,19 @@
   "roadmap.release-055.2.summary": "Official blog live",
   "roadmap.release-055.2.description": "The TomaNote blog (blog.tomanote.app) is officially live with articles, changelogs, and productivity tips.",
   "roadmap.release-055.3.summary": "Accessible icons on dark themes",
-  "roadmap.release-055.3.description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility."
+  "roadmap.release-055.3.description": "Sidebar and bottom bar icons now display white with a subtle background on dark themes for better visibility.",
+  "roadmap.release-057.0.summary": "Editor fixes",
+  "roadmap.release-057.0.description": "Code blocks render as true blocks, empty paragraph after insertions, clickable links with Ctrl/Cmd+click.",
+  "roadmap.release-057.1.summary": "Custom link modal",
+  "roadmap.release-057.1.description": "Replaced native prompt() with styled TomaNote dialog for link insertion.",
+  "roadmap.release-057.2.summary": "Keyboard shortcuts",
+  "roadmap.release-057.2.description": "Fixed duplicate listener race condition on init().",
+  "roadmap.release-057.3.summary": "Emoji on pin",
+  "roadmap.release-057.3.description": "Consolidated pin/unpin logic into TabPinHandler as single source of truth.",
+  "roadmap.release-057.4.summary": "Save indicator",
+  "roadmap.release-057.4.description": "Debounce fixed: trigger() now respects the 5000ms limit.",
+  "roadmap.release-057.5.summary": "Info pages",
+  "roadmap.release-057.5.description": "Redesigned /about, /privacy, /terms with TomaNote design tokens.",
+  "roadmap.release-057.6.summary": "E2E testing",
+  "roadmap.release-057.6.description": "38 Playwright tests for info pages, 4 link validation tests. 725 total tests."
 }
