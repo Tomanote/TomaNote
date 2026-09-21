@@ -138,8 +138,7 @@ test.describe("Save Indicator — Mobile Viewport", () => {
     await waitForAppReady(page);
 
     const indicator = page.locator("#save-indicator");
-    const isAttached = await indicator.isAttached();
-    expect(isAttached).toBe(true);
+    await expect(indicator).toBeAttached();
   });
 
   test("save indicator is not visible by default", async ({ page }) => {
@@ -164,7 +163,8 @@ test.describe("Save Indicator — Mobile Viewport", () => {
       window.saveIndicator?.trigger();
     });
 
-    await page.waitForTimeout(100);
+    // trigger() is debounced (5000ms) per #92 fix — wait past the debounce window
+    await page.waitForTimeout(5300);
 
     const indicator = page.locator("#save-indicator");
     const hasVisibleClass = await indicator.evaluate((el) =>

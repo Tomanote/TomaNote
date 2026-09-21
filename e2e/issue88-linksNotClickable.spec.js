@@ -21,11 +21,14 @@ test.describe("Issue #88 — Links Not Clickable", () => {
     await typeInEditor(page, "click me");
     await selectAllInEditor(page);
 
-    page.on("dialog", async (dialog) => {
-      await dialog.accept("https://example.com");
-    });
-
+    // Custom link modal flow (replaced native prompt in #87)
     await clickFormatButton(page, "link");
+    await page.waitForTimeout(500);
+
+    const modal = page.locator('[data-testid="link-modal"]');
+    await expect(modal).toBeVisible();
+    await modal.locator("#link-modal-url").fill("https://example.com");
+    await modal.locator(".link-modal__btn--confirm").click();
     await page.waitForTimeout(500);
 
     const editor = page.locator(".ProseMirror").last();
