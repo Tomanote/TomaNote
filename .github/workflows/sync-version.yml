@@ -1,71 +1,110 @@
-name: Sincronizar Versión en la Organización
+name: Sync Version Across Ecosystem
 
 on:
   release:
     types: [published]
   push:
     tags:
-      - "v*" # Se ejecuta si subes manualmente una etiqueta v1.0.0
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
-  update-ecosystem-version:
+  sync-version:
     runs-on: ubuntu-latest
-    steps:
-      - name: Extraer versión del Tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    timeout-minutes: 10
 
-      # ----------------------------------------------------
-      # ACTUALIZAR DOCUMENTACIÓN (ASTRO STARLIGHT)
-      # ----------------------------------------------------
-      - name: Clonar Repositorio de Documentación
+    steps:
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          # Strip leading 'v' if present (v0.5.7 → 0.5.7)
+          VERSION="${VERSION#v}"
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "📦 Syncing version: ${VERSION}"
+
+      # ─────────────────────────────────────────────────────────
+      # SYNC: TomaNote-Docs
+      # ─────────────────────────────────────────────────────────
+      - name: Clone TomaNote-Docs
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-Docs"
-          token: ${{ secrets.GITHUB_TOKEN }} # Funciona nativamente en la misma ORG
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: docs-repo
 
-      - name: Inyectar versión en Astro Docs
+      - name: Update version in Docs
+        working-directory: docs-repo
         run: |
-          cd docs-repo
-          # Opción A: Modifica el package.json de la documentación
-          sed -i 's/"version": ".*"/"version": "${{ steps.get_version.outputs.VERSION }}"/g' package.json
+          # Update package.json version
+          if [ -f package.json ]; then
+            sed -i "s/\"version\": \".*\"/\"version\": \"${{ steps.get_version.outputs.VERSION }}\"/g" package.json
+            echo "✅ Updated docs/package.json → ${{ steps.get_version.outputs.VERSION }}"
+          else
+            echo "⚠️ docs/package.json not found — skipping"
+          fi
 
-          # Opción B: Si tienes una variable en astro.config.mjs o un archivo JSON de constantes,
-          # puedes editarlo aquí para que aparezca dinámicamente en tu barra o footer.
-          # Ejemplo si tuvieras un archivo 'src/content/docs/version.json':
-          # echo '{"current": "${{ steps.get_version.outputs.VERSION }}"}' > src/content/docs/version.json
+          # Also update version.json if it exists
+          if [ -f src/content/docs/version.json ]; then
+            echo "{\"current\": \"${{ steps.get_version.outputs.VERSION }}\"}" > src/content/docs/version.json
+            echo "✅ Updated docs/version.json → ${{ steps.get_version.outputs.VERSION }}"
+          fi
 
-      - name: Push a TomaNote-Docs
+      - name: Push to TomaNote-Docs
+        working-directory: docs-repo
         run: |
-          cd docs-repo
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: actualizar versión a ${{ steps.get_version.outputs.VERSION }} desde APP" || echo "Sin cambios"
-          git push origin main
+          if git diff --cached --quiet; then
+            echo "ℹ️ No version changes in Docs — skipping commit"
+          else
+            git commit -m "chore: sync version to ${{ steps.get_version.outputs.VERSION }}"
+            git push origin main
+            echo "✅ Pushed Docs update"
+          fi
 
-      # ----------------------------------------------------
-      # ACTUALIZAR BLOG (Mención estética)
-      # ----------------------------------------------------
-      - name: Clonar Repositorio del Blog
+      # ─────────────────────────────────────────────────────────
+      # SYNC: TomaNote-blog
+      # ─────────────────────────────────────────────────────────
+      - name: Clone TomaNote-blog
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-blog"
           token: ${{ secrets.GITHUB_TOKEN }}
           path: blog-repo
 
-      - name: Actualizar dato de versión en Blog
+      - name: Update version in Blog
+        working-directory: blog-repo
         run: |
-          cd blog-repo
-          # Creamos o modificamos un archivo estático de configuración que lea tu blog
-          echo '{"app_version": "${{ steps.get_version.outputs.VERSION }}"}' > version-info.json
+          echo "{\"app_version\": \"${{ steps.get_version.outputs.VERSION }}\"}" > version-info.json
+          echo "✅ Updated blog/version-info.json → ${{ steps.get_version.outputs.VERSION }}"
 
-      - name: Push a TomaNote-blog
+      - name: Push to TomaNote-blog
+        working-directory: blog-repo
         run: |
-          cd blog-repo
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: sincronizar badge de versión ${{ steps.get_version.outputs.VERSION }}" || echo "Sin cambios"
-          git push origin main
+          if git diff --cached --quiet; then
+            echo "ℹ️ No version changes in Blog — skipping commit"
+          else
+            git commit -m "chore: sync version badge to ${{ steps.get_version.outputs.VERSION }}"
+            git push origin main
+            echo "✅ Pushed Blog update"
+          fi
+
+      # ─────────────────────────────────────────────────────────
+      # Summary
+      # ─────────────────────────────────────────────────────────
+      - name: Sync summary
+        if: always()
+        run: |
+          echo "## 🔗 Version Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Repository | Version | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| TomaNote-Docs | \`${{ steps.get_version.outputs.VERSION }}\` | ${{ job.status == 'success' && '✅ Synced' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TomaNote-blog | \`${{ steps.get_version.outputs.VERSION }}\` | ${{ job.status == 'success' && '✅ Synced' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
