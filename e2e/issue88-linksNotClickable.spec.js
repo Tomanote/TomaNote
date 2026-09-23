@@ -11,8 +11,21 @@ import {
   clickFormatButton,
 } from "./helpers.js";
 
+/** Seed a deterministic tab so the app never boots into the empty state */
+async function seedTab(page) {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "tabsData",
+      JSON.stringify([
+        { id: "body-tab-1", name: "E2E Tab", content: "", format: "markdown", isPinned: false, emoji: null, updatedAt: Date.now() },
+      ])
+    );
+  });
+}
+
 test.describe("Issue #88 — Links Not Clickable", () => {
   test.beforeEach(async ({ page }) => {
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
   });

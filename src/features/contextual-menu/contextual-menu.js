@@ -169,6 +169,10 @@ export class ContextMenu {
       const pinLabel = pinItem.querySelector?.("span, .context-menu__label");
       if (pinLabel) {
         const labelKey = isPinned ? "context-menu.unpin-tab" : "context-menu.pin-tab";
+        // Keep data-i18n in sync: applyTranslations() runs right after this block and
+        // must re-apply the SAME state-specific key instead of overwriting the
+        // dynamic label back to the static pin-tab translation.
+        pinLabel.setAttribute("data-i18n", labelKey);
         pinLabel.textContent = window.i18n?.t(labelKey) ?? (isPinned ? "Unpin tab" : "Pin tab");
       }
     }
