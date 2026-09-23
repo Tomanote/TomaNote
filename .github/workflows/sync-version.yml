@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-Docs"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SYNC_TOKEN }}
           path: docs-repo
 
       - name: Update version in Docs
@@ -62,7 +62,7 @@ jobs:
             echo "ℹ️ No version changes in Docs — skipping commit"
           else
             git commit -m "chore: sync version to ${{ steps.get_version.outputs.VERSION }}"
-            git push origin main
+            git push origin HEAD:master
             echo "✅ Pushed Docs update"
           fi
 
@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-blog"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SYNC_TOKEN }}
           path: blog-repo
 
       - name: Update version in Blog
@@ -92,7 +92,7 @@ jobs:
             echo "ℹ️ No version changes in Blog — skipping commit"
           else
             git commit -m "chore: sync version badge to ${{ steps.get_version.outputs.VERSION }}"
-            git push origin main
+            git push origin HEAD:master
             echo "✅ Pushed Blog update"
           fi
 
