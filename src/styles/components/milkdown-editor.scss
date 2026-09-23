@@ -16,14 +16,13 @@
   >.milkdown {
     width: 100%;
     min-height: 100%;
-    padding-bottom: 2em; // Space below for cursor after last block
   }
 
   // ProseMirror editor area
   .ProseMirror {
     outline: none !important;
     min-height: 100%;
-    padding: 0 0 4em 0 !important; // 4em bottom padding for click-to-type below blocks
+    padding: 0 !important; // 4em bottom padding for click-to-type below blocks
     font-family: var(--tn-font-family-default) !important;
     font-size: var(--tn-editor-font-size) !important;
     color: var(--tn-color-text) !important;
@@ -475,8 +474,9 @@ html[data-theme="neon-orbit"] {
 // Code block language label (pure CSS)
 // ==========================================
 .tab-list__item--content.milkdown-editor .ProseMirror {
+
   // Language label via CSS attr() — Milkdown sets data-language on <code>
-  pre > code[data-language]::before {
+  pre>code[data-language]::before {
     content: attr(data-language);
     display: block;
     position: absolute;
@@ -561,7 +561,9 @@ html[data-theme="neon-orbit"] {
     line-height: 1;
     opacity: 0.7;
 
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &__body {
@@ -611,7 +613,9 @@ html[data-theme="neon-orbit"] {
     cursor: pointer;
     transition: opacity 0.15s;
 
-    &:hover { opacity: 0.85; }
+    &:hover {
+      opacity: 0.85;
+    }
 
     &--cancel {
       background: var(--tn-theme-secondary);

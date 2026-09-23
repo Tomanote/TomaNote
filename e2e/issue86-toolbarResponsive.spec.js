@@ -5,9 +5,22 @@
 import { test, expect } from "@playwright/test";
 import { waitForAppReady, typeInEditor } from "./helpers.js";
 
+/** Seed a deterministic tab so the app never boots into the empty state */
+async function seedTab(page) {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "tabsData",
+      JSON.stringify([
+        { id: "body-tab-1", name: "E2E Tab", content: "", format: "markdown", isPinned: false, emoji: null, updatedAt: Date.now() },
+      ])
+    );
+  });
+}
+
 test.describe("Issue #86 — Toolbar Responsive Layout", () => {
   test("toolbar buttons are visible at 1280x720 (desktop)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
 
@@ -23,6 +36,7 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
 
   test("toolbar buttons are visible at 1280x400 (reduced height)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 400 });
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
 
@@ -45,6 +59,7 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
 
   test("toolbar buttons are accessible at 1280x300 (very small height)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 300 });
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
 
@@ -65,6 +80,7 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
 
   test("toolbar does not overflow outside viewport at small sizes", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 350 });
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
 
@@ -81,6 +97,7 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
 
   test("toolbar is usable at 1024x600 (small laptop)", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 600 });
+    await seedTab(page);
     await page.goto("/");
     await waitForAppReady(page);
 
@@ -94,8 +111,7 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
     // All should be clickable
     for (let i = 0; i < count; i++) {
       const btn = buttons.nth(i);
-      const isAttached = await btn.isAttached();
-      expect(isAttached).toBe(true);
+      await expect(btn).toBeAttached();
     }
   });
 });
