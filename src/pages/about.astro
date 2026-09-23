@@ -9,7 +9,7 @@ const title = t("seo.about.title");
 const description = t("seo.about.description");
 ---
 
-<Layout>
+<Layout isInfoPage={true}>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -20,122 +20,125 @@ const description = t("seo.about.description");
       ]
     }
   </script>
-  <article id="tn-content-about" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-    <div class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 lg:p-10">
-        <h1 class="text-4xl! md:text-5xl! font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">{t("about.main-title")}</h1>
 
-        <div class="space-y-8">
-          <section>
-            <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">{t("about.main-first-description")}</p>
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600 p-4 rounded-r-lg">{t("about.main-second-description")}</p>
-          </section>
+  <article id="tn-content-about" class="info-page-container" data-testid="info-page">
+    <div class="info-card">
+      <h1 class="info-page-title">{t("about.main-title")}</h1>
 
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("about.first-list")}
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                </svg>
-                <span class="text-gray-700 dark:text-gray-300 font-medium">{t("about.first-list-item1")}</span>
-              </div>
-              <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                <span class="text-gray-700 dark:text-gray-300 font-medium">{t("about.first-list-item2")}</span>
-              </div>
-              <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6-4h12a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 4v-4m-8 4v-4"></path>
-                </svg>
-                <span class="text-gray-700 dark:text-gray-300 font-medium">{t("about.first-list-item3")}</span>
-              </div>
-              <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                <span class="text-gray-700 dark:text-gray-300 font-medium">{t("about.first-list-item4")}</span>
-              </div>
+      <div class="info-sections">
+        <section>
+          <p class="info-body-text lead">{t("about.main-first-description")}</p>
+          <div class="info-callout">
+            <p class="info-body-text">{t("about.main-second-description")}</p>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("about.first-list")}
+          </h2>
+          <div class="info-grid">
+            <div class="info-grid-item">
+              <svg class="info-grid-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+              </svg>
+              <span>{t("about.first-list-item1")}</span>
             </div>
-          </section>
-
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed italic bg-gray-50 dark:bg-gray-700/50 p-5 rounded-xl text-center">{t("about.intro-third-description")}</p>
-          </section>
-
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("about.second-title")}
-            </h2>
-            <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r-lg">
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {t("about.second-first-description")}
-              </p>
+            <div class="info-grid-item">
+              <svg class="info-grid-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <span>{t("about.first-list-item2")}</span>
             </div>
-          </section>
+            <div class="info-grid-item">
+              <svg class="info-grid-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6-4h12a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 4v-4m-8 4v-4"></path>
+              </svg>
+              <span>{t("about.first-list-item3")}</span>
+            </div>
+            <div class="info-grid-item">
+              <svg class="info-grid-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>{t("about.first-list-item4")}</span>
+            </div>
+          </div>
+        </section>
 
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("about.title-second-list")}
-            </h2>
-            <ul class="space-y-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 md:p-6">
-              <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                <span>{t("about.title-second-list-item1")}</span>
-              </li>
-              <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                <span>{t("about.title-second-list-item2")}</span>
-              </li>
-              <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                <span>{t("about.title-second-list-item3")}</span>
-              </li>
-              <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                <span>{t("about.title-second-list-item4")}</span>
-              </li>
-              <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                <span>{t("about.title-second-list-item5")}</span>
-              </li>
-            </ul>
-          </section>
+        <section class="info-section">
+          <div class="info-callout info-callout--quote">
+            <p class="info-body-text">{t("about.intro-third-description")}</p>
+          </div>
+        </section>
 
-          <section class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-              {t("about.third-title")}
-            </h2>
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-5 rounded-xl">{t("about.third-first-description")}</p>
-          </section>
-        </div>
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("about.second-title")}
+          </h2>
+          <div class="info-callout info-callout--highlight">
+            <p class="info-body-text">{t("about.second-first-description")}</p>
+          </div>
+        </section>
 
-        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <a href="/" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200 group">
-            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            {t("about.back")}
-          </a>
-        </div>
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("about.title-second-list")}
+          </h2>
+          <ul class="info-list">
+            <li class="info-list-item">
+              <svg class="info-check-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{t("about.title-second-list-item1")}</span>
+            </li>
+            <li class="info-list-item">
+              <svg class="info-check-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{t("about.title-second-list-item2")}</span>
+            </li>
+            <li class="info-list-item">
+              <svg class="info-check-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{t("about.title-second-list-item3")}</span>
+            </li>
+            <li class="info-list-item">
+              <svg class="info-check-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{t("about.title-second-list-item4")}</span>
+            </li>
+            <li class="info-list-item">
+              <svg class="info-check-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{t("about.title-second-list-item5")}</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="info-section">
+          <h2 class="info-section-title">
+            <span class="info-section-dot"></span>
+            {t("about.third-title")}
+          </h2>
+          <div class="info-callout info-callout--quote">
+            <p class="info-body-text">{t("about.third-first-description")}</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="info-footer">
+        <a href="/">
+          <svg class="info-back-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          {t("about.back")}
+        </a>
       </div>
     </div>
   </article>

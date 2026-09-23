@@ -4,6 +4,7 @@
 // Supports GFM: tables, images with upload, links, code blocks
 
 import { devLogger } from "../utils/devLogger.js";
+import { showLinkModal } from "../ui/linkModal.js";
 
 export class MilkdownEditor {
   constructor() {
@@ -120,6 +121,9 @@ export class MilkdownEditor {
       // Setup auto-save: listen for ProseMirror updates
       await this._setupAutoSave(tabId, editor);
 
+      // Setup link click handler (Ctrl/Cmd+click opens in new tab)
+      this._setupLinkClickHandler(tabId, container);
+
       this.log(`📝 Editor created for tab: ${tabId}`);
 
       return editor;
@@ -144,6 +148,10 @@ export class MilkdownEditor {
     }
 
     try {
+      // Cleanup link click handler
+      if (entry._linkClickHandler && entry._linkClickTarget) {
+        entry._linkClickTarget.removeEventListener("click", entry._linkClickHandler);
+      }
       entry.container.innerHTML = "";
       this.editors.delete(tabId);
       this.log(`🗑️ Editor destroyed for tab: ${tabId}`);
@@ -411,48 +419,93 @@ export class MilkdownEditor {
             // Fallback: insert markdown link text
             const sel = view.state.selection;
             const txt = sel.empty ? "" : state.doc.textBetween(sel.from, sel.to, "\n");
-            const url = prompt("URL:", "https://");
-            if (url === null) break;
-            const display = txt || prompt("Text:", "Link text") || url;
-            dispatch(state.tr.insertText(`[${display}](${url})`));
+            showLinkModal({ initialUrl: "https://", initialText: txt }).then((result) => {
+              if (!result) return;
+              // Re-read live state — async modal may have caused state drift
+              const liveState = view.state;
+              dispatch(liveState.tr.insertText(`[${result.text}](${result.url})`));
+              view.focus();
+            });
             break;
           }
 
-          // Check if cursor is inside an existing link → update URL
+          // Capture selection coordinates BEFORE the async modal
+          const linkFrom = state.selection.from;
+          const linkTo = state.selection.to;
+          const linkEmpty = state.selection.empty;
           const $linkFrom = state.selection.$from;
-          if (state.selection.empty) {
+
+          if (linkEmpty) {
             // No selection: check if inside a link mark
             const marks = $linkFrom.marks();
             const existingLink = marks.find(m => m.type === linkMarkType);
             if (existingLink) {
-              const newUrl = prompt("URL:", existingLink.attrs.href || "https://");
-              if (newUrl === null) break;
-              // Update the link URL by replacing the mark
-              const tr = state.tr
-                .removeMark($linkFrom.start(), $linkFrom.end(), linkMarkType)
-                .addMark($linkFrom.start(), $linkFrom.end(), linkMarkType.create({ href: newUrl, title: existingLink.attrs.title || "" }));
-              dispatch(tr);
-              view.focus();
+              const existingHref = existingLink.attrs.href || "https://";
+              const existingTitle = existingLink.attrs.title || "";
+              // Capture resolved positions before modal
+              const mStart = $linkFrom.start();
+              const mEnd = $linkFrom.end();
+              showLinkModal({ initialUrl: existingHref, initialText: "", showTextField: false }).then((result) => {
+                if (!result) return;
+                // Re-read live state for valid positions
+                const liveState = view.state;
+                try {
+                  // Verify the mark still exists at the captured range
+                  const $liveFrom = liveState.doc.resolve(mStart);
+                  const liveMarks = $liveFrom.marks();
+                  const stillLinked = liveMarks.find(m => m.type === linkMarkType);
+                  if (stillLinked) {
+                    const tr = liveState.tr
+                      .removeMark(mStart, mEnd, linkMarkType)
+                      .addMark(mStart, mEnd, linkMarkType.create({ href: result.url, title: existingTitle }));
+                    dispatch(tr);
+                  }
+                } catch (_) { /* position drifted — ignore */ }
+                view.focus();
+              });
               break;
             }
             // No selection, not in a link: insert link text + prompt for URL
-            const url = prompt("URL:", "https://");
-            if (url === null) break;
-            const display = prompt("Text:", "Link text") || url;
-            const linkMark = linkMarkType.create({ href: url, title: "" });
-            const textNode = state.schema.text(display, [linkMark]);
-            dispatch(state.tr.replaceSelectionWith(textNode));
-            view.focus();
+            showLinkModal({ initialUrl: "https://", initialText: "" }).then((result) => {
+              if (!result) return;
+              // Re-read live state
+              const liveState = view.state;
+              const linkMark = linkMarkType.create({ href: result.url, title: "" });
+              const textNode = liveState.schema.text(result.text || result.url, [linkMark]);
+              // Use insert() for empty positions, replaceSelectionWith for non-empty
+              try {
+                if (liveState.doc.content.size <= 1) {
+                  // Empty doc: insert at position 1 (inside the paragraph)
+                  const tr = liveState.tr.insert(1, textNode);
+                  dispatch(tr);
+                } else {
+                  dispatch(liveState.tr.replaceSelectionWith(textNode, false)); // false = keep the link mark instead of inheriting (empty) cursor marks
+                }
+              } catch (_) {
+                // Fallback: insert at end of doc
+                const endPos = Math.max(1, liveState.doc.content.size - 1);
+                const tr = liveState.tr.insert(endPos, textNode);
+                dispatch(tr);
+              }
+              view.focus();
+            });
             break;
           }
 
           // Selection exists: wrap in link mark
-          const url = prompt("URL:", "https://");
-          if (url === null) break;
-          const linkMark = linkMarkType.create({ href: url, title: "" });
-          const tr = state.tr.addMark(state.selection.from, state.selection.to, linkMark);
-          dispatch(tr);
-          view.focus();
+          const selectedText = state.doc.textBetween(linkFrom, linkTo, "\n");
+          showLinkModal({ initialUrl: "https://", initialText: selectedText, showTextField: false }).then((result) => {
+            if (!result) return;
+            // Re-read live state and clamp positions to valid range
+            const liveState = view.state;
+            const clampedFrom = Math.min(linkFrom, liveState.doc.content.size - 1);
+            const clampedTo = Math.min(linkTo, liveState.doc.content.size - 1);
+            if (clampedFrom < 0 || clampedTo <= clampedFrom) return;
+            const linkMark = linkMarkType.create({ href: result.url, title: "" });
+            const tr = liveState.tr.addMark(clampedFrom, clampedTo, linkMark);
+            dispatch(tr);
+            view.focus();
+          });
           break;
         }
 
@@ -621,6 +674,40 @@ export class MilkdownEditor {
       this.log(`💾 Auto-save configured for tab: ${tabId}`);
     } catch (e) {
       this.log(`⚠️ Auto-save setup failed for ${tabId}:`, e.message);
+    }
+  }
+
+  /**
+   * Setup link click handler — Ctrl/Cmd+click opens link in new tab.
+   * Regular click positions cursor (contenteditable default behavior).
+   */
+  _setupLinkClickHandler(tabId, container) {
+    const pmEl = container.querySelector(".ProseMirror");
+    if (!pmEl) return;
+
+    const handler = (e) => {
+      // Only handle Ctrl or Cmd + click
+      if (!e.ctrlKey && !e.metaKey) return;
+
+      const link = e.target.closest("a");
+      if (!link) return;
+
+      const href = link.getAttribute("href");
+      if (!href) return;
+
+      // Open in new tab
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(href, "_blank", "noopener,noreferrer");
+    };
+
+    pmEl.addEventListener("click", handler);
+
+    // Store for cleanup
+    const entry = this.editors.get(tabId);
+    if (entry) {
+      entry._linkClickHandler = handler;
+      entry._linkClickTarget = pmEl;
     }
   }
 

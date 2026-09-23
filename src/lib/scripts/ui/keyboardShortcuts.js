@@ -24,6 +24,14 @@ export class KeyboardShortcuts {
       return this;
     }
 
+    // Guard against duplicate registration: remove old listener first
+    if (this.boundHandler) {
+      document.removeEventListener("keydown", this.boundHandler, { capture: true });
+      this.boundHandler = null;
+    }
+    // Clear shortcuts to prevent duplicates on re-init
+    this.shortcuts = [];
+
     this.registerDefaults();
     this.log("✅ registerDefaults() ejecutado. Shortcuts registrados:", this.shortcuts.length);
 

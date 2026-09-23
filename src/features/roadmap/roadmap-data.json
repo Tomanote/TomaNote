@@ -63,11 +63,97 @@
       }
     },
     {
-      "id": "release-056",
+      "id": "release-057",
       "type": "current",
+      "versionNumber": "0.5.7",
+      "date": "2026-09-21",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          {
+            "summary": "Correcciones del editor",
+            "description": "Bloques de código ahora renderizan como bloques, párrafo vacío después de inserciones, enlaces clickeables con Ctrl/Cmd+click."
+          },
+          {
+            "summary": "Modal de enlace personalizado",
+            "description": "Reemplazo del prompt() nativo con modal personalizado de TomaNote para inserción de enlaces; genera nodos <a> reales incluso sin selección previa."
+          },
+          {
+            "summary": "Menú contextual de pestañas",
+            "description": "Las etiquetas Fijar/Desfijar del menú contextual se actualizan dinámicamente según el estado de la pestaña."
+          },
+          {
+            "summary": "Barra lateral adaptable",
+            "description": "La barra derecha envuelve los botones en múltiples columnas cuando baja la altura de la ventana, sin recortes (#86)."
+          },
+          {
+            "summary": "Atajos de teclado",
+            "description": "Corregida condición de carrera de listeners duplicados en init()."
+          },
+          {
+            "summary": "Emoji al fijar",
+            "description": "Consolidación de lógica de fijar/desfijar en TabPinHandler como única fuente de verdad."
+          },
+          {
+            "summary": "Indicador de guardado",
+            "description": "Debounce corregido: trigger() ahora respeta los 5000ms."
+          },
+          {
+            "summary": "Páginas informativas",
+            "description": "Rediseño de /about, /privacy, /terms con tokens de diseño de TomaNote."
+          },
+          {
+            "summary": "Tests E2E",
+            "description": "Tests Playwright para páginas informativas, validación de enlaces, menú contextual y barra lateral adaptable. 725 unit + 142 E2E = 867 tests totales."
+          }
+        ],
+        "en": [
+          {
+            "summary": "Editor fixes",
+            "description": "Code blocks render as true blocks, empty paragraph after insertions, clickable links with Ctrl/Cmd+click."
+          },
+          {
+            "summary": "Custom link modal",
+            "description": "Replaced native prompt() with styled TomaNote dialog for link insertion; creates real <a> nodes even without a prior selection."
+          },
+          {
+            "summary": "Tab context menu",
+            "description": "Context-menu Pin/Unpin labels now update dynamically based on the tab's pinned state."
+          },
+          {
+            "summary": "Responsive sidebar",
+            "description": "Right sidebar wraps tools into multiple columns when viewport height shrinks, with no clipping (#86)."
+          },
+          {
+            "summary": "Keyboard shortcuts",
+            "description": "Fixed duplicate listener race condition on init()."
+          },
+          {
+            "summary": "Emoji on pin",
+            "description": "Consolidated pin/unpin logic into TabPinHandler as single source of truth."
+          },
+          {
+            "summary": "Save indicator",
+            "description": "Debounce fixed: trigger() now respects the 5000ms limit."
+          },
+          {
+            "summary": "Info pages",
+            "description": "Redesigned /about, /privacy, /terms with TomaNote design tokens."
+          },
+          {
+            "summary": "E2E testing",
+            "description": "Playwright tests for info pages, link validation, tab context menu, and responsive sidebar. 725 unit + 142 E2E = 867 total tests."
+          }
+        ]
+      }
+    },
+    {
+      "id": "release-056",
+      "type": "previous",
       "versionNumber": "0.5.6",
       "date": "2026-09-02",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [

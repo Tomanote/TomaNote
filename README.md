@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.6-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.7-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,39 +20,52 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.6
+## 🚀 What's new — v0.5.7
 
-Milkdown editor integration, syntax highlighting, formatting toolbar, and UI cleanup.
+Bug fixes, CI/CD hardening, info pages redesign, and link modal improvements.
 
-### ✨ New features
-- **Milkdown editor** — Full ProseMirror-based Markdown editor replacing the legacy contenteditable system
-- **GFM support** — Tables, images with upload, links, and code blocks via @milkdown/kit
-- **Code block styling** — Polished code blocks with language labels, line numbers, and theme-aware colors
-- **Formatting toolbar** — Right sidebar with 12 formatting buttons (bold, italic, underline, headings, code, blockquote, lists, links, horizontal rules)
-- **Keyboard shortcuts** — Ctrl+B/I/U for formatting, Ctrl+Z/Y for undo/redo, Ctrl+S for save feedback
-- **Auto-empty lines** — Automatic empty paragraphs around code blocks and blockquotes for better cursor positioning
-- **Dual format support** — Markdown (Milkdown) and HTML (legacy) tabs coexist
+### 🐛 Bug fixes
+- **Code block layout** — Code blocks now render as true block elements instead of inline-flex (#84)
+- **Empty paragraph after blocks** — Auto-empty lines plugin handles `setBlockType` conversions (#85)
+- **Custom link modal** — Replaced native `prompt()` with styled TomaNote dialog (#87)
+- **Clickable links** — Ctrl/Cmd+click opens links in new tab (#88)
+- **Keyboard shortcuts** — Fixed duplicate listener race condition on init (#89)
+- **Emoji on pin** — Fixed emoji being replaced with random value via unified TabPinHandler (#90)
+- **Save indicator debounce** — Indicator no longer flashes wildly on every auto-save tick (#92)
+- **Link modal stale state** — Modal now re-reads live ProseMirror state on confirm
+- **Link without selection** — Inserting a link on a blank selection now creates a real clickable `<a>` node instead of plain text
+- **Tab context menu labels** — Pin/Unpin label now flips dynamically based on the tab's pinned state
+- **Responsive toolbar** — Right sidebar tools wrap into extra columns on short viewports instead of clipping (#86)
+
+### 🎨 Info pages redesign
+- `/about`, `/privacy`, `/terms` redesigned with TomaNote design tokens
+- Scroll fix — pages no longer clip content (overflow bug resolved)
+- 38 new E2E tests covering status, scrolling, navigation, responsive, and design system
 
 ### 🔧 Improvements
-- **Code block styling** — Polished visual design with language labels, line numbers, and theme-aware colors
-- **Editor UX** — Improved cursor behavior after blockquotes and code blocks
-- **Bug fixes** — Fixed schema context key mismatch, stale state capture, and position validation errors
+- Consolidated pin/unpin logic into `TabPinHandler` as single source of truth (#91)
+- Link validation tests confirm `<a>` nodes with correct href, underline, and accent color
 
-### 📦 Dependencies
-- Added `@milkdown/kit` ^7.22.1, `@milkdown/plugin-tooltip` ^7.22.1, `@milkdown/theme-nord` ^7.22.1
-- Removed `marked` (replaced by Milkdown)
+### 📦 DevOps
+- CI workflows fixed for Dependabot compatibility (`--legacy-peer-deps`)
+- Automated dependabot configuration added
+- Cross-repo version sync hardened with error handling
 
 ### 🧪 Testing
-- Added Playwright E2E testing with 56 tests across editor, UI, and persistence suites
-- New test suites for autoEmptyLines plugin, floating menu Milkdown route, and code block formatting
+- **867 total tests**: 725 unit (Vitest, 30 files) + 142 E2E (Playwright, 13 files)
 
-### 🧪 Playwright E2E
-- 25 editor tests: loading, typing, formatting, headings, code blocks, blockquotes, lists, links, undo/redo, tables, multi-tab
-- 22 UI tests: sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts help, context menu, tab switching
-- 9 persistence tests: auto-save, localStorage, reload, multi-tab persistence, markdown recovery
+## 📋 Previous: v0.5.6
 
-### 🧪 Test coverage
-723 total tests: 667 unit tests (Vitest) + 56 E2E tests (Playwright).
+Milkdown editor integration, formatting toolbar, and UI cleanup.
+
+### ✨ Features
+- **Milkdown editor** — Full ProseMirror-based Markdown editor
+- **GFM support** — Tables, images, links, code blocks via @milkdown/kit
+- **Formatting toolbar** — 12 formatting buttons (bold, italic, headings, code, blockquote, lists, links)
+- **Keyboard shortcuts** — Ctrl+B/I/U, Ctrl+Z/Y, Ctrl+S, 27 total registered
+- **Auto-empty lines** — Automatic paragraphs around code blocks and blockquotes
+- **Dual format** — Markdown (Milkdown) and HTML tabs coexist
+- **56 Playwright E2E tests** across editor, UI, and persistence suites
 
 ## 🛠️ Tech Stack
 

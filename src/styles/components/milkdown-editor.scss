@@ -16,14 +16,13 @@
   >.milkdown {
     width: 100%;
     min-height: 100%;
-    padding-bottom: 2em; // Space below for cursor after last block
   }
 
   // ProseMirror editor area
   .ProseMirror {
     outline: none !important;
     min-height: 100%;
-    padding: 0 0 4em 0 !important; // 4em bottom padding for click-to-type below blocks
+    padding: 0 !important; // 4em bottom padding for click-to-type below blocks
     font-family: var(--tn-font-family-default) !important;
     font-size: var(--tn-editor-font-size) !important;
     color: var(--tn-color-text) !important;
@@ -44,11 +43,6 @@
       font-weight: 700 !important;
       margin: 0.8em 0 0 0 !important;
       color: var(--tn-color-text) !important;
-
-      &:has(code) {
-        display: inline-flex;
-        align-items: center;
-      }
     }
 
     h2 {
@@ -56,11 +50,6 @@
       font-weight: 600 !important;
       margin: 0.7em 0 0 0 !important;
       color: var(--tn-color-text) !important;
-
-      &:has(code) {
-        display: inline-flex;
-        align-items: center;
-      }
     }
 
     h3 {
@@ -68,32 +57,17 @@
       font-weight: 600 !important;
       margin: 0.6em 0 0 0 !important;
       color: var(--tn-color-text) !important;
-
-      &:has(code) {
-        display: inline-flex;
-        align-items: center;
-      }
     }
 
     p {
       margin: 0.25em 0 !important;
       line-height: 1.75 !important;
       color: var(--tn-color-text) !important;
-
-      &:has(code) {
-        display: inline-flex;
-        align-items: center;
-      }
     }
 
     strong {
-      &:has(code) {
-        display: inline-flex;
-        align-items: center;
-
-        code {
-          margin-inline: .25em;
-        }
+      code {
+        margin-inline: .25em;
       }
     }
 
@@ -151,15 +125,12 @@
       margin: 0.8em 0 !important;
       overflow-x: auto !important;
       border: 1px solid var(--tn-theme-contrast) !important;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
+      display: block !important;
 
       code {
         display: block;
         width: auto;
         max-width: 100%;
-        height: 100%;
         background-color: var(--tn-theme-Secondary) !important;
         padding-inline: 2em 1em !important;
         padding-block: .25em !important;
@@ -503,8 +474,9 @@ html[data-theme="neon-orbit"] {
 // Code block language label (pure CSS)
 // ==========================================
 .tab-list__item--content.milkdown-editor .ProseMirror {
+
   // Language label via CSS attr() — Milkdown sets data-language on <code>
-  pre > code[data-language]::before {
+  pre>code[data-language]::before {
     content: attr(data-language);
     display: block;
     position: absolute;
@@ -538,5 +510,121 @@ html[data-theme="neon-orbit"] {
     padding: 2px 6px;
     color: var(--tn-color-text);
     border: 1px solid color-mix(in srgb, var(--tn-color-text) 10%, transparent);
+  }
+}
+
+// ==========================================
+// Link Modal (replaces native prompt)
+// ==========================================
+.link-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.link-modal {
+  background: var(--tn-theme-primary);
+  border: 1px solid var(--tn-theme-contrast);
+  border-radius: var(--tn-border-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  min-width: 360px;
+  max-width: 480px;
+  padding: 0;
+  font-family: var(--tn-font-family-default);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--tn-theme-contrast);
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--tn-color-text);
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--tn-color-text);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--tn-color-text);
+    opacity: 0.8;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--tn-theme-secondary);
+    border: 1px solid var(--tn-theme-contrast);
+    border-radius: var(--tn-border-radius-small);
+    color: var(--tn-color-text);
+    font-family: var(--tn-font-family-default);
+    font-size: 0.875rem;
+    outline: none;
+
+    &:focus {
+      border-color: var(--tn-theme-contrast);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--tn-theme-contrast);
+  }
+
+  &__btn {
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: var(--tn-border-radius-small);
+    font-size: 0.85rem;
+    font-family: var(--tn-font-family-default);
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    &--cancel {
+      background: var(--tn-theme-secondary);
+      color: var(--tn-color-text);
+    }
+
+    &--confirm {
+      background: var(--tn-theme-contrast);
+      color: var(--tn-neutral-tertiary-color);
+    }
   }
 }

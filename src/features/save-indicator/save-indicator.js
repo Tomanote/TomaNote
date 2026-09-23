@@ -59,10 +59,10 @@ export class SaveIndicator {
   }
 
   trigger() {
-    this.cancel();
-    if (this.hasActiveTab()) {
-      this.show();
-    }
+    // Use debounced schedule instead of immediate show.
+    // This prevents the indicator from flashing on every 300ms
+    // auto-save tick from Milkdown's MutationObserver.
+    this.schedule();
   }
 
   show() {

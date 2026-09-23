@@ -96,15 +96,21 @@ describe("SaveIndicator", () => {
   });
 
   describe("trigger", () => {
-    it("should show the indicator immediately", () => {
+    it("should use debounced schedule instead of immediate show (FIXED)", () => {
       saveIndicator.trigger();
 
+      // After fix: trigger() calls schedule(), which respects debounceMs
+      expect(mockElement.classList.add).not.toHaveBeenCalledWith("is-visible");
+
+      // After debounce, it shows
+      vi.advanceTimersByTime(5000);
       expect(mockElement.classList.add).toHaveBeenCalledWith("is-visible");
     });
 
-    it("should cancel a pending debounce", () => {
+    it("should cancel a pending debounce and restart", () => {
       saveIndicator.schedule();
-      saveIndicator.trigger();
+      vi.advanceTimersByTime(2000);
+      saveIndicator.trigger(); // Resets the debounce
       vi.advanceTimersByTime(5000);
 
       expect(mockElement.classList.add).toHaveBeenCalledTimes(1);

@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.7] - September 21, 2026
+
+### Fixed
+- Code block renders inline when preceded by inline code — changed `pre { display: inline-flex }` to `display: block !important` (#84).
+- Missing empty paragraph after code block and blockquote insertion — enhanced `autoEmptyLinesPlugin` to handle `setBlockType` conversions (#85).
+- Replaced native `prompt()` with custom TomaNote modal for link insertion (`linkModal.js`) (#87).
+- Inserted links not clickable — added Ctrl/Cmd+click handler opens link in new tab via `window.open()` (#88).
+- Keyboard shortcuts intermittently fail — `init()` now removes old listener and clears shortcuts before re-registration to prevent duplicate keydown handlers (#89).
+- User-provided emoji intermittently replaced with random emoji on pin — `FloatingMenu.handlePinTab()` now delegates to `window.tabManager.pinTab()` (TabPinHandler) as single source of truth (#90).
+- Save indicator appears too fast (~300ms) — `trigger()` now calls `schedule()` instead of `show()` directly, respecting the 5000ms debounce (#92).
+- Link modal stale state — re-reads `view.state` inside async modal callbacks to prevent invalid ProseMirror transactions.
+- Link inserted without a prior selection rendered as plain text — `replaceSelectionWith()` now dispatches with `inheritMarks: false` so the link mark survives on empty selections and produces a real `<a>` node.
+- Tab context menu always showed "Pin Tab" — the `data-i18n` attribute is now synced to the state-specific key before `applyTranslations()` runs, so pinned tabs correctly display "Unpin Tab".
+- Formatting toolbar clipped buttons on short viewports (#86) — right sidebar tools now flow into adaptive multi-column layout below 900px viewport height, with no clipping and no vertical scrollbar.
+- Info page scroll bug — added `isInfoPage` prop to Layout.astro that overrides `overflow: hidden` on `<body>` and `#app-layout` for `/about`, `/privacy`, `/terms` routes.
+
+### Changed
+- Consolidated duplicated pin/unpin logic into `TabPinHandler` — removed redundant `pinTab()`/`unpinTab()` from `lib/scripts/ui/floatingMenu.js` (#91).
+- Redesigned `/about`, `/privacy`, `/terms` pages using TomaNote design tokens (`--tn-*` CSS custom properties) instead of Tailwind utilities.
+- Created `src/styles/components/info-pages.scss` with complete design system for informational pages.
+
+### DevOps
+- Added `--legacy-peer-deps` to `npm ci` in CI, security, and deploy workflows to resolve `@vitest/coverage-v8` peer dependency conflicts with vitest v5.
+- Added explicit `permissions` blocks and `timeout-minutes` to CI and security workflows.
+- Created `.github/dependabot.yml` with weekly schedule, dependency grouping, and labels.
+- Hardened `sync-version.yml` with error handling, `git diff --cached --quiet` skip logic, and step summaries.
+
+### Testing
+- 55 new Vitest unit tests: dependency validation (11), keyboard shortcut dedup (10), emoji pin behavior (11), pin/unpin architecture (15), save indicator debounce (12).
+- 38 new Playwright E2E tests for info pages (status, scrolling, content, navigation, responsive, design system).
+- 5 new Playwright E2E tests for link node validation (href, underline, color, text content, empty-selection insertion).
+- 5 new Playwright E2E tests for tab context menu pin/unpin label lifecycle.
+- 5 new Playwright E2E tests for responsive right sidebar at restricted viewport heights.
+- 867 total tests passing: 725 unit (Vitest, 30 files) + 142 E2E (Playwright, 13 files).
+
 ## [0.5.6] - September 4, 2026
 
 ### Added

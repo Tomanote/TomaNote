@@ -1,6 +1,6 @@
 # AI Context — TomaNote
 
-> **Last updated**: 2026-09-04 | **Version**: 0.5.6 (milestone) | **Branch**: milestone-0.5.6
+> **Last updated**: 2026-09-23 | **Version**: 0.5.7 | **Branch**: dev (unified)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Free, privacy-first, offline-capable notepad PWA. Runs 100% in the browser — no accounts, no servers, no data transmission. All notes stored in `localStorage`. Live at **tomanote.app**.
 
-**Key features**: Tabbed notepad, auto-save, dark/light themes, custom Google Fonts, context menus, floating action menu, command palette, keyboard shortcuts, Milkdown Markdown editor (ProseMirror), i18n (EN/ES), PWA installability, full SEO (Schema.org, OG, sitemap).
+**Key features**: Tabbed notepad, auto-save, dark/light themes, custom Google Fonts, context menus, floating action menu, command palette, keyboard shortcuts, Milkdown Markdown editor (ProseMirror), custom link modal, i18n (EN/ES), PWA installability, full SEO (Schema.org, OG, sitemap).
 
 **License**: AGPL-3.0 (commercial use prohibited without authorization).
 
@@ -54,18 +54,20 @@ src/
 │   │   │   ├── autoEmptyLinesPlugin.js  # Empty paragraphs around blocks
 │   │   │   └── underlinePlugin.js       # Custom underline mark
 │   │   ├── milkdownEditor.js    # Editor manager (create/destroy/commands)
+│   │   ├── tabPinHandler.js     # Pin/unpin logic (single source of truth)
 │   │   ├── tabs.js              # Tab lifecycle (create, switch, persist)
 │   │   └── ...                  # FontManager, ThemeManager, etc.
-│   ├── ui/                # KeyboardShortcuts, FloatingMenu, etc.
+│   ├── ui/                # KeyboardShortcuts, FloatingMenu, linkModal, etc.
 │   └── utils/             # DOM helpers, emoji, formatting
 ├── i18n/                  # Dual i18n: server (utils.ts) + client (core.js)
 ├── locales/               # en.json, es.json
 ├── styles/                # SCSS 7-architecture
 │   └── components/
 │       ├── milkdown-editor.scss      # Editor typography, code blocks, tables
+│       ├── info-pages.scss           # Info page design system (--tn-* tokens)
 │       └── EditorContent.scss        # Base editor content styles
 ├── pages/                 # Astro routes (index, about, privacy, terms)
-└── layouts/               # Root Layout.astro
+└── layouts/               # Root Layout.astro (isInfoPage prop)
 ```
 
 **Conventions**:
@@ -83,17 +85,17 @@ src/
 
 | Field              | Value                                         |
 | ------------------ | --------------------------------------------- |
-| Production version | 0.5.4 (deployed via `gh-pages`)               |
-| Active branch      | `milestone-0.5.6`                             |
+| Production version | 0.5.6 (deployed via `gh-pages`)               |
+| Active branch      | `dev` (unified; PR dev → master pending)       |
 | Default branch     | `master`                                      |
-| Tests (unit)       | 667 passing (25 files, Vitest)                |
-| Tests (E2E)        | 56 passing (3 files, Playwright)              |
-| Tests (total)      | 723                                           |
+| Tests (unit)       | 725 passing (30 files, Vitest)                |
+| Tests (E2E)        | 142 passing (13 files, Playwright)             |
+| Tests (total)      | 867                                           |
 | Test framework     | Vitest + jsdom + Playwright + @testing-library |
 
 ---
 
-## Milkdown Editor (v0.5.6)
+## Milkdown Editor (v0.5.7)
 
 ### Editor Manager
 
@@ -123,21 +125,70 @@ All commands use ProseMirror's Transform API directly (not Milkdown command syst
 
 **Marks**: `bold`, `italic`, `underline`, `strikethrough`, `codeInline`
 **Blocks**: `heading1`/`2`/`3`, `codeBlock`, `blockquote`, `bulletList`, `orderedList`, `horizontalRule`
-**Other**: `link` (with prompt dialog)
+**Other**: `link` (with custom TomaNote modal via `linkModal.js`)
 
 ### Key Implementation Details
 
 - **Module pre-loading**: All imports cached in `this._modules` during `init()` to avoid async yield during `executeCommand()`
 - **Live state**: All methods read `view.state` fresh (never cached) to avoid stale positions after plugin transactions
+- **Link modal**: Async `showLinkModal()` re-reads `view.state` inside callbacks to prevent stale closure bugs; handles empty documents with `tr.insert()`
+- **Empty-selection link insert**: `replaceSelectionWith(textNode, false)` disables mark inheritance so a blank cursor cannot strip the freshly created link mark — yields a real `<a>` node
+- **Link click handler**: Ctrl/Cmd+click on `<a>` elements opens in new tab via `window.open(href, "_blank")`
 - **Position validation**: Block commands wrapped in try-catch with depth-walking to handle edge cases
 - **Auto-save**: MutationObserver + debounced save (300ms) on ProseMirror DOM changes
 - **Tab persistence**: Markdown content saved to `localStorage` via `tabsData`
 
 ---
 
+## Tab Architecture
+
+### Pin/Unpin
+
+- **Single source of truth**: `TabPinHandler` (`tabPinHandler.js`)
+- `FloatingMenu.handlePinTab()` delegates to `window.tabManager.pinTab()` → `TabPinHandler.pinTab()`
+- Emoji resolution chain: `existingEmoji || detectEmojiInText(name) || getRandomPinEmoji()`
+- Removed duplicate `pinTab()`/`unpinTab()` from `lib/scripts/ui/floatingMenu.js`
+- **Context menu delegation**: right-click pin actions route through the same `window.tabManager` lifecycle; `showTabContextMenu()` syncs the `data-i18n` attribute to `context-menu.pin-tab` / `context-menu.unpin-tab` *before* `applyTranslations()` runs, so the i18n pass re-applies the dynamic label instead of clobbering it with the static key
+
+### Save Indicator
+
+- `trigger()` calls `schedule()` (debounced 5000ms), not `show()` directly
+- Prevents indicator flashing on every 300ms auto-save tick
+
+### Keyboard Shortcuts
+
+- `init()` guards against duplicate registration: removes old listener + clears shortcuts before re-registering
+- 27 shortcuts registered with modifier matching (Ctrl/Alt/Shift/Meta)
+
+### Right Sidebar Responsiveness (Adobe-style multi-column)
+
+- `floating-menu.scss` `@media (max-height: 900px)`: `.tn-tools-container` switches to `flex-flow: wrap` and `.tn-formatting-toolbar` uses `display: contents`, so buttons flow into 2nd/3rd/4th columns instead of being clipped (#86)
+- `.tn-navbar` gets `width: auto !important; min-width: 96px` to grow with wrapped columns while keeping the sidebar width as floor
+- `html/body` keep `overflow: hidden` — no vertical scrollbar; layout adapts via column flow only
+- Short-viewport height tweaks: `Reset.scss` / `TabList.scss` drop 93% → 91% below 900px height; `milkdown-editor.scss` ProseMirror padding normalized
+
+---
+
+## Info Pages
+
+### Design System
+
+- `src/styles/components/info-pages.scss` — complete design system using `--tn-*` CSS custom properties
+- Classes: `.info-page-container`, `.info-card`, `.info-page-title`, `.info-section-title`, `.info-callout`, `.info-list`, `.info-grid`, `.info-footer`
+
+### Scroll Fix
+
+- `Layout.astro` accepts `isInfoPage` prop
+- When `true`, applies `.info-page-body` class to `<body>` which overrides:
+  - `body { overflow: hidden }` → `overflow-y: auto`
+  - `#app-layout { max-height: 100vh }` → `max-height: none`
+  - Hides sidebar/tab-list/editor chrome
+
+---
+
 ## Test Files
 
-### Unit Tests (Vitest) — 25 files, 667 tests
+### Unit Tests (Vitest) — 30 files, 725 tests
 
 ```
 close-tab-confirmation.test.js      # 10 tests
@@ -163,91 +214,78 @@ floatingNavPosition.test.js         # 12 tests — floating nav positioning
 keyboardShortcuts.test.js           # Keyboard shortcut tests
 settingsModal.test.js               # Settings modal tests
 tabDragDrop.test.js                 # Drag-and-drop tests
-emojiDetector.test.js               # 18 tests — emoji detection
+emojiDetector.test.js              # 18 tests — emoji detection
 formatting.test.js                  # 6 tests — text formatting
+dependencyValidation.test.js        # 11 tests — dependency versions
+issue89-shortcutInit.test.js        # 10 tests — shortcut dedup
+issue90-emojiPin.test.js            # 11 tests — emoji on pin
+issue91-pinUnpinRefactor.test.js    # 15 tests — pin/unpin architecture
+issue92-saveIndicator.test.js       # 12 tests — save indicator debounce
 ```
 
-### E2E Tests (Playwright) — 3 files, 56 tests
+### E2E Tests (Playwright) — 13 files, 142 tests
 
 ```
 e2e/editor.spec.js                  # 25 tests — editor loading, formatting, headings, code blocks, lists, links, undo/redo, tables, multi-tab
 e2e/ui.spec.js                      # 22 tests — sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts, context menu, tab switching, responsive
 e2e/persistence.spec.js             # 9 tests — auto-save, localStorage, reload, multi-tab persistence, markdown recovery
+e2e/infoPages.spec.js               # 18 tests — status, scrolling, content, navigation, responsive, design system
+e2e/issue84-codeBlockLayout.spec.js # 5 tests — code block CSS validation
+e2e/issue85-emptyParagraphAfter.spec.js # 5 tests — empty paragraph after blocks
+e2e/issue86-toolbarResponsive.spec.js   # 5 tests — toolbar on small viewports
+e2e/issue87-linkModal.spec.js       # 5 tests — custom link modal behavior
+e2e/issue87-linkNodeValidation.spec.js  # 5 tests — link node href, underline, color, text, empty-selection insertion
+e2e/issue88-linksNotClickable.spec.js   # 6 tests — Ctrl/Cmd+click link navigation
+e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
+e2e/tabContextMenu.spec.js          # 5 tests — dynamic pin/unpin label lifecycle
+e2e/rightSidebarResponsive.spec.js  # 5 tests — multi-column wrap at restricted heights
 ```
 
 ---
 
-## Recent Work (v0.5.6 milestone)
+## Recent Work (v0.5.7 milestone)
 
-### PHASE 0 — Setup
+### Bug Fixes
 
-- Installed `@milkdown/kit`, `@milkdown/theme-nord`, `@milkdown/plugin-tooltip`
-- Removed `marked` dependency (replaced by Milkdown)
+- **#84**: Code block CSS `inline-flex` → `block !important`
+- **#85**: `autoEmptyLinesPlugin` handles `setBlockType` conversions
+- **#87**: Custom `linkModal.js` replaces native `prompt()`
+- **#88**: Ctrl/Cmd+click handler for links in editor
+- **#89**: Keyboard shortcuts `init()` deduplication guard
+- **#90**: FloatingMenu delegates pin/unpin to TabPinHandler
+- **#91**: Consolidated pin/unpin into single source of truth
+- **#92**: Save indicator `trigger()` → `schedule()` (debounce fix)
+- **#86**: Right sidebar clips buttons on short viewports → Adobe-style multi-column wrap
+- **Link empty selection**: `replaceSelectionWith(..., false)` preserves the link mark so blank-editor insertion yields a real `<a>` node
+- **Context menu labels**: `data-i18n` synced before `applyTranslations()` so Pin/Unpin labels flip with tab state
+- **Link stale state**: Modal re-reads `view.state` inside callbacks
+- **Info page scroll**: `isInfoPage` prop overrides overflow
 
-### PHASE 1 — Core Editor
+### Info Pages
 
-- `MilkdownEditor` class: singleton managing per-tab editors
-- ProseMirror-based Markdown editing with auto-save
+- Redesigned `/about`, `/privacy`, `/terms` with TomaNote design tokens
+- Created `info-pages.scss` design system
+- 18 E2E tests covering all routes
 
-### PHASE 2 — GFM Support
+### DevOps
 
-- Tables, images (with upload), links, code blocks via `@milkdown/kit/preset/gfm`
-
-### PHASE 3 — Formatting Toolbar
-
-- Right sidebar with 12 format buttons (bold, italic, headings, lists, etc.)
-- Floating menu with grouped actions
-
-### PHASE 4 — Dropdowns & UX
-
-- Toggle, click-outside, escape, tab change handling
-
-### PHASE 4.1 — Broken Functionality Fixes
-
-- Underline plugin (`underlinePlugin.js`) — custom `<u>` mark
-- Heading toggle (same-level heading → paragraph)
-- Undo/redo via `@milkdown/kit/prose/history`
-- Context menu integration
-
-### PHASE 4.1b — Integration Bug Fixes
-
-- **schemaCtx key fix**: `ctx.get("schemaCtx")` → `ctx.get(schemaCtx)` (imported from `@milkdown/core`)
-- **Module pre-loading**: Moved all imports into `init()` to eliminate async yield in `executeCommand()`
-- **Live state reading**: All methods now read `view.state` fresh instead of caching
-- **Position validation**: Block commands wrapped in try-catch with depth-walking
-
-### PHASE 4.2 — Code Blocks
-
-- Pure CSS code block styling (background, border, monospace font)
-- Language labels via `attr(data-language)` CSS
-
-### PHASE 5 — Left Sidebar Cleanup
-
-- Simplified to: logo, search, help, settings
-
-### PHASE 6 — Playwright E2E Testing
-
-- 25 editor tests: loading, typing, formatting, headings, code blocks, blockquotes, lists, links, undo/redo, tables, multi-tab
-- 22 UI tests: sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts help, context menu, tab switching
-- 9 persistence tests: auto-save, localStorage, reload, multi-tab persistence, markdown recovery
-- Bug discovered: `restoreTabs()` doesn't check any radio button after restoring tabs, preventing Milkdown editor auto-initialization
-
-### PHASE 7 — Documentation
-
-- README, CHANGELOG, AI_CONTEXT, roadmap-data.json, modal-info updated to v0.5.6
+- CI workflows fixed with `--legacy-peer-deps`
+- `dependabot.yml` created
+- `sync-version.yml` hardened
 
 ---
 
-## Git History (v0.5.6)
+## Git History (v0.5.7)
 
 ```
-004bf18 docs(v0.5.6): update documentation for v0.5.6 release
-25cdc34 feat(v0.5.6): add Shiki syntax highlighting for code blocks
-73ad011 feat(v0.5.6): formatting toolbar, keyboard shortcuts, and editor styling
-b6b3ca3 test(v0.5.6): add tests for autoEmptyLines plugin and floating menu Milkdown route
-916b816 fix(v0.5.6): fix autoEmptyLines plugin crash and Milkdown editor command routing
-f755b03 feat(v0.5.6): Milkdown integration, formatting toolbar, tab persistence fix
+cc37bf1 style(ui): fix contrast color tokens in keyboard shortcuts help panel
+a5b32f4 style(ui): implement multi-column flex wrapping for rightSidebar and apply manual adjustments for editor height
+75dd513 fix(tabs): synchronize i18n data attributes to prevent dynamic context menu labels from being overwritten
+31cecc5 fix(editor): prevent proseMirror from stripping link marks when inserting nodes on empty selections
+0740745 chore(devops): resolve upstream dependency synchronization conflicts from master
 ```
+
+Branches: `milestone-0.5.7` → `dev` (fast-forward, pushed). `master` untouched — PR pending human review.
 
 ---
 
@@ -255,8 +293,9 @@ f755b03 feat(v0.5.6): Milkdown integration, formatting toolbar, tab persistence 
 
 ### Phase 8 — Git Flow
 
-- Merge milestone-0.5.6 → dev
-- PR dev → master
+- [x] Merge milestone-0.5.7 → dev (fast-forward, pushed)
+- [ ] Tag + Release v0.5.7
+- [ ] PR dev → master (human review)
 
 ### v0.6.0 Roadmap
 
@@ -266,6 +305,8 @@ f755b03 feat(v0.5.6): Milkdown integration, formatting toolbar, tab persistence 
 | Formatting toolbar (12 buttons)        | Done    |
 | Keyboard shortcuts (27 shortcuts)      | Done    |
 | Auto-empty lines around blocks         | Done    |
+| Custom link modal                      | Done    |
+| Save indicator debounce                | Done    |
 | More keyboard shortcuts (left_Alt)     | Pending |
 | Offline pre-loading / fallback         | Pending |
 | Service Worker connection-recovery     | Pending |
