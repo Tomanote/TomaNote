@@ -479,7 +479,7 @@ export class MilkdownEditor {
                   const tr = liveState.tr.insert(1, textNode);
                   dispatch(tr);
                 } else {
-                  dispatch(liveState.tr.replaceSelectionWith(textNode));
+                  dispatch(liveState.tr.replaceSelectionWith(textNode, false)); // false = keep the link mark instead of inheriting (empty) cursor marks
                 }
               } catch (_) {
                 // Fallback: insert at end of doc
