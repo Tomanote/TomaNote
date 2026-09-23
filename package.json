@@ -26,26 +26,26 @@
     "security:outdated": "npm outdated"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.6",
+    "@astrojs/check": "^0.9.10",
     "@milkdown/kit": "^7.22.1",
     "@milkdown/plugin-tooltip": "^7.22.1",
     "@milkdown/theme-nord": "^7.22.1",
-    "@tailwindcss/vite": "^4.3.1",
-    "astro": "^7.1.0",
-    "sass": "^1.86.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.3",
+    "sass": "^1.104.1",
     "sortablejs": "^1.15.7",
     "tailwindcss": "^4.0.16",
     "typescript": "^5.9.3",
-    "vite": "^8.1.0"
+    "vite": "^8.3.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@vitest/coverage-v8": "^5.0.1",
     "gh-pages": "^6.3.0",
     "jsdom": "^30.1.0",
     "standard-version": "^9.5.0",
-    "terser": "^5.44.1",
+    "terser": "^5.51.2",
     "vitest": "^4.1.0"
   },
   "overrides": {
