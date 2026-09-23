@@ -77,7 +77,15 @@
           },
           {
             "summary": "Modal de enlace personalizado",
-            "description": "Reemplazo del prompt() nativo con modal personalizado de TomaNote para inserción de enlaces."
+            "description": "Reemplazo del prompt() nativo con modal personalizado de TomaNote para inserción de enlaces; genera nodos <a> reales incluso sin selección previa."
+          },
+          {
+            "summary": "Menú contextual de pestañas",
+            "description": "Las etiquetas Fijar/Desfijar del menú contextual se actualizan dinámicamente según el estado de la pestaña."
+          },
+          {
+            "summary": "Barra lateral adaptable",
+            "description": "La barra derecha envuelve los botones en múltiples columnas cuando baja la altura de la ventana, sin recortes (#86)."
           },
           {
             "summary": "Atajos de teclado",
@@ -97,7 +105,7 @@
           },
           {
             "summary": "Tests E2E",
-            "description": "38 tests Playwright para páginas informativas, 4 tests de validación de enlaces. 725 tests totales."
+            "description": "Tests Playwright para páginas informativas, validación de enlaces, menú contextual y barra lateral adaptable. 725 unit + 142 E2E = 867 tests totales."
           }
         ],
         "en": [
@@ -107,7 +115,15 @@
           },
           {
             "summary": "Custom link modal",
-            "description": "Replaced native prompt() with styled TomaNote dialog for link insertion."
+            "description": "Replaced native prompt() with styled TomaNote dialog for link insertion; creates real <a> nodes even without a prior selection."
+          },
+          {
+            "summary": "Tab context menu",
+            "description": "Context-menu Pin/Unpin labels now update dynamically based on the tab's pinned state."
+          },
+          {
+            "summary": "Responsive sidebar",
+            "description": "Right sidebar wraps tools into multiple columns when viewport height shrinks, with no clipping (#86)."
           },
           {
             "summary": "Keyboard shortcuts",
@@ -127,7 +143,7 @@
           },
           {
             "summary": "E2E testing",
-            "description": "38 Playwright tests for info pages, 4 link validation tests. 725 total tests."
+            "description": "Playwright tests for info pages, link validation, tab context menu, and responsive sidebar. 725 unit + 142 E2E = 867 total tests."
           }
         ]
       }

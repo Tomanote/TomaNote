@@ -23,6 +23,11 @@ This PR delivers the **milestone-0.5.7** release, containing critical bug fixes 
 ### Save Indicator
 - **Debounce fix** — `trigger()` now calls `schedule()` instead of `show()` directly, respecting the 5000ms debounce and preventing wild flashing on every 300ms auto-save tick
 
+### Edge-Case Fixes (final pass)
+- **Link without selection** — `replaceSelectionWith(textNode, false)` disables mark inheritance so inserting a link on a blank cursor yields a real marked `<a>` node instead of a flat text block
+- **Tab context menu labels** — `showTabContextMenu()` now syncs the `data-i18n` attribute to `context-menu.pin-tab`/`unpin-tab` *before* `applyTranslations()` runs, so pinned tabs correctly show "Unpin Tab" instead of being reverted to the static key
+- **Responsive RightSidebar (#86)** — Adobe-style multi-column wrap: below 900px viewport height the tool buttons flow into 2nd/3rd/4th columns (`flex-flow: wrap` + `display: contents`) instead of being clipped above the fold; `html/body` keep `overflow: hidden` (no scrollbar)
+
 ### Keyboard Shortcuts
 - **Duplicate listener guard** — `init()` now removes old listener and clears shortcuts before re-registration, preventing duplicate keydown handlers from race conditions
 
@@ -52,12 +57,15 @@ This PR delivers the **milestone-0.5.7** release, containing critical bug fixes 
 
 Closes #84 — Code block renders inline
 Closes #85 — Missing empty paragraph after elements
+Closes #86 — Formatting toolbar clips buttons on small viewports
 Closes #87 — Replace native prompt() with custom modal
 Closes #88 — Links not clickable
 Closes #89 — Keyboard shortcuts intermittently fail
 Closes #90 — Emoji replaced on pin via FloatingMenu
 Closes #91 — Consolidate duplicated pin/unpin logic
 Closes #92 — Save indicator too fast + missing on mobile
+Closes #75 — nanoid < 3.3.18 infinite loop DoS (lockfile now at 3.3.18)
+Closes #95 — nanoid 3.3.16 lockfile regression (resolved via upstream master sync)
 
 ---
 
@@ -65,28 +73,28 @@ Closes #92 — Save indicator too fast + missing on mobile
 
 ```bash
 # Unit tests
-npx vitest run              # 725/725 pass
+npx vitest run              # 725/725 pass (30 files)
 
-# E2E — Info pages
-npx playwright test e2e/infoPages.spec.js  # 38/38 pass
+# E2E — full suite
+npx playwright test         # 142 tests (13 files)
 
-# E2E — Link validation
-npx playwright test e2e/issue87-linkNodeValidation.spec.js  # 2/4 pass (2 flaky due to pre-existing localStorage empty-state)
-
-# E2E — Full suite (existing)
-npx playwright test e2e/ui.spec.js         # 21/22 pass (1 pre-existing flaky)
+# E2E — new specs from this milestone
+npx playwright test e2e/infoPages.spec.js              # info pages
+npx playwright test e2e/issue87-linkNodeValidation.spec.js  # link node + empty selection
+npx playwright test e2e/tabContextMenu.spec.js          # pin/unpin labels
+npx playwright test e2e/rightSidebarResponsive.spec.js  # multi-column wrap
 ```
+
+**Totals: 867 tests — 725 unit (Vitest) + 142 E2E (Playwright).**
 
 ---
 
 ## ⚠️ Known Issues (Not in Scope)
 
 - **#97** — Clipboard paste breaks editor state (P1 — requires deeper ProseMirror/clipboard integration)
-- **#93** — Astro upgrade 7.1.0 → 7.2.8 (P1 — requires testing with full dependency tree)
-- **#94** — Vitest mocker upgrade (P2 — minor)
-- **#95** — Nanoid lockfile regression (P1 — requires lockfile regeneration)
+- **#93** — Astro upgrade 7.1.0 → 7.2.8 (P1 — still open: lockfile at 7.1.0, requires testing with full dependency tree)
+- **#94** — Vitest mocker upgrade (P2 — still open: lockfile at 4.1.10, needs 4.1.11)
 - **#83** — Syntax highlighting for code blocks (P2 — feature, not bug)
-- **#86** — Toolbar clips on small viewports (P2 — CSS fix needed)
 
 ---
 

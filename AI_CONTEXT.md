@@ -1,6 +1,6 @@
 # AI Context — TomaNote
 
-> **Last updated**: 2026-09-21 | **Version**: 0.5.7 (milestone) | **Branch**: milestone-0.5.7
+> **Last updated**: 2026-09-23 | **Version**: 0.5.7 | **Branch**: dev (unified)
 
 ---
 
@@ -86,11 +86,11 @@ src/
 | Field              | Value                                         |
 | ------------------ | --------------------------------------------- |
 | Production version | 0.5.6 (deployed via `gh-pages`)               |
-| Active branch      | `milestone-0.5.7`                             |
+| Active branch      | `dev` (unified; PR dev → master pending)       |
 | Default branch     | `master`                                      |
-| Tests (unit)       | 667 passing (30 files, Vitest)                |
-| Tests (E2E)        | 56+ passing (Playwright)                      |
-| Tests (total)      | 725+                                          |
+| Tests (unit)       | 725 passing (30 files, Vitest)                |
+| Tests (E2E)        | 142 passing (13 files, Playwright)             |
+| Tests (total)      | 867                                           |
 | Test framework     | Vitest + jsdom + Playwright + @testing-library |
 
 ---
@@ -132,6 +132,7 @@ All commands use ProseMirror's Transform API directly (not Milkdown command syst
 - **Module pre-loading**: All imports cached in `this._modules` during `init()` to avoid async yield during `executeCommand()`
 - **Live state**: All methods read `view.state` fresh (never cached) to avoid stale positions after plugin transactions
 - **Link modal**: Async `showLinkModal()` re-reads `view.state` inside callbacks to prevent stale closure bugs; handles empty documents with `tr.insert()`
+- **Empty-selection link insert**: `replaceSelectionWith(textNode, false)` disables mark inheritance so a blank cursor cannot strip the freshly created link mark — yields a real `<a>` node
 - **Link click handler**: Ctrl/Cmd+click on `<a>` elements opens in new tab via `window.open(href, "_blank")`
 - **Position validation**: Block commands wrapped in try-catch with depth-walking to handle edge cases
 - **Auto-save**: MutationObserver + debounced save (300ms) on ProseMirror DOM changes
@@ -147,6 +148,7 @@ All commands use ProseMirror's Transform API directly (not Milkdown command syst
 - `FloatingMenu.handlePinTab()` delegates to `window.tabManager.pinTab()` → `TabPinHandler.pinTab()`
 - Emoji resolution chain: `existingEmoji || detectEmojiInText(name) || getRandomPinEmoji()`
 - Removed duplicate `pinTab()`/`unpinTab()` from `lib/scripts/ui/floatingMenu.js`
+- **Context menu delegation**: right-click pin actions route through the same `window.tabManager` lifecycle; `showTabContextMenu()` syncs the `data-i18n` attribute to `context-menu.pin-tab` / `context-menu.unpin-tab` *before* `applyTranslations()` runs, so the i18n pass re-applies the dynamic label instead of clobbering it with the static key
 
 ### Save Indicator
 
@@ -157,6 +159,13 @@ All commands use ProseMirror's Transform API directly (not Milkdown command syst
 
 - `init()` guards against duplicate registration: removes old listener + clears shortcuts before re-registering
 - 27 shortcuts registered with modifier matching (Ctrl/Alt/Shift/Meta)
+
+### Right Sidebar Responsiveness (Adobe-style multi-column)
+
+- `floating-menu.scss` `@media (max-height: 900px)`: `.tn-tools-container` switches to `flex-flow: wrap` and `.tn-formatting-toolbar` uses `display: contents`, so buttons flow into 2nd/3rd/4th columns instead of being clipped (#86)
+- `.tn-navbar` gets `width: auto !important; min-width: 96px` to grow with wrapped columns while keeping the sidebar width as floor
+- `html/body` keep `overflow: hidden` — no vertical scrollbar; layout adapts via column flow only
+- Short-viewport height tweaks: `Reset.scss` / `TabList.scss` drop 93% → 91% below 900px height; `milkdown-editor.scss` ProseMirror padding normalized
 
 ---
 
@@ -205,7 +214,7 @@ floatingNavPosition.test.js         # 12 tests — floating nav positioning
 keyboardShortcuts.test.js           # Keyboard shortcut tests
 settingsModal.test.js               # Settings modal tests
 tabDragDrop.test.js                 # Drag-and-drop tests
-emojiDetector.test.js               # 18 tests — emoji detection
+emojiDetector.test.js              # 18 tests — emoji detection
 formatting.test.js                  # 6 tests — text formatting
 dependencyValidation.test.js        # 11 tests — dependency versions
 issue89-shortcutInit.test.js        # 10 tests — shortcut dedup
@@ -214,20 +223,22 @@ issue91-pinUnpinRefactor.test.js    # 15 tests — pin/unpin architecture
 issue92-saveIndicator.test.js       # 12 tests — save indicator debounce
 ```
 
-### E2E Tests (Playwright) — 8+ files, 94+ tests
+### E2E Tests (Playwright) — 13 files, 142 tests
 
 ```
 e2e/editor.spec.js                  # 25 tests — editor loading, formatting, headings, code blocks, lists, links, undo/redo, tables, multi-tab
 e2e/ui.spec.js                      # 22 tests — sidebar, floating menu, bottom bar, modals, command palette, keyboard shortcuts, context menu, tab switching, responsive
 e2e/persistence.spec.js             # 9 tests — auto-save, localStorage, reload, multi-tab persistence, markdown recovery
-e2e/infoPages.spec.js               # 38 tests — status, scrolling, content, navigation, responsive, design system
+e2e/infoPages.spec.js               # 18 tests — status, scrolling, content, navigation, responsive, design system
 e2e/issue84-codeBlockLayout.spec.js # 5 tests — code block CSS validation
 e2e/issue85-emptyParagraphAfter.spec.js # 5 tests — empty paragraph after blocks
 e2e/issue86-toolbarResponsive.spec.js   # 5 tests — toolbar on small viewports
 e2e/issue87-linkModal.spec.js       # 5 tests — custom link modal behavior
-e2e/issue87-linkNodeValidation.spec.js  # 4 tests — link node href, underline, color, text
+e2e/issue87-linkNodeValidation.spec.js  # 5 tests — link node href, underline, color, text, empty-selection insertion
 e2e/issue88-linksNotClickable.spec.js   # 6 tests — Ctrl/Cmd+click link navigation
 e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
+e2e/tabContextMenu.spec.js          # 5 tests — dynamic pin/unpin label lifecycle
+e2e/rightSidebarResponsive.spec.js  # 5 tests — multi-column wrap at restricted heights
 ```
 
 ---
@@ -244,6 +255,9 @@ e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
 - **#90**: FloatingMenu delegates pin/unpin to TabPinHandler
 - **#91**: Consolidated pin/unpin into single source of truth
 - **#92**: Save indicator `trigger()` → `schedule()` (debounce fix)
+- **#86**: Right sidebar clips buttons on short viewports → Adobe-style multi-column wrap
+- **Link empty selection**: `replaceSelectionWith(..., false)` preserves the link mark so blank-editor insertion yields a real `<a>` node
+- **Context menu labels**: `data-i18n` synced before `applyTranslations()` so Pin/Unpin labels flip with tab state
 - **Link stale state**: Modal re-reads `view.state` inside callbacks
 - **Info page scroll**: `isInfoPage` prop overrides overflow
 
@@ -251,7 +265,7 @@ e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
 
 - Redesigned `/about`, `/privacy`, `/terms` with TomaNote design tokens
 - Created `info-pages.scss` design system
-- 38 E2E tests covering all routes
+- 18 E2E tests covering all routes
 
 ### DevOps
 
@@ -264,8 +278,14 @@ e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
 ## Git History (v0.5.7)
 
 ```
-(Upcoming merge commits)
+cc37bf1 style(ui): fix contrast color tokens in keyboard shortcuts help panel
+a5b32f4 style(ui): implement multi-column flex wrapping for rightSidebar and apply manual adjustments for editor height
+75dd513 fix(tabs): synchronize i18n data attributes to prevent dynamic context menu labels from being overwritten
+31cecc5 fix(editor): prevent proseMirror from stripping link marks when inserting nodes on empty selections
+0740745 chore(devops): resolve upstream dependency synchronization conflicts from master
 ```
+
+Branches: `milestone-0.5.7` → `dev` (fast-forward, pushed). `master` untouched — PR pending human review.
 
 ---
 
@@ -273,8 +293,9 @@ e2e/issue92-clipboardPaste.spec.js  # 7 tests — clipboard paste persistence
 
 ### Phase 8 — Git Flow
 
-- Merge milestone-0.5.7 → dev
-- PR dev → master
+- [x] Merge milestone-0.5.7 → dev (fast-forward, pushed)
+- [ ] Tag + Release v0.5.7
+- [ ] PR dev → master (human review)
 
 ### v0.6.0 Roadmap
 

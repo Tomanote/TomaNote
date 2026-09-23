@@ -33,6 +33,9 @@ Bug fixes, CI/CD hardening, info pages redesign, and link modal improvements.
 - **Emoji on pin** — Fixed emoji being replaced with random value via unified TabPinHandler (#90)
 - **Save indicator debounce** — Indicator no longer flashes wildly on every auto-save tick (#92)
 - **Link modal stale state** — Modal now re-reads live ProseMirror state on confirm
+- **Link without selection** — Inserting a link on a blank selection now creates a real clickable `<a>` node instead of plain text
+- **Tab context menu labels** — Pin/Unpin label now flips dynamically based on the tab's pinned state
+- **Responsive toolbar** — Right sidebar tools wrap into extra columns on short viewports instead of clipping (#86)
 
 ### 🎨 Info pages redesign
 - `/about`, `/privacy`, `/terms` redesigned with TomaNote design tokens
@@ -49,7 +52,7 @@ Bug fixes, CI/CD hardening, info pages redesign, and link modal improvements.
 - Cross-repo version sync hardened with error handling
 
 ### 🧪 Testing
-- **725 total tests**: 667 unit (Vitest) + 56 E2E (Playwright) from v0.5.6 + 55 new Vitest + 38 new E2E
+- **867 total tests**: 725 unit (Vitest, 30 files) + 142 E2E (Playwright, 13 files)
 
 ## 📋 Previous: v0.5.6
 

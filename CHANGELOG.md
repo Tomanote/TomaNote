@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - User-provided emoji intermittently replaced with random emoji on pin — `FloatingMenu.handlePinTab()` now delegates to `window.tabManager.pinTab()` (TabPinHandler) as single source of truth (#90).
 - Save indicator appears too fast (~300ms) — `trigger()` now calls `schedule()` instead of `show()` directly, respecting the 5000ms debounce (#92).
 - Link modal stale state — re-reads `view.state` inside async modal callbacks to prevent invalid ProseMirror transactions.
+- Link inserted without a prior selection rendered as plain text — `replaceSelectionWith()` now dispatches with `inheritMarks: false` so the link mark survives on empty selections and produces a real `<a>` node.
+- Tab context menu always showed "Pin Tab" — the `data-i18n` attribute is now synced to the state-specific key before `applyTranslations()` runs, so pinned tabs correctly display "Unpin Tab".
+- Formatting toolbar clipped buttons on short viewports (#86) — right sidebar tools now flow into adaptive multi-column layout below 900px viewport height, with no clipping and no vertical scrollbar.
 - Info page scroll bug — added `isInfoPage` prop to Layout.astro that overrides `overflow: hidden` on `<body>` and `#app-layout` for `/about`, `/privacy`, `/terms` routes.
 
 ### Changed
@@ -31,8 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Testing
 - 55 new Vitest unit tests: dependency validation (11), keyboard shortcut dedup (10), emoji pin behavior (11), pin/unpin architecture (15), save indicator debounce (12).
 - 38 new Playwright E2E tests for info pages (status, scrolling, content, navigation, responsive, design system).
-- 4 new Playwright E2E tests for link node validation (href, underline, color, text content).
-- 725 total tests passing (667 unit + 56 E2E from 0.5.6 + new additions).
+- 5 new Playwright E2E tests for link node validation (href, underline, color, text content, empty-selection insertion).
+- 5 new Playwright E2E tests for tab context menu pin/unpin label lifecycle.
+- 5 new Playwright E2E tests for responsive right sidebar at restricted viewport heights.
+- 867 total tests passing: 725 unit (Vitest, 30 files) + 142 E2E (Playwright, 13 files).
 
 ## [0.5.6] - September 4, 2026
 
