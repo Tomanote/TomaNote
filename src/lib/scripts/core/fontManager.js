@@ -146,27 +146,79 @@ export class FontManager {
     }
   }
 
+  /**
+   * Current connection status (milestone 0.5.8).
+   * Prefers the centralized ConnectivityStore, falls back to navigator.onLine.
+   * @returns {boolean}
+   */
+  isOnline() {
+    try {
+      const store = window.connectivity;
+      if (store && typeof store.isOnline === "function") {
+        return store.isOnline() !== false;
+      }
+    } catch {
+      // store broken — fall through to navigator
+    }
+    return typeof navigator === "undefined" || navigator.onLine !== false;
+  }
+
+  /**
+   * Inject a remote stylesheet with a silent failure path: if the request
+   * errors (offline, timeout, blocked), the font family stack still resolves
+   * through the local fallback — the app never crashes on a missing font.
+   * @param {string} url
+   * @param {string|null} family
+   */
+  injectFontLink(url, family) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    link.onerror = () => {
+      // Intercept the network failure silently: keep the family applied with
+      // its fallback stack so text remains readable.
+      this.applyFontToNotes(family ?? this.defaultFont);
+      if (typeof link.remove === "function") link.remove();
+    };
+    document.head.appendChild(link);
+  }
+
   loadCustomFont() {
-    const fontUrl = localStorage.getItem("customFontUrl");
+    let fontUrl = null;
+    try {
+      fontUrl = localStorage.getItem("customFontUrl");
+    } catch {
+      // localStorage unavailable (private mode / quota) — treat as no preference
+      fontUrl = null;
+    }
 
     if (!fontUrl) {
       this.applyFontToNotes(this.defaultFont);
       return;
     }
 
-    try {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = fontUrl;
-      document.head.appendChild(link);
+    const match = fontUrl.match(/[?&]family=([^:&]*)/);
+    const family = match && match[1] ? decodeURIComponent(match[1].split(":")[0].replace(/\+/g, " ")) : null;
+    const resolvedFamily = family ?? this.defaultFont;
 
-      const match = fontUrl.match(/[?&]family=([^:&]*)/);
-      if (match && match[1]) {
-        const family = decodeURIComponent(match[1].split(":")[0].replace(/\+/g, " "));
-        this.applyFontToNotes(family);
-        localStorage.setItem("customFontName", family);
+    // Offline pre-loading: skip the remote request entirely, apply the local
+    // fallback family immediately so the editor never renders unstyled.
+    if (!this.isOnline()) {
+      this.applyFontToNotes(resolvedFamily);
+      return;
+    }
+
+    try {
+      this.injectFontLink(fontUrl, family);
+      this.applyFontToNotes(resolvedFamily);
+      if (family) {
+        try {
+          localStorage.setItem("customFontName", family);
+        } catch {
+          // non-fatal: memory-only preference for this session
+        }
       }
-    } catch (error) {
+    } catch {
       this.applyFontToNotes(this.defaultFont);
     }
   }
@@ -238,18 +290,27 @@ export class FontManager {
   }
 
   changeNoteFont(fontUrl, fontName) {
+    // Persist the preference first — LocalStorage is the source of truth.
+    // Each write is individually guarded so a quota/private-mode failure still
+    // applies the font in-session instead of silently discarding the change.
     try {
       localStorage.setItem("customFontUrl", fontUrl);
       localStorage.setItem("customFontName", fontName);
+    } catch {
+      // storage unavailable — keep going with in-memory state
+    }
 
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = fontUrl;
-      document.head.appendChild(link);
-
+    try {
       this.applyFontToNotes(fontName);
+
+      // Offline pre-loading: never request remote resources while offline.
+      // The family + fallback stack renders immediately; the remote CSS will be
+      // fetched on the next load when connectivity returns.
+      if (!this.isOnline()) return true;
+
+      this.injectFontLink(fontUrl, fontName);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

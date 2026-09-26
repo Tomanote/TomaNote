@@ -158,6 +158,10 @@ export class TabManager {
 
     // Listen for tab-saved events (from Milkdown auto-save)
     window.addEventListener("tab-saved", () => {
+      // Milestone 0.5.8: edits must reach LocalStorage INSTANTLY — not only on
+      // tab-switch/beforeunload/manual-save. doSave() already refreshed the
+      // in-memory tabsData (300ms debounce), so this persists that state.
+      this.saveTabs();
       window.saveIndicator?.trigger();
     });
 
@@ -316,27 +320,39 @@ export class TabManager {
   async restoreTabs() {
     try {
       const savedData = localStorage.getItem("tabsData");
-      this.tabsData = savedData ? JSON.parse(savedData) : [];
+      const parsed = savedData ? JSON.parse(savedData) : [];
+      // LocalStorage is the default stream: a corrupt/non-array payload must
+      // degrade to an empty list instead of throwing or rendering a blank app.
+      this.tabsData = Array.isArray(parsed) ? parsed : [];
 
       // Migration: convert HTML content to markdown for markdown tabs
       this.tabsData.forEach((tab) => {
-        if (tab.format === "markdown" && tab.content && tab.content.startsWith("<")) {
+        if (tab && tab.format === "markdown" && tab.content && tab.content.startsWith("<")) {
           tab.content = this.htmlToMarkdown(tab.content);
         }
       });
-      localStorage.setItem("tabsData", JSON.stringify(this.tabsData));
+      try {
+        localStorage.setItem("tabsData", JSON.stringify(this.tabsData));
+      } catch {
+        // Quota/private-mode: keep the in-memory state, skip the write-back
+      }
 
       // Clear existing tabs (except the create button)
       this.tabList.querySelectorAll(".tab-list__item").forEach((item) => item.remove());
 
-      // Create elements for each tab
+      // Create elements for each tab — one malformed entry must not blank the rest
       this.tabsData.forEach((tabData) => {
-        this.createTabElement(tabData);
+        try {
+          this.createTabElement(tabData);
+        } catch (error) {
+          this.log("⚠️ Skipping malformed tab entry:", tabData?.id, error);
+        }
       });
 
       // Update ID counter
       this.updateTabIdCounter();
     } catch (error) {
+      this.log("⚠️ restoreTabs failed — starting from LocalStorage defaults:", error);
       this.tabsData = [];
     }
   }
@@ -646,7 +662,11 @@ export class TabManager {
 
       this.tabsData = tabsData;
       localStorage.setItem("tabsData", JSON.stringify(tabsData));
-    } catch (error) {}
+    } catch (error) {
+      // Silent local fallback: an unwritable LocalStorage (quota / private
+      // mode) must never propagate — the in-memory state stays authoritative.
+      this.log("⚠️ saveTabs failed (LocalStorage unwritable):", error);
+    }
   }
 
   updateTabIds() {
