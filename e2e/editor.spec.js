@@ -253,16 +253,19 @@ test.describe("Editor — Links", () => {
     await waitForAppReady(page);
   });
 
-  test("link via floating menu triggers URL prompt", async ({ page }) => {
+  test("link via floating menu opens custom modal and inserts link", async ({ page }) => {
     await typeInEditor(page, "click here");
     await selectAllInEditor(page);
 
-    // The link command uses window.prompt() — intercept it
-    page.once("dialog", async (dialog) => {
-      await dialog.accept("https://example.com");
-    });
-
     await clickFormatButton(page, "link");
+
+    // Issue #87 replaced the native window.prompt() with the custom TomaNote
+    // link modal — fill its URL field and confirm instead of intercepting a dialog.
+    const modal = page.locator('[data-testid="link-modal"]');
+    await expect(modal).toBeVisible({ timeout: 3000 });
+    await modal.locator("#link-modal-url").fill("https://example.com");
+    await modal.locator(".link-modal__btn--confirm").click();
+    await page.waitForTimeout(300);
 
     const editor = page.locator(".ProseMirror").last();
     const hasLink = await editor.locator("a").count();
