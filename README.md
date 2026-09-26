@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-0.5.7-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.8-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Mobile](https://img.shields.io/badge/mobile-responsive-success)
@@ -20,39 +20,42 @@ TomaNote is a modern, minimalist notepad that runs directly in your browser. No 
 > Want to see what's coming next?
 > Check the **Roadmap** inside the app at [tomanote.app](https://tomanote.app) ✨
 
-## 🚀 What's new — v0.5.7
+## 🚀 What's new — v0.5.8
+
+Offline-first foundations: connectivity awareness, resilient local persistence, and a fully hardened dependency tree.
+
+### ✨ Features
+- **Centralized connectivity state** — reactive `window.connectivity` store with clean subscriptions and a global `connectivity-changed` event
+- **Connection status badge** — discrete toast on connection drops and recovery, with zero desktop layout shift
+- **Offline save feedback** — autosave and Ctrl+S read "Saved locally (Offline mode active)" while offline (EN/ES)
+- **Mobile link slash command** — typing " / " in the mobile editor opens the Link Insertion Modal (#107)
+- **Instant persistence** — every edit reaches LocalStorage immediately; corrupt data degrades gracefully instead of blanking the app
+
+### 🔒 Security
+- **astro 7.3.5** — clears the critical AVIF image-optimization RCE and base-path authorization bypass (#110)
+- **vitest / @vitest/mocker 4.1.11** — clears path traversal via redirect mock (CVE-2026-84373) (#109)
+- **devalue 5.9.4** — clears DoS via malformed input (CVE-2026-81176) (#108)
+- **`npm audit`: 0 active vulnerabilities** (down from 9)
+
+### 🐛 Bug fixes
+- **Custom font cascade** — note fonts now reach the ProseMirror editing surface (#104)
+- **Autosave debounce** — keystrokes bubbling from the Milkdown surface correctly restart the 5 s countdown (#105)
+- **Ctrl+S / Cmd+S** — case-insensitive matching for Chromium, ⌘S binding for macOS, immediate confirmation toast (#106)
+- **Empty paragraphs after blocks** — fixed a silent off-by-one that skipped auto-inserted paragraphs (#85 regression)
+
+### 🧪 Testing
+- **920 total tests**: 761 unit (Vitest, 35 files) + 159 E2E (Playwright) — the E2E suite verified against the production build preview
+
+## 📋 Previous: v0.5.7
 
 Bug fixes, CI/CD hardening, info pages redesign, and link modal improvements.
 
-### 🐛 Bug fixes
-- **Code block layout** — Code blocks now render as true block elements instead of inline-flex (#84)
-- **Empty paragraph after blocks** — Auto-empty lines plugin handles `setBlockType` conversions (#85)
-- **Custom link modal** — Replaced native `prompt()` with styled TomaNote dialog (#87)
-- **Clickable links** — Ctrl/Cmd+click opens links in new tab (#88)
-- **Keyboard shortcuts** — Fixed duplicate listener race condition on init (#89)
-- **Emoji on pin** — Fixed emoji being replaced with random value via unified TabPinHandler (#90)
-- **Save indicator debounce** — Indicator no longer flashes wildly on every auto-save tick (#92)
-- **Link modal stale state** — Modal now re-reads live ProseMirror state on confirm
-- **Link without selection** — Inserting a link on a blank selection now creates a real clickable `<a>` node instead of plain text
-- **Tab context menu labels** — Pin/Unpin label now flips dynamically based on the tab's pinned state
-- **Responsive toolbar** — Right sidebar tools wrap into extra columns on short viewports instead of clipping (#86)
-
-### 🎨 Info pages redesign
+- Code blocks render as true blocks (#84), empty paragraph after insertions (#85)
+- Custom link modal replaces native `prompt()` (#87); links clickable via Ctrl/Cmd+click (#88)
+- Keyboard shortcut dedup on init (#89); unified pin/unpin via TabPinHandler (#90, #91)
+- Save indicator debounce fix (#92); responsive toolbar without clipping (#86)
 - `/about`, `/privacy`, `/terms` redesigned with TomaNote design tokens
-- Scroll fix — pages no longer clip content (overflow bug resolved)
-- 38 new E2E tests covering status, scrolling, navigation, responsive, and design system
-
-### 🔧 Improvements
-- Consolidated pin/unpin logic into `TabPinHandler` as single source of truth (#91)
-- Link validation tests confirm `<a>` nodes with correct href, underline, and accent color
-
-### 📦 DevOps
-- CI workflows fixed for Dependabot compatibility (`--legacy-peer-deps`)
-- Automated dependabot configuration added
-- Cross-repo version sync hardened with error handling
-
-### 🧪 Testing
-- **867 total tests**: 725 unit (Vitest, 30 files) + 142 E2E (Playwright, 13 files)
+- **867 total tests**: 725 unit + 142 E2E
 
 ## 📋 Previous: v0.5.6
 

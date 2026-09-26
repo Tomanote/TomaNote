@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.8] - September 26, 2026
+
+### Features
+- Centralized connectivity state tracker — reactive `window.connectivity` store with non-leaking `online`/`offline` listeners, a `subscribe()` API and a global `connectivity-changed` event, ready for the upcoming mobile List/Grid views.
+- Connection status alert badge — discrete toast announces connection drops ("You're offline — changes are saved locally") and recovery ("Back online") with zero desktop layout shift.
+- Mobile link slash command — typing " / " in the mobile editor opens the custom Link Insertion Modal through a ProseMirror `handleTextInput` plugin (#107).
+- Offline-aware save toasts — autosave and manual save read "Saved locally (Offline mode active)" while the connection is down (EN/ES).
+- Instant-LocalStorage persistence — every edit reaches `tabsData` immediately instead of waiting for tab switches or `beforeunload`; corrupt payloads degrade to an empty list instead of blanking the window.
+
+### Security fixes
+- astro 7.1.0 → 7.3.5 — clears the critical AVIF image-optimization RCE (GHSA-26w7-cxv4-gfx2) and base-path authorization bypass (GHSA-376h-93r7-7g6f) (#110).
+- vitest / @vitest/mocker 4.1.10 → 4.1.11 — clears path traversal / arbitrary file read via redirect mock (CVE-2026-84373) (#109).
+- devalue 5.8.1 → 5.9.4 (pinned via npm overrides) — clears DoS via malformed input (CVE-2026-81176) (#108).
+- `npm audit` footprint reduced from 9 to 0 active vulnerabilities, including the transitive `brace-expansion` advisory.
+
+### Bug fixes
+- Custom font cascade to the ProseMirror surface — `.ProseMirror` now consumes `var(--font-family-notes, …)` instead of a hardcoded stack (#104).
+- Autosave debounce event bubbling — the save-indicator input filter matches editor surfaces structurally (`closest(".tab-list__item--content")`) so keystrokes from the Milkdown child surface restart the 5 s countdown (#105).
+- Ctrl+S / Cmd+S manual save — case-insensitive key matching for Chromium's uppercase delivery, a dedicated `Meta+S` binding for macOS, and an immediate confirmation toast via `executeManualSave()` (#106).
+- autoEmptyLinesPlugin off-by-one — insert positions for trailing code blocks/quotes resolved past `doc.content.size`, silently skipping issue #85's empty paragraphs; positions corrected and unit-test mocks tightened to real ProseMirror resolve semantics.
+- `waitForAppReady` race — now waits for `milkdownEditor` readiness and falls back to the mobile bottom-bar create action when the desktop create button renders 0×0.
+
+### Testing
+- 27 new unit tests (connectivity store, offline save toast, connection status, font fallback) written TDD-first; autoEmptyLines suite hardened to 29 tests under strict position validation.
+- 7 new E2E offline tests (`e2e/offlinePreloading.spec.js`) exercising real `context.setOffline()` flows: store reactivity, indicator lifecycle, offline toast text, offline create→persist→reload.
+- Editor link spec aligned with the custom link modal (#87 removed the native prompt); toolbar visibility assertions hardened against post-mount reflow.
+- **920 total tests passing: 761 unit (Vitest, 35 files) + 159 E2E (Playwright), with the E2E suite verified against the production build preview.**
+
 ## [0.5.7] - September 21, 2026
 
 ### Fixed
