@@ -22,7 +22,7 @@ describe("Issue #89 — Keyboard Shortcuts Initialization Race Condition", () =>
     window.commandPalette = { toggle: vi.fn(), isOpen: false };
     window.editorSettings = { applyWidth: vi.fn() };
     window.keyboardShortcutsHelp = { toggle: vi.fn() };
-    window.saveIndicator = { trigger: vi.fn() };
+    window.saveIndicator = { trigger: vi.fn(), show: vi.fn() };
 
     document.getElementById = vi.fn((id) => {
       if (id === "commandPalette") return { hasAttribute: vi.fn(() => false) };
@@ -172,7 +172,7 @@ describe("Issue #89 — Keyboard Shortcuts Initialization Race Condition", () =>
   // --- Bug: shortcuts blocked by isInputFocused when they shouldn't be ---
 
   it("Ctrl+S works even when an input is focused (skipWhenInputFocused=false)", async () => {
-    window.saveIndicator = { trigger: vi.fn() };
+    window.saveIndicator = { trigger: vi.fn(), show: vi.fn() };
     ks = makeKS();
     await ks.init();
 
@@ -193,7 +193,7 @@ describe("Issue #89 — Keyboard Shortcuts Initialization Race Condition", () =>
       preventDefault: vi.fn(),
     });
 
-    expect(window.saveIndicator.trigger).toHaveBeenCalled();
+    expect(window.saveIndicator.show).toHaveBeenCalled();
   });
 
   // --- Bug: contenteditable ProseMirror should not block shortcuts ---
