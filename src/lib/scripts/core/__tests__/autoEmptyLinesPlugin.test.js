@@ -61,11 +61,14 @@ function mockDoc(...children) {
       ? mockNode(paragraphType, [mockNode(textType, [c])])
       : c,
   );
-  const totalSize = nodes.reduce((sum, n) => sum + n.nodeSize, 0) + 2;
+  const childrenSize = nodes.reduce((sum, n) => sum + n.nodeSize, 0);
   return {
     type: docType,
-    content: { size: totalSize, content: nodes },
-    nodeSize: totalSize,
+    // Real ProseMirror semantics: doc.content.size = sum of children sizes.
+    // resolve() is valid only within [0, content.size] — mirroring this is what
+    // catches off-by-one insert positions (issue #85 E2E regression).
+    content: { size: childrenSize, content: nodes },
+    nodeSize: childrenSize + 2,
     forEach(cb) {
       let offset = 0;
       nodes.forEach((child, i) => {
@@ -108,7 +111,8 @@ function mockTransaction(docChanged = false, docRef) {
   const trDoc = docRef
     ? {
         resolve(pos) {
-          if (pos < 0 || pos > docRef.nodeSize) {
+          // Mirror real ProseMirror: positions are valid in [0, content.size]
+          if (pos < 0 || pos > docRef.content.size) {
             throw new RangeError(`Position ${pos} out of range`);
           }
           return { pos };
@@ -518,10 +522,12 @@ describe("autoEmptyLinesPlugin", () => {
       expect(result).not.toBeNull();
       expect(result.inserts.length).toBe(2);
 
-      // The code_block has nodeSize that includes its content + open/close tokens
+      // Real ProseMirror positions: the first child of doc starts at position 0
+      // (there is no "doc opening token" offset), and the end of the last child
+      // equals doc.content.size — both are valid resolve() positions.
       const cbNode = codeBlock("x");
-      const expectedAfter = cbNode.nodeSize + 1; // offset 0 + nodeSize + 1 (doc open token)
-      const expectedBefore = 1; // offset 0 + 1 (doc open token)
+      const expectedAfter = cbNode.nodeSize; // offset 0 + nodeSize (end of node, === content.size for a lone child)
+      const expectedBefore = 0; // offset 0 — position right before the block
 
       // Insert "after" is at the higher position
       const positions = result.inserts.map((i) => i.pos).sort((a, b) => a - b);
@@ -543,7 +549,7 @@ describe("autoEmptyLinesPlugin", () => {
       // code_block at index 1: offset = paragraph("intro").nodeSize
       const introNode = paragraph("intro");
       const cbNode = codeBlock("x");
-      const expectedPos = introNode.nodeSize + cbNode.nodeSize + 1;
+      const expectedPos = introNode.nodeSize + cbNode.nodeSize; // end of the code_block — no +1
 
       expect(result.inserts[0].pos).toBe(expectedPos);
     });
