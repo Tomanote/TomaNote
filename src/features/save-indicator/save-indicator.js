@@ -33,7 +33,18 @@ export class SaveIndicator {
 
   setupListeners() {
     this.boundInputHandler = (e) => {
-      if (e.target?.classList?.contains("tab-list__item--content")) {
+      // Issue #105: real keystrokes bubble from the ProseMirror surface, which is
+      // a CHILD of .tab-list__item--content (`.tab-list__item--content > .milkdown >
+      // .ProseMirror`). Class-based matching on the target misses those events, so
+      // the 5s countdown never restarted while typing in Markdown tabs. Match by
+      // DOM structure instead: legacy editors ARE the content div; Milkdown
+      // keystrokes target an element inside it.
+      const target = e.target;
+      const isEditorSurface =
+        target?.classList?.contains("tab-list__item--content") ||
+        target?.classList?.contains("ProseMirror") ||
+        (target instanceof Element && target.closest(".tab-list__item--content") !== null);
+      if (isEditorSurface) {
         this.schedule();
       }
     };
