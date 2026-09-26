@@ -33,13 +33,25 @@ export class MilkdownEditor {
       const proseHistory = $prose(() => history());
       const { autoEmptyLines } = await import("./plugins/autoEmptyLinesPlugin.js");
 
+      // Mobile slash command plugin (issue #107): " / " opens the link modal.
+      // Implemented as a ProseMirror input handler so the trigger characters are
+      // removed atomically within the state pipeline — no DOM/state flush race.
+      const mobileSlashLinkPlugin = $prose(
+        () =>
+          new Plugin({
+            props: {
+              handleTextInput: (view, from, to, text) => this._handleMobileSlashInput(view, from, text),
+            },
+          })
+      );
+
       // Pre-load command modules to avoid async yield in executeCommand
       const { editorViewCtx } = await import("@milkdown/kit/core");
       const { toggleMark, wrapIn, lift } = await import("@milkdown/kit/prose/commands");
-      const { TextSelection } = await import("@milkdown/kit/prose/state");
+      const { TextSelection, Plugin } = await import("@milkdown/kit/prose/state");
       const { undo, redo } = await import("@milkdown/kit/prose/history");
 
-      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, editorViewCtx, toggleMark, wrapIn, lift, TextSelection, undo, redo };
+      this._modules = { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, mobileSlashLinkPlugin, editorViewCtx, toggleMark, wrapIn, lift, TextSelection, undo, redo };
       this._initialized = true;
 
       this.log("✅ MilkdownEditor initialized — modules pre-loaded");
@@ -86,7 +98,7 @@ export class MilkdownEditor {
     }
 
     const { Editor, defaultValueCtx, rootCtx } = await import("@milkdown/kit/core");
-    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines } = this._modules;
+    const { commonmark, gfm, tooltipFactory, nord, underline, proseHistory, autoEmptyLines, mobileSlashLinkPlugin } = this._modules;
 
     this.log(`📝 Creating editor for ${tabId}, container:`, container?.tagName, container?.className?.substring(0, 50));
 
@@ -101,6 +113,7 @@ export class MilkdownEditor {
         .use(gfm)
         .use(proseHistory)
         .use(autoEmptyLines)
+        .use(mobileSlashLinkPlugin)
         .use(tooltipFactory("tomanote-tooltip"))
         .use(underline)
         .create();
@@ -709,6 +722,89 @@ export class MilkdownEditor {
       entry._linkClickHandler = handler;
       entry._linkClickTarget = pmEl;
     }
+  }
+
+  /**
+   * Detect mobile layout: touch-primary pointers or narrow viewports.
+   * Mirrors the desktop gate used by KeyboardShortcuts ((pointer: fine)) so the
+   * two input systems never overlap.
+   * @returns {boolean}
+   */
+  _isMobileLayout() {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const narrowViewport = window.matchMedia("(max-width: 768px)").matches;
+    return coarsePointer || narrowViewport;
+  }
+
+  /**
+   * Mobile slash command input handler — issue #107.
+   * The RightSidebar (formatting buttons) does not render on mobile layouts, so
+   * touch users have no entry point for the Link Insertion Modal. Typing a slash
+   * followed by a space (" / ") intercepts the input inside ProseMirror's
+   * transaction pipeline (handleTextInput), removes the trigger characters from
+   * the document atomically and opens the same showLinkModal() dialog used on
+   * desktop. Returning true consumes the space keystroke.
+   *
+   * Native Milkdown note (TomaNote-Docs): the link input rules ([text](url) and
+   * autolink) only transform content when the full pattern is entered/pasted;
+   * they do not offer a modal-based fallback for " / ", so this plugin is
+   * complementary, not redundant. Verified against @milkdown/preset-commonmark
+   * input rules — flagged for documentation in issue #107.
+   *
+   * @param {any} view - ProseMirror EditorView
+   * @param {number} from - insertion start position (pre-insert state)
+   * @param {string} text - the text being inserted
+   * @returns {boolean} true when the input was consumed as the slash trigger
+   */
+  _handleMobileSlashInput(view, from, text) {
+    if (!this._isMobileLayout()) return false;
+    if (text !== " ") return false;
+    // Guard: modal already open — never stack triggers
+    if (document.querySelector(".link-modal-overlay")) return false;
+
+    // Trigger = space typed right after a slash that itself starts the document
+    // or follows a space (i.e. the " / " sequence). Checking the PRE-insert
+    // state avoids https:// false positives ("//" + space does not match).
+    let before = "";
+    try {
+      before = view.state.doc.textBetween(Math.max(0, from - 2), from, "\n", " ");
+    } catch (_) {
+      return false;
+    }    if (before !== " /" && before !== "/") return false;
+
+    // Consume the space and remove the trigger slash from the document
+    try {
+      const removeFrom = before === " /" ? from - 1 : from - 1;
+      view.dispatch(view.state.tr.delete(removeFrom, from));
+    } catch (_) {
+      /* deletion is cosmetic — modal still opens */
+    }
+
+    this.log("📱 Slash command triggered — opening link modal");
+    showLinkModal({ initialUrl: "https://", initialText: "" }).then((result) => {
+      if (!result) {
+        view.focus();
+        return;
+      }
+      // Re-read live state — async modal may have caused state drift
+      const liveState = view.state;
+      const linkMarkType = liveState.schema.marks.link;
+      try {
+        if (linkMarkType) {
+          const linkMark = linkMarkType.create({ href: result.url, title: "" });
+          const textNode = liveState.schema.text(result.text || result.url, [linkMark]);
+          view.dispatch(liveState.tr.replaceSelectionWith(textNode, false));
+        } else {
+          // Fallback: insert raw markdown link text
+          view.dispatch(liveState.tr.insertText(`[${result.text}](${result.url})`));
+        }
+      } catch (_) {
+        /* state drifted — ignore */
+      }
+      view.focus();
+    });
+    return true;
   }
 
   /**
