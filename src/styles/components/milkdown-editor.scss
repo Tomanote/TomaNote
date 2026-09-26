@@ -23,7 +23,10 @@
     outline: none !important;
     min-height: 100%;
     padding: 0 !important; // 4em bottom padding for click-to-type below blocks
-    font-family: var(--tn-font-family-default) !important;
+    // User typography cascades into the workspace (#104):
+    // --font-family-notes is set by FontManager.applyFontToNotes();
+    // falls back to the theme default when no custom font is selected.
+    font-family: var(--font-family-notes, var(--tn-font-family-default)) !important;
     font-size: var(--tn-editor-font-size) !important;
     color: var(--tn-color-text) !important;
     caret-color: var(--tn-color-text) !important;
