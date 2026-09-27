@@ -12,6 +12,10 @@ import Icon from "../../components/icons/Icon.astro";
 import { getLang, useTranslations } from "../../i18n/utils";
 const t = useTranslations(getLang());
 
+// Version — single source of truth is the roadmap's current release block
+import roadmapData from "../roadmap/roadmap-data.json";
+const currentVersion = roadmapData.versions.find((version) => version.isCurrent)?.versionNumber ?? "0.5.8";
+
 // Components
 import SettingsNavItem from "./components/SettingsNavItem.astro";
 
@@ -50,7 +54,7 @@ const navItems = [
             TomaNote
           </h2>
           <p id="settings-desc" class="sr-only">Settings and preferences for TomaNote app</p>
-          <span class="version text-sm! text-(--color-text)">v 0.5.7</span>
+          <span class="version text-sm! text-(--color-text)">v {currentVersion}</span>
         </div>
 
         <nav class="settings-nav bg-(--tn-neutral-tertiary-color)/10 rounded-lg mt-4! px-1.25!">
