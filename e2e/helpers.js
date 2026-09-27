@@ -8,13 +8,14 @@ export async function waitForAppReady(page) {
   // Wait for the main app structure
   await page.waitForSelector("main", { timeout: 10_000 });
 
-  // Wait for either the tab list or the empty state ("New tab" button)
-  try {
-    await page.waitForSelector(".tab-list, #create-tab", { timeout: 10_000 });
-  } catch {
-    // App not loaded — wait a bit more
-    await page.waitForTimeout(1000);
-  }
+  // Wait for the app's JS runtime to be ready before interacting.
+  // The tab-list markup is SSR'd, but TabManager/Milkdown attach later via
+  // async dynamic imports — clicking "New tab" before they attach gets swallowed.
+  await page.waitForFunction(
+    () => typeof window.tabManager !== "undefined" && typeof window.milkdownEditor !== "undefined",
+    null,
+    { timeout: 30_000 }
+  );
 
   // Check if any tab already exists
   let tabCount = await page.locator(".tab-list__item").count();
@@ -25,13 +26,25 @@ export async function waitForAppReady(page) {
     if (await newTabBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await newTabBtn.click();
       await page.waitForTimeout(1000);
+    } else {
+      // Mobile layout collapses the desktop tab strip: #create-tab renders a
+      // 0×0 box and a fresh session legitimately has 0 tabs and no editor.
+      // Without this fallback the .ProseMirror waits below timed out silently,
+      // so waitForAppReady "passed" with no editor and hasActiveTab() stayed
+      // false — making save-toast assertions at mobile viewports impossible.
+      // The bottom bar's create action delegates to the same #create-tab handler.
+      const mobileCreateBtn = page.locator("#bottom-bar-create-tab");
+      if (await mobileCreateBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await mobileCreateBtn.click();
+        await page.waitForTimeout(1000);
+      }
     }
   }
 
   // Wait for the ProseMirror editor to be ready inside the active/visible tab
   // After restoreTabs(), the radio may not be checked — click the first tab to activate it
   try {
-    await page.waitForSelector(".ProseMirror", { timeout: 10_000 });
+    await page.waitForSelector(".ProseMirror", { timeout: 15_000 });
   } catch {
     // No ProseMirror yet — tabs may be restored but radio not checked
     // Click the first tab label to activate it

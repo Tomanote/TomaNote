@@ -1,0 +1,14 @@
+---
+// src/features/connection-status/connection-status.astro
+// Discrete connection status indicator (milestone 0.5.8 — Offline Pre-loading).
+
+import "./connection-status.scss";
+import { getLang, useTranslations } from "../../i18n/utils";
+
+const t = useTranslations(getLang());
+---
+
+<div id="connection-status" class="connection-status" role="status" aria-live="polite">
+  <span class="connection-status__icon" aria-hidden="true">⚠</span>
+  <span class="connection-status__text" data-i18n="connection.offline">{t("connection.offline")}</span>
+</div>

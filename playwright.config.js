@@ -21,7 +21,9 @@ export default defineConfig({
   reporter: "list",
 
   use: {
-    baseURL: "http://localhost:4321",
+    // E2E_BASE_URL lets the suite run against a production build
+    // (e.g. `npm run preview` on another port) instead of the dev server.
+    baseURL: process.env.E2E_BASE_URL || "http://localhost:4321",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     locale: "en-US",

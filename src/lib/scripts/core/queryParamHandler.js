@@ -67,11 +67,17 @@ export class QueryParamHandler {
   static registerProtocolHandler() {
     if (typeof navigator === "undefined" || typeof navigator.registerProtocolHandler === "undefined") return;
 
-    const origin = window.location.origin;
-    navigator.registerProtocolHandler(
-      "web+tomanote",
-      `${origin}/?note=%s`,
-      "TomaNote"
-    );
+    // Strict try/catch: browsers may throw (SecurityError / unsupported
+    // protocol) — never let a registration failure break app boot.
+    try {
+      const origin = window.location.origin;
+      navigator.registerProtocolHandler(
+        "web+tomanote",
+        `${origin}/?note=%s`,
+        "TomaNote"
+      );
+    } catch {
+      // Silent fallback: protocol registration is a progressive enhancement
+    }
   }
 }

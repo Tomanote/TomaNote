@@ -45,16 +45,12 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
     const count = await buttons.count();
 
     // ISSUE #86: Some buttons get clipped at reduced height
-    // Count how many are actually visible vs total
-    let visibleCount = 0;
+    // Buttons finish their layout/animation pass after mount — assert with
+    // auto-retrying visibility checks instead of a one-shot snapshot, which
+    // races under full-suite load.
     for (let i = 0; i < count; i++) {
-      const isVisible = await buttons.nth(i).isVisible().catch(() => false);
-      if (isVisible) visibleCount++;
+      await expect(buttons.nth(i)).toBeVisible();
     }
-
-    // At reduced height, all formatting buttons should still be accessible
-    // This test will FAIL if buttons are clipped
-    expect(visibleCount).toBe(count);
   });
 
   test("toolbar buttons are accessible at 1280x300 (very small height)", async ({ page }) => {
@@ -67,15 +63,13 @@ test.describe("Issue #86 — Toolbar Responsive Layout", () => {
     const buttons = toolbar.locator("button[data-floating-action]");
     const count = await buttons.count();
 
-    let visibleCount = 0;
+    // Even at very small height, buttons should be accessible either via
+    // scroll or reflow. Retry per button: a single snapshot taken right after
+    // waitForAppReady observed the toolbar mid-reflow (6 of 12) under
+    // full-suite load.
     for (let i = 0; i < count; i++) {
-      const isVisible = await buttons.nth(i).isVisible().catch(() => false);
-      if (isVisible) visibleCount++;
+      await expect(buttons.nth(i)).toBeVisible();
     }
-
-    // Even at very small height, buttons should be accessible
-    // either via scroll or reflow
-    expect(visibleCount).toBe(count);
   });
 
   test("toolbar does not overflow outside viewport at small sizes", async ({ page }) => {

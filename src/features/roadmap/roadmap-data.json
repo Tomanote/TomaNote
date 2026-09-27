@@ -63,11 +63,89 @@
       }
     },
     {
-      "id": "release-057",
+      "id": "release-058",
       "type": "current",
+      "versionNumber": "0.5.8",
+      "date": "2026-09-26",
+      "isCurrent": true,
+      "isNext": false,
+      "items": {
+        "es": [
+          {
+            "summary": "Estado de conexión centralizado",
+            "description": "Store reactivo window.connectivity con suscripción limpia y evento global connectivity-changed; indicador discreto de conexión al perderla y al recuperarla."
+          },
+          {
+            "summary": "Guardado sin conexión",
+            "description": "El toast de guardado indica «Guardado localmente (modo sin conexión activo)» en autosave y en Ctrl+S/Cmd+S mientras no hay red."
+          },
+          {
+            "summary": "Persistencia instantánea",
+            "description": "Cada edición se escribe en LocalStorage al instante; payloads corruptos degradan a una lista vacía sin romper la app."
+          },
+          {
+            "summary": "Respaldo de recursos remotos",
+            "description": "Las fuentes remotas se omiten sin conexión y se recuperan en silencio; portapapeles y registro de protocolo quedan protegidos contra rechazos."
+          },
+          {
+            "summary": "Comando de barra móvil",
+            "description": "Escribir « / » en el editor móvil abre el modal de inserción de enlaces (#107)."
+          },
+          {
+            "summary": "Guardado manual Ctrl+S / ⌘S",
+            "description": "Coincidencia insensible a mayúsculas para Chromium, binding Meta para macOS y confirmación inmediata (#106)."
+          },
+          {
+            "summary": "Actualizaciones de seguridad",
+            "description": "astro 7.3.5, vitest 4.1.11 y devalue 5.9.4: 0 vulnerabilidades activas (#108–#110)."
+          },
+          {
+            "summary": "Tests",
+            "description": "761 tests unitarios + 159 E2E verificados contra el build de producción, con suite offline dedicada."
+          }
+        ],
+        "en": [
+          {
+            "summary": "Centralized connectivity state",
+            "description": "Reactive window.connectivity store with clean subscription and a global connectivity-changed event; discrete status indicator on connection drops and recovery."
+          },
+          {
+            "summary": "Offline saving",
+            "description": "The save toast reads «Saved locally (Offline mode active)» for autosave and Ctrl+S/Cmd+S whenever the connection is down."
+          },
+          {
+            "summary": "Instant persistence",
+            "description": "Every edit is written to LocalStorage immediately; corrupt payloads degrade to an empty list without breaking the app."
+          },
+          {
+            "summary": "Remote resource fallbacks",
+            "description": "Remote fonts are skipped offline and recover silently; clipboard and protocol registration are guarded against rejections."
+          },
+          {
+            "summary": "Mobile slash command",
+            "description": "Typing “ / ” in the mobile editor opens the Link Insertion Modal (#107)."
+          },
+          {
+            "summary": "Manual save Ctrl+S / ⌘S",
+            "description": "Case-insensitive matching for Chromium, Meta binding for macOS, and immediate confirmation (#106)."
+          },
+          {
+            "summary": "Security updates",
+            "description": "astro 7.3.5, vitest 4.1.11 and devalue 5.9.4: 0 active vulnerabilities (#108–#110)."
+          },
+          {
+            "summary": "Testing",
+            "description": "761 unit tests + 159 E2E verified against the production build, with a dedicated offline suite."
+          }
+        ]
+      }
+    },
+    {
+      "id": "release-057",
+      "type": "previous",
       "versionNumber": "0.5.7",
       "date": "2026-09-21",
-      "isCurrent": true,
+      "isCurrent": false,
       "isNext": false,
       "items": {
         "es": [
@@ -220,11 +298,13 @@
     },
     {
       "id": "release-055",
-      "type": "previous",
+      "type": "old",
       "versionNumber": "0.5.5",
       "date": "2026-08-28",
       "isCurrent": false,
       "isNext": false,
+      "isOld": true,
+      "showInTab": false,
       "items": {
         "es": [
           {

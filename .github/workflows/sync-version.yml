@@ -16,6 +16,23 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      # The `secrets` context is not available in job-level `if:` conditions,
+      # so token presence is checked here and exposed as a step output that
+      # the sync steps below gate on. Without this guard the job crashes with
+      # "Input required and not supplied: token" on every tag push.
+      - name: Check for SYNC_TOKEN
+        id: token_check
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$SYNC_TOKEN" ]; then
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️ SYNC_TOKEN secret is not configured — skipping ecosystem version sync."
+            echo "Configure a PAT with access to Tomanote/TomaNote-Docs and Tomanote/TomaNote-blog as the SYNC_TOKEN repository secret to enable this workflow."
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Extract version from tag
         id: get_version
         run: |
@@ -29,6 +46,7 @@ jobs:
       # SYNC: TomaNote-Docs
       # ─────────────────────────────────────────────────────────
       - name: Clone TomaNote-Docs
+        if: steps.token_check.outputs.has_token == 'true'
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-Docs"
@@ -36,6 +54,7 @@ jobs:
           path: docs-repo
 
       - name: Update version in Docs
+        if: steps.token_check.outputs.has_token == 'true'
         working-directory: docs-repo
         run: |
           # Update package.json version
@@ -53,6 +72,7 @@ jobs:
           fi
 
       - name: Push to TomaNote-Docs
+        if: steps.token_check.outputs.has_token == 'true'
         working-directory: docs-repo
         run: |
           git config user.name "github-actions[bot]"
@@ -70,6 +90,7 @@ jobs:
       # SYNC: TomaNote-blog
       # ─────────────────────────────────────────────────────────
       - name: Clone TomaNote-blog
+        if: steps.token_check.outputs.has_token == 'true'
         uses: actions/checkout@v4
         with:
           repository: "Tomanote/TomaNote-blog"
@@ -77,12 +98,14 @@ jobs:
           path: blog-repo
 
       - name: Update version in Blog
+        if: steps.token_check.outputs.has_token == 'true'
         working-directory: blog-repo
         run: |
           echo "{\"app_version\": \"${{ steps.get_version.outputs.VERSION }}\"}" > version-info.json
           echo "✅ Updated blog/version-info.json → ${{ steps.get_version.outputs.VERSION }}"
 
       - name: Push to TomaNote-blog
+        if: steps.token_check.outputs.has_token == 'true'
         working-directory: blog-repo
         run: |
           git config user.name "github-actions[bot]"
@@ -101,10 +124,21 @@ jobs:
       # ─────────────────────────────────────────────────────────
       - name: Sync summary
         if: always()
+        env:
+          HAS_TOKEN: ${{ steps.token_check.outputs.has_token }}
+          JOB_STATUS: ${{ job.status }}
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            STATUS="⏭ Skipped (SYNC_TOKEN not configured)"
+          elif [ "$JOB_STATUS" == "success" ]; then
+            STATUS="✅ Synced"
+          else
+            STATUS="❌ Failed"
+          fi
           echo "## 🔗 Version Sync Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Repository | Version | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------------|---------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| TomaNote-Docs | \`${{ steps.get_version.outputs.VERSION }}\` | ${{ job.status == 'success' && '✅ Synced' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| TomaNote-blog | \`${{ steps.get_version.outputs.VERSION }}\` | ${{ job.status == 'success' && '✅ Synced' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|---------|--------|"
+          echo "| TomaNote-Docs | \`${VERSION}\` | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TomaNote-blog | \`${VERSION}\` | ${STATUS} |" >> $GITHUB_STEP_SUMMARY

@@ -47,6 +47,12 @@ async function loadCriticalFunctions() {
   // 2. Share client language with SSR (so that .astro components can use it)
   window.__I18N_CONFIG = { lang: i18n.getLang() };
 
+  // 2. Initialize centralized connectivity state (milestone 0.5.8)
+  // Must be ready BEFORE FontManager + SaveIndicator consult it.
+  const { connectivity } = await import("./core/connectivity.js");
+  connectivity.init();
+  window.connectivity = connectivity;
+
   // 3. Load custom font (most critical part)
   const { FontManager } = await import("./core/fontManager.js");
   window.fontManager = new FontManager();
@@ -145,6 +151,7 @@ async function initializeBasicComponents() {
   await initializeEditorSettings();
   await initializeKeyboardShortcutsHelp();
   await initializeSaveIndicator();
+  await initializeConnectionStatus();
 }
 
 async function initializeTabsSystem() {
@@ -370,6 +377,22 @@ async function initializeSaveIndicator() {
     return window.saveIndicator;
   } catch (error) {
     devLogger.error("❌ Error inicializando SaveIndicator:", error);
+  }
+}
+
+async function initializeConnectionStatus() {
+  try {
+    const { ConnectionStatus } = await import("../../features/connection-status/connection-status.js");
+
+    window.connectionStatus = new ConnectionStatus({
+      debug: true,
+    });
+
+    window.connectionStatus.init();
+
+    return window.connectionStatus;
+  } catch (error) {
+    devLogger.error("❌ Error inicializando ConnectionStatus:", error);
   }
 }
 

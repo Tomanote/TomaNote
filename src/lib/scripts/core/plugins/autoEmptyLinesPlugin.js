@@ -80,14 +80,21 @@ export function createPlugin(schema) {
             prev.type === schema.nodes.paragraph && prev.content.size === 0;
         }
 
-        // ProseMirror positions: offset is relative to parent content,
-        // +1 accounts for the parent (doc) node opening token.
+        // ProseMirror positions: offset is relative to parent content.
+        // For top-level children of doc, offset IS the absolute position —
+        // the first child starts at position 0 (there is no doc-open offset),
+        // and offset + node.nodeSize is the position right after the node
+        // (=== doc.content.size when it is the last child). Both are always
+        // valid resolve() positions — an extra +1 used to push the "after"
+        // position past content.size for trailing blocks, which threw a
+        // RangeError that the catch swallowed, so issue #85's empty
+        // paragraphs were never inserted (E2E regression).
         // IMPORTANT: always recalculate from the live tr.doc, because
         // previous inserts into the same transaction shift positions.
         try {
           // Rule: always ensure an empty paragraph after
           if (!hasEmptyParagraphAfter) {
-            const afterPos = tr.doc.resolve(offset + node.nodeSize + 1).pos;
+            const afterPos = tr.doc.resolve(offset + node.nodeSize).pos;
             const emptyPara = schema.nodes.paragraph.create();
             tr.insert(afterPos, [emptyPara]);
             modified = true;
@@ -95,7 +102,7 @@ export function createPlugin(schema) {
 
           // Rule 1: first block also gets an empty paragraph before
           if (isFirstBlock && !hasEmptyParagraphBefore) {
-            const beforePos = tr.doc.resolve(offset + 1).pos;
+            const beforePos = tr.doc.resolve(offset).pos;
             const emptyPara = schema.nodes.paragraph.create();
             tr.insert(beforePos, [emptyPara]);
             modified = true;

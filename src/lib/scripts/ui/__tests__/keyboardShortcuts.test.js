@@ -56,7 +56,7 @@ describe("KeyboardShortcuts", () => {
       commandPalette: { toggle: vi.fn(), isOpen: false },
       editorSettings: { applyWidth: vi.fn() },
       keyboardShortcutsHelp: { toggle: vi.fn() },
-      saveIndicator: { trigger: vi.fn() },
+      saveIndicator: { trigger: vi.fn(), show: vi.fn() },
     };
     mockDoc();
   });
@@ -463,7 +463,7 @@ describe("KeyboardShortcuts", () => {
 
     it("shows the save indicator when Ctrl+S is pressed", () => {
       fireCtrlS();
-      expect(window.saveIndicator.trigger).toHaveBeenCalled();
+      expect(window.saveIndicator.show).toHaveBeenCalled();
     });
 
     it("prevents the default browser behavior", () => {
@@ -471,18 +471,37 @@ describe("KeyboardShortcuts", () => {
       expect(preventDefault).toHaveBeenCalled();
     });
 
+    it("Cmd+S (meta variant) also triggers the manual save toast", () => {
+      ks.handleKeydown({
+        key: "s",
+        ctrlKey: false, altKey: false, shiftKey: false, metaKey: true, location: 0,
+        preventDefault,
+      });
+      expect(window.saveIndicator.show).toHaveBeenCalled();
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it("plain S without modifiers does not trigger the save toast", () => {
+      ks.handleKeydown({
+        key: "s",
+        ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, location: 0,
+        preventDefault,
+      });
+      expect(window.saveIndicator.show).not.toHaveBeenCalled();
+    });
+
     it("works while an input is focused (skipWhenInputFocused is false)", () => {
       const input = document.createElement("input");
       Object.defineProperty(document, "activeElement", { value: input, configurable: true });
       fireCtrlS();
-      expect(window.saveIndicator.trigger).toHaveBeenCalled();
+      expect(window.saveIndicator.show).toHaveBeenCalled();
     });
 
     it("does nothing when saveIndicator is unavailable", () => {
       const trigger = window.saveIndicator.trigger;
       window.saveIndicator = undefined;
       expect(() => fireCtrlS()).not.toThrow();
-      window.saveIndicator = { trigger };
+      window.saveIndicator = { trigger, show: vi.fn() };
     });
   });
 

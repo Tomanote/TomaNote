@@ -234,20 +234,31 @@ export class FloatingMenu {
         break;
 
       case "paste":
-        navigator.clipboard.readText().then((text) => {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editable.focus();
-            document.execCommand("insertText", false, text);
-          }
-        });
+        // Offline/fallback: clipboard access can reject (permissions, insecure
+        // context) — swallow it so no unhandled rejection reaches the console.
+        try {
+          navigator.clipboard
+            .readText()
+            .then((text) => {
+              const selection = window.getSelection();
+              if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(text));
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+              } else {
+                editable.focus();
+                document.execCommand("insertText", false, text);
+              }
+            })
+            .catch((error) => {
+              this.log("Clipboard read rejected (fallback: nothing pasted):", error?.message ?? error);
+            });
+        } catch (error) {
+          this.log("Clipboard unavailable:", error?.message ?? error);
+        }
         break;
 
       case "undo":

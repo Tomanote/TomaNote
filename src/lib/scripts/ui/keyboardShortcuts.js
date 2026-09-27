@@ -91,7 +91,14 @@ export class KeyboardShortcuts {
   }
 
   matchesKey(e, s) {
-    if (e.key !== s.key) return false;
+    // Issue #106: Chromium delivers letter keys UPPERCASE when Ctrl is held
+    // (a real Ctrl+S press yields e.key === "S"), so a strict comparison made
+    // every Ctrl+letter shortcut silently dead with real keypresses while
+    // unit tests (synthetic lowercase keys) kept passing. Compare single
+    // characters case-insensitively; named keys ("Escape", "Enter") stay exact.
+    const eventKey = typeof e.key === "string" && e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const shortcutKey = typeof s.key === "string" && s.key.length === 1 ? s.key.toLowerCase() : s.key;
+    if (eventKey !== shortcutKey) return false;
     if (s.location !== undefined && e.location !== s.location) return false;
     const m = s.modifiers;
 
@@ -122,6 +129,26 @@ export class KeyboardShortcuts {
     const result = tag === "INPUT" || tag === "TEXTAREA";
     this.log("isInputFocused:", result, "| tag:", tag, "| isContentEditable:", el.isContentEditable);
     return result;
+  }
+
+  /**
+   * Manual save (Ctrl+S / Cmd+S) — issue #106.
+   * Persists the current note state to localStorage immediately and shows the
+   * exact same visual success toast used by the autosave routine.
+   * Calls saveIndicator.show() directly: trigger() would defer the feedback
+   * behind the 5000ms autosave debounce, leaving the user without confirmation.
+   * @param {KeyboardEvent} [e] - originating event (logging only)
+   */
+  executeManualSave(e) {
+    try {
+      // Force the local storage backup (same routine autosave relies on)
+      window.tabManager?.saveTabs();
+    } catch (error) {
+      devLogger.error("[KeyboardShortcuts] Manual save failed:", error);
+    }
+    // Immediate visual confirmation via the shared autosave toast
+    window.saveIndicator?.show();
+    if (e) this.log("💾 Manual save executed via keyboard shortcut");
   }
 
   getShortcutsByCategory() {
@@ -306,7 +333,11 @@ export class KeyboardShortcuts {
       },
     });
 
-    // --- Ctrl+S: Save (visual feedback) ---
+    // --- Ctrl+S: Manual save + immediate visual confirmation (issue #106) ---
+    // Executes the localStorage backup AND fires the SAME success toast used by
+    // the autosave routine — immediately, without the 5s autosave debounce.
+    // matchesKey() guarantees meta:false when it is pinned, so this entry never
+    // fires on macOS; Cmd+S gets its own registration below.
     this.registerShortcut({
       key: "s",
       modifiers: { ctrl: true, alt: false, shift: false, meta: false },
@@ -315,7 +346,20 @@ export class KeyboardShortcuts {
       description: "shortcuts.desc.save",
       category: "editor",
       handler: () => {
-        window.saveIndicator?.trigger();
+        this.executeManualSave();
+      },
+    });
+
+    // --- Cmd+S: Manual save on macOS (issue #106) ---
+    this.registerShortcut({
+      key: "s",
+      modifiers: { ctrl: false, alt: false, shift: false, meta: true },
+      skipWhenInputFocused: false,
+      label: "Cmd+S",
+      description: "shortcuts.desc.save",
+      category: "editor",
+      handler: () => {
+        this.executeManualSave();
       },
     });
 
