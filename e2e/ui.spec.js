@@ -39,7 +39,9 @@ test.describe("UI — Left Sidebar", () => {
   });
 
   test("left sidebar has help/shortcuts button", async ({ page }) => {
-    const helpBtn = page.locator(".sidebar-left__bottom button").first();
+    // 0.5.9.1 backport added support + zen buttons above the help button, so
+    // positional selection no longer resolves to it — target it semantically
+    const helpBtn = page.locator('.sidebar-left__bottom button[onclick*="keyboardShortcutsHelp"]');
     await helpBtn.click();
     await page.waitForTimeout(500);
 
@@ -98,13 +100,16 @@ test.describe("UI — Bottom Bar (Mobile)", () => {
     await expect(bottomBar).toBeAttached();
   });
 
-  test("bottom bar has content, font, and tab submenus", async ({ page }) => {
+  test("bottom bar keeps the content and font submenus (legacy tab submenu removed)", async ({ page }) => {
     await page.goto("/");
     await waitForAppReady(page);
 
+    // 0.5.9.1 (Mobile Beta): pin/rename/delete moved inline onto the note
+    // rows, so the tab-actions submenu and its trigger are decommissioned.
     const submenuTriggers = page.locator("[data-submenu-trigger]");
     const count = await submenuTriggers.count();
-    expect(count).toBeGreaterThanOrEqual(3);
+    expect(count).toBe(2);
+    await expect(page.locator("#submenu-tab")).toHaveCount(0);
   });
 });
 
