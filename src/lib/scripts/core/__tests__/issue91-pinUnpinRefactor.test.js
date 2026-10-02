@@ -1,8 +1,8 @@
 // src/lib/scripts/core/__tests__/issue91-pinUnpinRefactor.test.js
-// Issue #91: Consolidate duplicated pin/unpin logic
-// Tests that verify the pin/unpin architecture: whether FloatingMenu and
-// TabPinHandler use the same function or have independent implementations,
-// and whether a single source of truth can be identified.
+// Issue #91 — Consolidated pin/unpin logic (UPDATED for the 0.5.9.1
+// decoupling): TabPinHandler remains the single source of truth, but the
+// resolution chain is now STAR-ONLY — no emoji detection, storage or
+// fallback exists anywhere in the pin pipeline.
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TabPinHandler } from "../tabPinHandler.js";
@@ -12,6 +12,8 @@ function makeTabElement({ pinned = false, name = "", storedEmoji = null } = {}) 
     setAttribute: vi.fn(),
     getAttribute: vi.fn(() => storedEmoji),
     removeAttribute: vi.fn(),
+    appendChild: vi.fn(),
+    contains: vi.fn(() => false),
   };
   const labelSpan = {
     setAttribute: vi.fn(),
@@ -33,7 +35,7 @@ function makeTabElement({ pinned = false, name = "", storedEmoji = null } = {}) 
   };
 }
 
-describe("Issue #91 — Pin/Unpin Logic Audit", () => {
+describe("Issue #91 — Pin/Unpin Logic Audit (star-only pipeline)", () => {
   let handler;
   let mockTabManager;
 
@@ -49,39 +51,34 @@ describe("Issue #91 — Pin/Unpin Logic Audit", () => {
   describe("TabPinHandler.pinTab behavior", () => {
     it("adds 'pinned' class to tab element", () => {
       const tab = makeTabElement();
-      handler.pinTab(tab, "🔴");
+      handler.pinTab(tab);
       expect(tab.classList.add).toHaveBeenCalledWith("pinned");
     });
 
-    it("sets data-emoji on both label and label span", () => {
+    it("injects the native star into the label (no data-emoji writes)", () => {
       const tab = makeTabElement();
-      handler.pinTab(tab, "🔴");
-      expect(tab.querySelector("label").setAttribute).toHaveBeenCalledWith(
-        "data-emoji",
-        "🔴"
-      );
-      expect(tab.querySelector("label span").setAttribute).toHaveBeenCalledWith(
-        "data-emoji",
-        "🔴"
-      );
+      handler.pinTab(tab);
+      const label = tab.querySelector("label");
+      expect(label.appendChild).toHaveBeenCalled();
+      expect(label.setAttribute).not.toHaveBeenCalled();
     });
 
     it("calls reorderTabs after pinning", () => {
       const tab = makeTabElement();
-      handler.pinTab(tab, "📌");
+      handler.pinTab(tab);
       expect(mockTabManager.reorderTabs).toHaveBeenCalled();
     });
 
     it("calls saveTabs after pinning", () => {
       const tab = makeTabElement();
-      handler.pinTab(tab, "📌");
+      handler.pinTab(tab);
       expect(mockTabManager.saveTabs).toHaveBeenCalled();
     });
 
     it("does NOT dispatch tabsChanged event", () => {
       const dispatchSpy = vi.spyOn(document, "dispatchEvent");
       const tab = makeTabElement();
-      handler.pinTab(tab, "📌");
+      handler.pinTab(tab);
       expect(dispatchSpy).not.toHaveBeenCalled();
     });
   });
@@ -93,13 +90,13 @@ describe("Issue #91 — Pin/Unpin Logic Audit", () => {
       expect(tab.classList.remove).toHaveBeenCalledWith("pinned");
     });
 
-    it("does NOT remove data-emoji attributes", () => {
+    it("clears data-emoji attributes (legacy cleanup, star replaces emoji)", () => {
       const tab = makeTabElement({ pinned: true, storedEmoji: "🔴" });
       handler.unpinTab(tab);
       const label = tab.querySelector("label");
       const labelSpan = tab.querySelector("label span");
-      expect(label.removeAttribute).not.toHaveBeenCalledWith("data-emoji");
-      expect(labelSpan.removeAttribute).not.toHaveBeenCalledWith("data-emoji");
+      expect(label.removeAttribute).toHaveBeenCalledWith("data-emoji");
+      expect(labelSpan.removeAttribute).toHaveBeenCalledWith("data-emoji");
     });
 
     it("calls reorderTabs after unpinning", () => {
@@ -116,56 +113,44 @@ describe("Issue #91 — Pin/Unpin Logic Audit", () => {
   });
 
   describe("Unified architecture — FloatingMenu delegates to TabPinHandler via TabManager", () => {
-    it("TabPinHandler is the single source of truth for emoji resolution", () => {
-      // TabPinHandler: emoji param → detectEmojiInText(name) → existing data-emoji → random
-      // FloatingMenu.handlePinTab() now delegates to window.tabManager.pinTab/unpinTab
-      // which routes through TabPinHandler — no more duplicate logic.
-
-      const tab1 = makeTabElement({ name: "No emoji", storedEmoji: "🔵" });
+    it("TabPinHandler resolves the pin anchor from the STAR, never from text", () => {
+      const tab1 = makeTabElement({ name: "No emoji here", storedEmoji: "🔵" });
       handler.pinTab(tab1);
-      expect(tab1.querySelector("label").setAttribute).toHaveBeenCalledWith(
-        "data-emoji",
-        "🔵"
-      );
+      const label = tab1.querySelector("label");
+      expect(label.appendChild).toHaveBeenCalled();
+      expect(label.setAttribute).not.toHaveBeenCalled();
     });
 
-    it("FloatingMenu no longer has its own pinTab/unpinTab methods", () => {
-      // After refactoring, FloatingMenu delegates to window.tabManager
-      // which uses TabPinHandler. Verify by reading the source file.
+    it("FloatingMenu has no pinTab/unpinTab methods of its own", () => {
+      // Verify by reading the source file (kept from the original audit)
       const fs = require("fs");
       const path = require("path");
       const src = fs.readFileSync(
-        path.resolve(__dirname, "../../ui/floatingMenu.js"), "utf-8"
+        path.resolve(__dirname, "../../ui/floatingMenu.js"),
+        "utf-8"
       );
 
-      // FloatingMenu should NOT define pinTab or unpinTab methods
-      // (they were removed in favor of delegation to tabManager)
       const hasPinTabMethod = /\bpinned?Tab\s*\(/.test(
-        src.replace(/handlePinTab/g, "") // exclude handlePinTab references
+        src.replace(/handlePinTab/g, "")
       );
       expect(hasPinTabMethod).toBe(false);
 
-      // handlePinTab should delegate to window.tabManager
       expect(src).toContain("window.tabManager");
       expect(src).toContain("handlePinTab");
     });
 
-    it("TabPinHandler checks existing data-emoji as third fallback", () => {
-      // TabPinHandler checks: emoji param → detectEmojiInText(name) → existingEmoji → random
-      const tab = makeTabElement({
-        name: "No emoji",
-        storedEmoji: "🌟",
-      });
+    it("the emoji resolution chain (param → detect → stored → random) is GONE", () => {
+      // The old chain used all four sources; now even an explicit emoji
+      // argument produces zero attribute writes.
+      const tab = makeTabElement({ name: "🚀 Lanzamiento", storedEmoji: "🌟" });
+      handler.pinTab(tab, "🟠");
 
-      handler.pinTab(tab);
-
-      const label = tab.querySelector("label");
-      expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+      expect(tab.querySelector("label").setAttribute).not.toHaveBeenCalled();
     });
   });
 
-  describe("Centralization proposal validation", () => {
-    it("TabPinHandler is a separate class that could be the single source of truth", () => {
+  describe("Centralization validation", () => {
+    it("TabPinHandler is a separate class that remains the single source of truth", () => {
       expect(handler).toBeInstanceOf(TabPinHandler);
       expect(typeof handler.pinTab).toBe("function");
       expect(typeof handler.unpinTab).toBe("function");
@@ -177,7 +162,7 @@ describe("Issue #91 — Pin/Unpin Logic Audit", () => {
 
     it("TabPinHandler calls saveTabs and reorderTabs (centralized persistence)", () => {
       const tab = makeTabElement();
-      handler.pinTab(tab, "🔴");
+      handler.pinTab(tab);
       expect(mockTabManager.saveTabs).toHaveBeenCalledTimes(1);
       expect(mockTabManager.reorderTabs).toHaveBeenCalledTimes(1);
     });

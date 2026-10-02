@@ -152,6 +152,13 @@ async function initializeBasicComponents() {
   await initializeKeyboardShortcutsHelp();
   await initializeSaveIndicator();
   await initializeConnectionStatus();
+  // Milestone 0.5.9.1 (Mobile Beta) — logical wiring only: the handwritten
+  // TopBarMobile markup owns the presentation, these controllers own the
+  // events and state synchronization.
+  await initializeTopBarMobile();
+  // Milestone 0.5.9 backports — Desktop LeftSidebar context wrapper.
+  await initializeZenMode();
+  await initializeSupportModal();
 }
 
 async function initializeTabsSystem() {
@@ -396,13 +403,48 @@ async function initializeConnectionStatus() {
   }
 }
 
+// Milestone 0.5.9.1 (Mobile Beta) — search engine, immersive back button and
+// uniform row layout on top of the handwritten TopBarMobile markup.
+async function initializeTopBarMobile() {
+  try {
+    const { TopBarMobileController } = await import("../../features/top-bar/topBarMobile.js");
+
+    window.topBarMobile = new TopBarMobileController({ debug: true });
+    await window.topBarMobile.init();
+  } catch (error) {
+    devLogger.error("❌ Error inicializando TopBarMobile:", error);
+  }
+}
+
+// Milestone 0.5.9 backport — Zen Mode (Fullscreen API) in the LeftSidebar.
+async function initializeZenMode() {
+  try {
+    const { ZenModeController } = await import("../../features/sidebar-left/zenMode.js");
+
+    window.zenMode = new ZenModeController({ debug: true });
+    await window.zenMode.init();
+  } catch (error) {
+    devLogger.error("❌ Error inicializando ZenMode:", error);
+  }
+}
+
+// Milestone 0.5.9 backport — accessible Support modal overlay.
+async function initializeSupportModal() {
+  try {
+    const { SupportModal } = await import("../../features/support-modal/supportModal.js");
+
+    window.supportModal = new SupportModal({ debug: true });
+    await window.supportModal.init();
+  } catch (error) {
+    devLogger.error("❌ Error inicializando SupportModal:", error);
+  }
+}
+
 // ===== OPTIONAL MODULES =====
 async function loadOptionalModules() {
   try {
     // Try load modules for utilites
     const utilsModule = await import("./utils/domHelpers.js");
-
-    const emojiModule = await import("./utils/emojiDetector.js");
 
     // Here you can add mor improt dynamics
     import("./core/fontManager.js");
@@ -410,7 +452,6 @@ async function loadOptionalModules() {
     import("./core/themeManager.js");
     import("../../features/contextual-menu/contextual-menu.js");
     import("./utils/domHelpers.js");
-    import("./utils/emojiDetector.js");
   } catch (error) {
     // return false
   }

@@ -1,7 +1,10 @@
 // src/lib/scripts/core/__tests__/issue90-emojiPin.test.js
-// Issue #90: User emoji replaced with random on pin
-// Tests that verify emoji detection priority, persistence, and
-// the race condition between FloatingMenu.pinTab and TabPinHandler.pinTab.
+// Issue #90 — SUPERSEDED by the 0.5.9.1 pin/emoji decoupling.
+// The historical bug (user emoji replaced with a random one on pin) is
+// impossible by construction now: pinning NO LONGER WRITES EMOJIS AT ALL.
+// The pin status is the native orange star vector; emojis in note text or
+// titles are plain content and never influence pinned layout or metadata.
+// Tests preserved (adapted) as regression guards for the new contract.
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TabPinHandler } from "../tabPinHandler.js";
@@ -14,6 +17,8 @@ function makeTabElement({ pinned = false, name = "", storedEmoji = null } = {}) 
     setAttribute: vi.fn(),
     getAttribute: vi.fn(() => storedEmoji),
     removeAttribute: vi.fn(),
+    appendChild: vi.fn(),
+    contains: vi.fn(() => false),
   };
   const labelSpan = {
     setAttribute: vi.fn(),
@@ -35,7 +40,7 @@ function makeTabElement({ pinned = false, name = "", storedEmoji = null } = {}) 
   };
 }
 
-describe("Issue #90 — Emoji Not Preserved When Pinning Tab", () => {
+describe("Issue #90 — SUPERSEDED: pin status no longer involves emojis", () => {
   let handler;
   let mockTabManager;
 
@@ -48,135 +53,81 @@ describe("Issue #90 — Emoji Not Preserved When Pinning Tab", () => {
     handler = new TabPinHandler(mockTabManager);
   });
 
-  // --- Core bug: emoji in tab name is not preserved ---
+  it("pinning NEVER writes any emoji attribute (root cause eliminated)", () => {
+    const tab = makeTabElement({ name: "🚀 Proyecto", storedEmoji: "🌟" });
 
-  it("detects emoji from tab name and uses it as data-emoji", () => {
-    const tabElement = makeTabElement({ name: "🚀 Proyecto" });
-    handler.pinTab(tabElement);
+    handler.pinTab(tab);
 
-    const label = tabElement.querySelector("label");
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
+    expect(tab.querySelector("label").setAttribute).not.toHaveBeenCalled();
+    expect(tab.querySelector("label span").setAttribute).not.toHaveBeenCalled();
   });
 
-  it("preserves existing data-emoji when tab name has no emoji", () => {
-    const tabElement = makeTabElement({
-      name: "Compras",
-      storedEmoji: "🔵",
-    });
-    handler.pinTab(tabElement);
+  it("emojis in the tab NAME do not leak into pin metadata", () => {
+    const tab = makeTabElement({ name: "📋 Lista de compras del super" });
 
-    const label = tabElement.querySelector("label");
-    // Should keep the stored emoji, not replace with random
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🔵");
+    handler.pinTab(tab);
+
+    const label = tab.querySelector("label");
+    const emojiWrites = label.setAttribute.mock.calls.filter(([attr]) => attr === "data-emoji");
+    expect(emojiWrites).toHaveLength(0);
   });
 
-  it("uses explicit emoji parameter over stored emoji", () => {
-    const tabElement = makeTabElement({
-      name: "Nota",
-      storedEmoji: "🔵",
-    });
-    handler.pinTab(tabElement, "🔴");
+  it("stored legacy emojis are ignored during pin (star is the only anchor)", () => {
+    const tab = makeTabElement({ storedEmoji: "🔵" });
 
-    const label = tabElement.querySelector("label");
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
+    handler.pinTab(tab);
+
+    expect(tab.querySelector("label").setAttribute).not.toHaveBeenCalled();
+    expect(tab.querySelector("label").appendChild).toHaveBeenCalled(); // star injected
   });
 
-  it("falls back to random emoji only when no other option exists", () => {
-    const tabElement = makeTabElement({ name: "Sin emoji" });
-    handler.pinTab(tabElement);
+  it("pinning the same tab multiple times never writes emojis (idempotent star)", () => {
+    // Real DOM node: the plain-object mock cannot model removal, so the
+    // rebuild-not-duplicate contract is verified against an actual element.
+    const label = document.createElement("label");
+    const span = document.createElement("span");
+    span.textContent = "🚀 Proyecto";
+    label.appendChild(span);
+    const tab = document.createElement("div");
+    tab.appendChild(label);
 
-    const label = tabElement.querySelector("label");
-    const emojiCall = label.setAttribute.mock.calls.find(
-      (c) => c[0] === "data-emoji"
-    );
-    expect(emojiCall).toBeDefined();
-    expect(emojiCall[1]).toBeTruthy();
-    expect(emojiCall[1].length).toBeGreaterThan(0);
+    handler.pinTab(tab);
+    handler.pinTab(tab);
+    handler.pinTab(tab);
+
+    expect(label.getAttribute("data-emoji")).toBeNull();
+    // Exactly ONE star lives in the label after repeated pins
+    expect(label.querySelectorAll(".tn-pinned-star")).toHaveLength(1);
+    // ...and it lives inside the title span (the legacy emoji slot)
+    expect(span.querySelectorAll(".tn-pinned-star")).toHaveLength(1);
   });
 
-  it("emoji detection works for various emoji types", () => {
-    const emojis = ["🔴", "🚀", "💻", "📝", "⭐", "📌", "🎯", "🔥"];
+  it("unpin does not resurrect any emoji metadata — it clears it", () => {
+    const tab = makeTabElement({ pinned: true, storedEmoji: "🔴" });
 
-    for (const emoji of emojis) {
-      const tabElement = makeTabElement({ name: `${emoji} Tab` });
-      handler.pinTab(tabElement);
+    handler.unpinTab(tab);
 
-      const label = tabElement.querySelector("label");
-      expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", emoji);
-    }
+    const label = tab.querySelector("label");
+    expect(label.removeAttribute).toHaveBeenCalledWith("data-emoji");
+    const labelSpan = tab.querySelector("label span");
+    expect(labelSpan.removeAttribute).toHaveBeenCalledWith("data-emoji");
   });
 
-  // --- Bug: FloatingMenu and TabPinHandler have different logic ---
+  it("still routes through the centralized persistence (reorderTabs + saveTabs)", () => {
+    const tab = makeTabElement();
 
-  it("TabPinHandler checks existing data-emoji as fallback (unlike FloatingMenu)", () => {
-    // TabPinHandler fallback chain: emoji param → detectEmojiInText(name) → existing data-emoji → random
-    const tabElement = makeTabElement({
-      name: "No emoji here",
-      storedEmoji: "📌",
-    });
-    handler.pinTab(tabElement);
+    handler.pinTab(tab);
 
-    const label = tabElement.querySelector("label");
-    // TabPinHandler should use the stored "📌"
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "📌");
+    expect(mockTabManager.reorderTabs).toHaveBeenCalledTimes(1);
+    expect(mockTabManager.saveTabs).toHaveBeenCalledTimes(1);
   });
 
-  // --- Bug: intermittent behavior (1 in 8-9 times) ---
+  it("pinning keeps the tab title text untouched (emoji in name = content)", () => {
+    const name = "😀 Cumpleaños de Ana 🎉";
+    const tab = makeTabElement({ name });
 
-  it("pinning same tab multiple times preserves the same emoji", () => {
-    const tabElement = makeTabElement({ name: "🎯 Mi Nota" });
+    handler.pinTab(tab);
 
-    handler.pinTab(tabElement);
-    handler.unpinTab(tabElement);
-    handler.pinTab(tabElement);
-
-    const label = tabElement.querySelector("label");
-    const dataEmojiCalls = label.setAttribute.mock.calls.filter(
-      (c) => c[0] === "data-emoji"
-    );
-
-    // All pin operations should use "🎯", not a random emoji
-    for (const call of dataEmojiCalls) {
-      expect(call[1]).toBe("🎯");
-    }
-  });
-
-  it("unpinTab does not remove data-emoji", () => {
-    const tabElement = makeTabElement({ name: "📌 Nota" });
-
-    handler.pinTab(tabElement);
-    handler.unpinTab(tabElement);
-
-    const label = tabElement.querySelector("label");
-    expect(label.removeAttribute).not.toHaveBeenCalledWith("data-emoji");
-  });
-
-  // --- Edge case: emoji in different positions ---
-
-  it("detects emoji at start of name", () => {
-    const tabElement = makeTabElement({ name: "🔴 Start" });
-    handler.pinTab(tabElement);
-    expect(tabElement.querySelector("label").setAttribute).toHaveBeenCalledWith(
-      "data-emoji",
-      "🔴"
-    );
-  });
-
-  it("detects emoji at end of name", () => {
-    const tabElement = makeTabElement({ name: "End 🔵" });
-    handler.pinTab(tabElement);
-    expect(tabElement.querySelector("label").setAttribute).toHaveBeenCalledWith(
-      "data-emoji",
-      "🔵"
-    );
-  });
-
-  it("detects emoji in middle of name", () => {
-    const tabElement = makeTabElement({ name: "Before 🟢 After" });
-    handler.pinTab(tabElement);
-    expect(tabElement.querySelector("label").setAttribute).toHaveBeenCalledWith(
-      "data-emoji",
-      "🟢"
-    );
+    expect(tab.querySelector("label span").textContent).toBe(name);
   });
 });

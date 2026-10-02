@@ -97,7 +97,6 @@ export function createMarkdownTabData(id, name, content = "") {
     content,
     format: "markdown",
     isPinned: false,
-    emoji: null,
     updatedAt: Date.now(),
   };
 }

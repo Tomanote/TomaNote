@@ -328,5 +328,18 @@
   "roadmap.release-058.6.summary": "Security updates",
   "roadmap.release-058.6.description": "astro 7.3.5, vitest 4.1.11 and devalue 5.9.4: 0 active vulnerabilities (#108–#110).",
   "roadmap.release-058.7.summary": "Testing",
-  "roadmap.release-058.7.description": "761 unit tests + 159 E2E verified against the production build, with a dedicated offline suite."
+  "roadmap.release-058.7.description": "761 unit tests + 159 E2E verified against the production build, with a dedicated offline suite.",
+  "_comment-support": "Support modal (milestone 0.5.9 backport)",
+  "sidebar.support": "Support TomaNote",
+  "sidebar.zen": "Zen mode",
+  "sidebar.zen-exit": "Exit Zen mode",
+  "support.title": "Support TomaNote",
+  "support.subtitle": "TomaNote is free and open source. Star the repo, report issues, or chip in — every bit helps.",
+  "support.star": "★ Give TomaNote a Star",
+  "support.issue": "Report an Issue",
+  "support.coffee": "☕ Buy Me a Coffee",
+  "support.kofi": "♥ Support on Ko-fi",
+  "support.close": "Close support dialog",
+  "_comment-mobile-beta": "Mobile Beta 0.5.9.1",
+  "tab.pin-tab": "Pin tab"
 }

@@ -112,7 +112,9 @@ describe("TabManager - Lógica Básica", () => {
     const tab = tabManager.createTab("Pinned", "<p>contenido</p>", true, "📌");
     expect(tab.content).toBe("<p>contenido</p>");
     expect(tab.isPinned).toBe(true);
-    expect(tab.emoji).toBe("📌");
+    // 0.5.9.1: el argumento emoji se conserva solo por compatibilidad de
+    // firma y NUNCA se persiste — el ancla de pin es la estrella nativa.
+    expect(tab.emoji).toBeNull();
   });
 
   it("No crear pestaña si enableCreation es false", () => {
@@ -194,7 +196,8 @@ describe("TabManager - saveTabs", () => {
     expect(saved[0].isPinned).toBe(false);
     expect(saved[0].updatedAt).toEqual(expect.any(Number));
     expect(saved[1].isPinned).toBe(true);
-    expect(saved[1].emoji).toBe("📌");
+    // 0.5.9.1: los emojis ya no se serializan como metadato de pin
+    expect(saved[1]).not.toHaveProperty("emoji");
     expect(saved[1].updatedAt).toEqual(expect.any(Number));
   });
 
@@ -368,7 +371,9 @@ describe("TabManager - createTabElement", () => {
 
     expect(element.classList.contains("pinned")).toBe(true);
     const label = element.querySelector("label");
-    expect(label.getAttribute("data-emoji")).toBe("📌");
+    // 0.5.9.1: sin data-emoji; la estrella nativa naranja ocupa su lugar
+    expect(label.getAttribute("data-emoji")).toBeNull();
+    expect(label.querySelector(".tn-pinned-star")).not.toBeNull();
   });
 
   it("No agrega data-emoji si emoji es null", () => {
@@ -582,9 +587,9 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager = makeTabManager({ enablePinning: true });
   });
 
-  it("pinTab agrega clase pinned y data-emoji", () => {
-    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
-    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "" };
+  it("pinTab agrega la clase pinned y estampa la estrella nativa sin tocar emojis", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), appendChild: vi.fn() };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), textContent: "" };
     const tabElement = {
       classList: { add: vi.fn() },
       querySelector: vi.fn((sel) => {
@@ -597,13 +602,16 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.pinTab(tabElement, "🔴");
 
     expect(tabElement.classList.add).toHaveBeenCalledWith("pinned");
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
-    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🔴");
+    // 0.5.9.1: el argumento emoji explícito se ignora — cero escrituras
+    expect(label.setAttribute).not.toHaveBeenCalled();
+    expect(labelSpan.setAttribute).not.toHaveBeenCalled();
+    // ...y la estrella nativa se estampa en su lugar
+    expect(label.appendChild).toHaveBeenCalledWith(expect.anything());
   });
 
-  it("pinTab preserva data-emoji existente si no se pasa emoji", () => {
-    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟") };
-    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), textContent: "Nota" };
+  it("pinTab ignora el emoji almacenado en data-emoji (legado desacoplado)", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), removeAttribute: vi.fn(), appendChild: vi.fn() };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), removeAttribute: vi.fn(), textContent: "Nota" };
     const tabElement = {
       classList: { add: vi.fn() },
       querySelector: vi.fn((sel) => {
@@ -615,13 +623,14 @@ describe("TabManager - pinTab / unpinTab", () => {
 
     tabManager.pinTab(tabElement);
 
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
-    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🌟");
+    expect(label.setAttribute).not.toHaveBeenCalled();
+    expect(labelSpan.setAttribute).not.toHaveBeenCalled();
+    expect(label.appendChild).toHaveBeenCalledWith(expect.anything());
   });
 
-  it("pinTab detecta emoji del nombre de la pestaña si no hay data-emoji", () => {
-    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null) };
-    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), textContent: "🚀 Proyecto" };
+  it("pinTab NUNCA deriva el estado de pin de un emoji en el nombre", () => {
+    const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), appendChild: vi.fn() };
+    const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), textContent: "🚀 Proyecto" };
     const tabElement = {
       classList: { add: vi.fn() },
       querySelector: vi.fn((sel) => {
@@ -633,11 +642,11 @@ describe("TabManager - pinTab / unpinTab", () => {
 
     tabManager.pinTab(tabElement);
 
-    expect(label.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
-    expect(labelSpan.setAttribute).toHaveBeenCalledWith("data-emoji", "🚀");
+    expect(label.setAttribute).not.toHaveBeenCalled();
+    expect(labelSpan.setAttribute).not.toHaveBeenCalled();
   });
 
-  it("unpinTab remueve la clase pinned pero conserva data-emoji", () => {
+  it("unpinTab remueve la clase pinned y limpia el data-emoji legado", () => {
     const label = { removeAttribute: vi.fn() };
     const labelSpan = { removeAttribute: vi.fn() };
     const tabElement = {
@@ -652,8 +661,9 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.unpinTab(tabElement);
 
     expect(tabElement.classList.remove).toHaveBeenCalledWith("pinned");
-    expect(label.removeAttribute).not.toHaveBeenCalled();
-    expect(labelSpan.removeAttribute).not.toHaveBeenCalled();
+    // 0.5.9.1: el desacoplado elimina cualquier residuo emoji al desfijar
+    expect(label.removeAttribute).toHaveBeenCalledWith("data-emoji");
+    expect(labelSpan.removeAttribute).toHaveBeenCalledWith("data-emoji");
   });
 
   it("pinTab no hace nada si enablePinning es false", () => {
