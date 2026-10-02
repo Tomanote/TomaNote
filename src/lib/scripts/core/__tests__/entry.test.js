@@ -36,10 +36,6 @@ vi.mock("../../utils/domHelpers.js", () => ({
   default: {},
 }));
 
-vi.mock("../../utils/emojiDetector.js", () => ({
-  default: {},
-}));
-
 describe("entry.js", () => {
   let originalWindow;
   let originalDocument;

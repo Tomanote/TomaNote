@@ -15,18 +15,27 @@
     &.pinned {
 
       label {
+
+        button {
+          display: flex !important;
+        }
+
+        @media (min-width: 768px) {
+          width: 40px !important;
+
+          button {
+            display: none !important;
+          }
+        }
+
         border-radius: 5px;
-        width: 40px;
         overflow: hidden;
         transition: ease-in-out .3s all;
         padding: 7px 5px 5px 10px;
+        width: 100%;
 
         &:hover {
           background-color: var(--tn-theme-secondary);
-        }
-
-        button {
-          display: none !important;
         }
 
         span {
@@ -50,6 +59,11 @@
       font-family: var(--font-family-notes, var(--font-family-default));
       font-weight: normal;
       height: calc(var(--content-height) - 27px);
+      padding-top: 2rem;
+
+      @media (max-width: 768px) {
+        height: calc(var(--content-height) + 15px);
+      }
 
       @media (min-width: 768px) {
         height: 93dvh;
@@ -150,6 +164,7 @@
 
           button:hover {
             background-color: color.adjust(vars.$tn-theme-primary-dark, $lightness: 50%);
+            border: 1px solid var(--tn-theme-contrast);
           }
         }
       }
