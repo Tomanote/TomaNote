@@ -265,6 +265,15 @@ export class FloatingMenu {
   }
 
   handleBottomBarAction(action, button) {
+    // Milestone 0.5.9.1 (Mobile Beta) — the Support icon button (replacing
+    // the obsolete search lens) mounts the support modal overlay directly.
+    if (action === "support") {
+      window.supportModal?.toggle();
+      this.closeBottomBarSubmenus();
+      this.log(`📝 Bottom bar acción ejecutada: ${action}`);
+      return;
+    }
+
     if (action === "search") {
       window.commandPalette?.open();
       this.closeBottomBarSubmenus();

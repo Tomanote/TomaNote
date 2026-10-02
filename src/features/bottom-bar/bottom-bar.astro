@@ -23,25 +23,25 @@ const fontItems = [
   { action: "italic", iconName: "italic", tooltip: t("context-menu.italic"), className: "tn-italic" },
 ];
 
-const tabItems = [
-  { action: "pin-tab", iconName: "pin", tooltip: t("context-menu.pin-tab"), className: "tn-pin" },
-  { action: "edit-name-tab", iconName: "edit", tooltip: t("context-menu.edit-name-tab"), className: "tn-edit" },
-  { action: "delete-tab", iconName: "delete", tooltip: t("context-menu.delete-tab"), className: "tn-delete" },
-];
+// Milestone 0.5.9.1 (Mobile Beta) — pin / rename / delete now live INLINE
+// inside every note row (.pin-tab / .edit-name-tab / .delete-tab on the tab
+// label matrix), so the bottom bar no longer hosts the legacy parent/child
+// note-editing (tab actions) submenu wrapper.
 ---
 
 <nav id="bottom-bar" class="tn-bottom-bar hidden md:hidden" style="bottom: var(--bb-bottom, 0px); padding-bottom: var(--bb-pb, 0rem);">
   <div class="tn-bottom-bar-submenu-container" id="bottom-bar-submenu-container">
     <BottomBarSubmenu id="submenu-content" items={contentItems} />
     <BottomBarSubmenu id="submenu-font" items={fontItems} />
-    <BottomBarSubmenu id="submenu-tab" items={tabItems} />
   </div>
 
   <div class="tn-bottom-bar-row">
     <BottomBarTab iconName="clipboard" action="content" tooltip={t("context-menu.content")} hasSubmenu={true} />
     <BottomBarTab iconName="font" action="font" tooltip={t("context-menu.font")} hasSubmenu={true} iconStrokeWidth="10" />
-    <BottomBarTab iconName="tab" action="tab" tooltip={t("context-menu.tab")} hasSubmenu={true} />
-    <BottomBarTab iconName="search" action="search" tooltip={t("context-menu.search")} />
+    {/* Milestone 0.5.9.1 (Mobile Beta) — the obsolete search lens is gone:
+        search moved to the mobile top bar, and this slot now mounts the
+        Support button wired straight to the support modal overlay. */}
+    <BottomBarTab iconName="heart" action="support" tooltip={t("sidebar.support")} />
     <BottomBarTab iconName="settings" action="settings" tooltip={t("context-menu.settings")} />
     <button id="bottom-bar-create-tab" class="tn-bottom-bar-btn flex flex-col items-center justify-center gap-0.5 flex-1 py-2 cursor-pointer transition-colors duration-200" aria-label={t("context-menu.new-tab")} type="button">
       <span class="tn-bottom-bar-create-icon flex justify-center items-center size-6 rounded-full bg-(--tn-theme-contrast) text-(--tn-neutral-tertiary-color)">
