@@ -1,0 +1,32 @@
+---
+// Import icons from library
+import "./TopBarMobile.scss";
+import Icon from "../../components/icons/Icon.astro";
+import { getLang, useTranslations } from "../../i18n/utils";
+
+const t = useTranslations(getLang());
+---
+
+<div class="tn-searchMobile__header block md:hidden! w-full h-auto">
+  <div class="tn-container border border-(--tn-theme-contrast) rounded-md flex">
+    <div class="tn-container__searchBar flex items-center justify-start w-full px-2.5">
+      <Icon name="search" className="text-(--tn-theme-contrast)" />
+      <input type="text" placeholder="Search Note" class="outline-0 py-2.5 px-3" />
+    </div>
+    <div class="tn-container__buttons flex items-center py-2.5 px-3">
+      <div class="button tn-button px-2">
+        <input type="checkbox" name="list" id="tn-MobileList" class="hidden" />
+        <label for="list">
+          <Icon name="list" className="text-(--tn-theme-contrast)" />
+        </label>
+      </div>
+      <div class="button tn-button">
+        <input type="checkbox" name="grid" id="tn-MobileGrid" class="hidden" />
+        <label for="grid">
+          <Icon name="grid" className="text-(--tn-theme-contrast)" />
+        </label>
+      </div>
+    </div>
+  </div>
+  <hr class="block md:hidden" />
+</div>

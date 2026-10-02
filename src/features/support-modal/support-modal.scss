@@ -1,0 +1,145 @@
+// src/features/support-modal/support-modal.scss
+// Milestone 0.5.9 — Support modal styles.
+// Dialog chrome mirrors the proven ks-help pattern: the native <dialog> is a
+// fixed fullscreen transparent box (visible bounding box for a11y tooling),
+// children center via flex when [open], and the backdrop click-catcher lives
+// in-flow inside it. Theme variables keep it dark/light adaptive.
+
+.support-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  &[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.support-modal__backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.support-modal__container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 420px;
+  max-height: 70dvh;
+  overflow-y: auto;
+  margin: 0 1rem;
+  padding: 1.25rem;
+  background: var(--tn-theme-secondary);
+  color: var(--tn-color-text);
+  border: 1px solid var(--tn-theme-contrast);
+  border-radius: 12px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.support-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.support-modal__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--tn-color-text);
+}
+
+.support-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--tn-theme-contrast);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tn-theme-contrast);
+    outline-offset: 2px;
+  }
+}
+
+.support-modal__close-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--tn-color-text);
+}
+
+.support-modal__subtitle {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.support-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.support-modal__action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--tn-theme-contrast);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--tn-color-text);
+  transition: background 0.15s, transform 0.1s;
+
+  &:hover {
+    background: var(--tn-theme-primary);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tn-theme-contrast);
+    outline-offset: 2px;
+  }
+}
+
+.support-modal__action-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--tn-theme-contrast);
+}
+
+.support-modal__action-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}

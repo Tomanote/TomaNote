@@ -1,0 +1,57 @@
+---
+// src/features/support-modal/support-modal.astro
+// Milestone 0.5.9 — Support modal overlay.
+// Accessible native <dialog> (focus management via showModal) with the four
+// canonical support actions. All copy is i18n-driven (en + es).
+
+import "./support-modal.scss";
+import Icon from "../../components/icons/Icon.astro";
+import { getLang, useTranslations } from "../../i18n/utils";
+
+const t = useTranslations(getLang());
+
+const GITHUB_REPO = "https://github.com/Tomanote/TomaNote";
+const GITHUB_ISSUES = "https://github.com/Tomanote/TomaNote/issues";
+const BUY_ME_A_COFFEE = "https://buymeacoffee.com/dftp930";
+const KO_FI = "https://ko-fi.com/tomanote";
+
+// `as const` narrows `key` to the literal i18n key union `t()` requires
+const actions = [
+  { key: "support.star", icon: "star", href: GITHUB_REPO, starred: true },
+  { key: "support.issue", icon: "bug", href: GITHUB_ISSUES, starred: false },
+  { key: "support.coffee", icon: "coffee", href: BUY_ME_A_COFFEE, starred: false },
+  { key: "support.kofi", icon: "heart", href: KO_FI, starred: true },
+] as const;
+---
+
+<dialog id="supportModal" class="support-modal" aria-labelledby="support-modal-title">
+  <div class="support-modal__backdrop" data-action="close"></div>
+  <div class="support-modal__container" role="document">
+    <div class="support-modal__header">
+      <h2 id="support-modal-title" class="support-modal__title" data-i18n="support.title">{t("support.title")}</h2>
+      <button class="support-modal__close" data-action="close" aria-label={t("support.close")}>
+        <Icon name="close" className="support-modal__close-icon" strokeWidth={2} />
+      </button>
+    </div>
+    <p class="support-modal__subtitle" data-i18n="support.subtitle">{t("support.subtitle")}</p>
+    <div class="support-modal__actions">
+      {
+        actions.map((action) => (
+          <a
+            href={action.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="support-modal__action group relative"
+            aria-label={t(action.key)}
+            data-i18n-aria={action.key}
+          >
+            <Icon name={action.icon} className="support-modal__action-icon" strokeWidth={2} />
+            <span class="support-modal__action-label" data-i18n={action.key}>
+              {t(action.key)}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</dialog>

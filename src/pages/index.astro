@@ -13,6 +13,8 @@ import CommandPalette from "../features/command-palette/command-palette.astro";
 import KeyboardShortcutsHelp from "../features/keyboard-shortcuts-help/keyboard-shortcuts-help.astro";
 import SaveIndicator from "../features/save-indicator/save-indicator.astro";
 import ConnectionStatus from "../features/connection-status/connection-status.astro";
+import TopBarMobile from "../features/top-bar/TopBarMobile.astro";
+import SupportModal from "../features/support-modal/support-modal.astro";
 ---
 
 <Layout>
@@ -22,7 +24,8 @@ import ConnectionStatus from "../features/connection-status/connection-status.as
     <main class="flex-1 relative overflow-hidden min-w-0">
       <SaveIndicator />
       <ConnectionStatus />
-      <div dir="ltr" class="tab-list flex flex-row justify-start items-start w-full h-dvh max-w-100dvw overflow-x-auto z-999 px-0 md:px-2">
+      <TopBarMobile />
+      <div dir="ltr" class="tab-list tn-listView flex flex-row justify-start items-start w-full h-dvh max-w-100dvw overflow-x-auto z-999 px-0 md:px-2">
         <span id="tab-list-anchor" class="hidden"></span>
       </div>
     </main>
@@ -34,6 +37,7 @@ import ConnectionStatus from "../features/connection-status/connection-status.as
   <ContextualMenu />
   <CommandPalette />
   <KeyboardShortcutsHelp />
+  <SupportModal />
 </Layout>
 
 <script>
