@@ -36,19 +36,19 @@ export class ThemeManager {
   }
 
   async init() {
-    // Cargar tema guardado
+    // Load saved theme
     this.loadSavedTheme();
 
-    // Crear UI del selector (deprecated, ahora se usa AppearanceTab)
+    // Create the selector UI (deprecated, AppearanceTab is used now)
     // this.createThemeSelectorUI();
 
     // Aplicar tema inicial
     this.applyTheme(this.currentTheme);
 
-    // Configurar listeners
+    // Configure listeners
     this.setupEventListeners();
 
-    // Configurar AppearanceTab si existe
+    // Configure AppearanceTab when it exists
     this.setupAppearanceTab();
 
     return this;
@@ -60,7 +60,7 @@ export class ThemeManager {
       if (savedTheme && this.themes.some((t) => t.id === savedTheme)) {
         this.currentTheme = savedTheme;
       } else {
-        // Comprobar preferencia del sistema
+        // Check the system preference
         const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         this.currentTheme = systemPrefersDark ? "dark" : "light";
         localStorage.setItem("notepadTheme", this.currentTheme);
@@ -77,14 +77,14 @@ export class ThemeManager {
       return;
     }
 
-    // Encontrar donde insertar (junto al toggle antiguo)
+    // Find where to insert (next to the old toggle)
     const themeWrapper = document.querySelector(".theme-selector-wrapper") || document.querySelector(".options-tab") || document.querySelector(".tab-list");
 
     if (!themeWrapper) {
       return;
     }
 
-    // Crear HTML del selector
+    // Create the selector HTML
     const themeSelectorHTML = `
       <div class="theme-selector-container">
         <button 
@@ -130,15 +130,15 @@ export class ThemeManager {
       </div>
     `;
 
-    // Insertar en el DOM
+    // Insert into the DOM
     themeWrapper.insertAdjacentHTML("beforeend", themeSelectorHTML);
 
-    // Actualizar el ícono inicial
+    // Update the initial icon
     this.updateThemeIcon();
   }
 
   setupEventListeners() {
-    // Sincronizar con el toggle antiguo si existe (deprecated)
+    // Sync with the old toggle when it exists (deprecated)
     const oldToggle = document.getElementById("dark-mode-toggle");
     if (oldToggle) {
       // Establecer estado inicial
@@ -157,7 +157,7 @@ export class ThemeManager {
       return;
     }
 
-    // Mapear IDs de radio buttons a IDs de temas
+    // Map radio button IDs to theme IDs
     const radioToThemeMap = {
       "theme-color-dark": "dark",
       "theme-color-light": "light",
@@ -167,13 +167,13 @@ export class ThemeManager {
       "theme-color-orbit": "neon-orbit",
     };
 
-    // Establecer el radio button activo según el tema actual
+    // Set the active radio button for the current theme
     this.updateAppearanceTabUI();
 
-    // Prevenir auto-scroll del modal al hacer clic en los labels (patch mobile)
+    // Prevent modal auto-scroll when clicking the labels (mobile patch)
     this.preventLabelAutoScroll(themeRadios);
 
-    // Agregar event listeners a los radio buttons
+    // Add event listeners to the radio buttons
     themeRadios.forEach((radio) => {
       radio.addEventListener("change", (e) => {
         const themeId = radioToThemeMap[e.target.id];
@@ -183,7 +183,7 @@ export class ThemeManager {
       });
     });
 
-    // Escuchar cambios de tema para actualizar la UI
+    // Listen for theme changes to update the UI
     window.addEventListener("themeChanged", (e) => {
       this.updateAppearanceTabUI();
     });
@@ -258,7 +258,7 @@ export class ThemeManager {
 
   switchTheme(themeId) {
     if (!this.themes.some((t) => t.id === themeId)) {
-      devLogger.warn(`⚠️  Tema "${themeId}" no válido`);
+      devLogger.warn(`⚠️  Invalid theme "${themeId}"`);
       return;
     }
 
@@ -268,7 +268,7 @@ export class ThemeManager {
     // Aplicar tema visualmente
     this.applyTheme(themeId);
 
-    // Guardar preferencia
+    // Save the preference
     try {
       localStorage.setItem("notepadTheme", themeId);
     } catch (error) {}
@@ -279,7 +279,7 @@ export class ThemeManager {
     // Actualizar toggle antiguo si existe
     this.updateLegacyToggle();
 
-    // Disparar evento para otros componentes
+    // Fire the event for other components
     window.dispatchEvent(
       new CustomEvent("themeChanged", {
         detail: {
@@ -291,16 +291,16 @@ export class ThemeManager {
   }
 
   applyTheme(themeId) {
-    // Usar atributo data-theme en el html
+    // Use the data-theme attribute on the html element
     document.documentElement.setAttribute("data-theme", themeId);
 
-    // Para retrocompatibilidad con CSS antiguo
+    // For backwards compatibility with old CSS
     document.documentElement.classList.remove("light-mode");
     if (themeId === "light") {
       document.documentElement.classList.add("light-mode");
     }
 
-    // Actualizar meta theme-color para móviles
+    // Update the meta theme-color for mobile
     this.updateMetaThemeColor(themeId);
   }
 
@@ -331,7 +331,7 @@ export class ThemeManager {
       btn.setAttribute("aria-current", isActive ? "true" : "false");
     });
 
-    // Actualizar ícono del botón principal
+    // Update the main button icon
     this.updateThemeIcon();
   }
 
@@ -369,7 +369,7 @@ export class ThemeManager {
     return [...this.themes];
   }
 
-  // Método para debug
+  // Debug method
   debugCSSVariables() {
     const variables = ["--tn-color-background", "--tn-color-text", "--tn-color-accent", "--tn-theme-primary", "--tn-theme-secondary"];
 

@@ -5,7 +5,7 @@
 // the developer's handwritten markup (TopBarMobile.astro / TopBarMobile.scss):
 //
 //   • MobileSearch     — live title/body filter + List/Grid checkbox beta gate
-//   • MobileNoteNav    — the mobile-only "regresar" immersive back control
+//   • MobileNoteNav    — the mobile-only immersive back control
 //   • MobileRowLayout  — uniform row height distribution in mobile list mode
 //
 // Every controller degrades to a no-op when its markup is absent, so this

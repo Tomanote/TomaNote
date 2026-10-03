@@ -6,7 +6,7 @@
 //     AND plaintext body, while the List/Grid checkboxes stay hidden/inert.
 //  2. Pin toggles stamp the native orange vector star — the emoji binding is
 //     fully un-bound (no data-emoji anywhere, no emoji in persistence).
-//  3. The mobile-only "regresar" control commits edits, runs saveTabs(),
+//  3. The mobile-only back control commits edits, runs saveTabs(),
 //     closes the full-screen workspace and returns to the list — no reload.
 //  4. Uniform note-row heights in mobile list mode.
 //  5. The BottomBar pivot: search lens gone, Support button wired to the
@@ -43,8 +43,8 @@ async function closeActiveNote(page) {
 
 async function seedNotes(page) {
   await page.evaluate(() => {
-    window.tabManager.createTab("Alpha compras", "leche y pan");
-    window.tabManager.createTab("Beta viajes", "playa del caribe");
+    window.tabManager.createTab("Alpha groceries", "milk and bread");
+    window.tabManager.createTab("Beta travel", "caribbean beach");
   });
 }
 
@@ -96,14 +96,14 @@ test.describe("Mobile Beta — live search over the handwritten top bar", () => 
     await expect.poll(() => visibleRowCount(page)).toBe(1);
 
     // BODY match (plaintext across the collection)
-    await input.fill("playa");
+    await input.fill("beach");
     await expect.poll(() => visibleRowCount(page)).toBe(1);
     const shown = await page.locator(".tab-list__item").evaluateAll((els) =>
       els
         .filter((el) => el.style.display !== "none")
         .map((el) => el.querySelector("label span")?.textContent ?? "")
     );
-    expect(shown.join(" ")).toContain("Beta viajes");
+    expect(shown.join(" ")).toContain("Beta travel");
 
     // Case-insensitive title match
     await input.fill("ALPHA");
@@ -167,7 +167,7 @@ test.describe("Mobile Beta — native star pin (emoji un-bound)", () => {
   });
 });
 
-test.describe("Mobile Beta — immersive workspace + regresar", () => {
+test.describe("Mobile Beta — immersive workspace + back button", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(MOBILE);
     await page.goto("/");
@@ -176,11 +176,14 @@ test.describe("Mobile Beta — immersive workspace + regresar", () => {
     await waitForAppReady(page);
   });
 
-  test('injects "regresar" in the top-left of the full-screen writing surface', async ({ page }) => {
+  test('injects the back button in the top-left of the full-screen writing surface', async ({ page }) => {
     // waitForAppReady opens a note, so the immersive workspace is live
-    const back = page.locator("[data-tn-regresar]");
+    const back = page.locator("[data-tn-back]");
     await expect(back).toBeVisible();
-    await expect(back).toHaveText("regresar");
+    // Playwright locale is en-US -> the i18n dictionary resolves the
+    // visible label to "Return" (rendered lowercase via text-transform,
+    // so match case-insensitively against the text content).
+    await expect(back).toHaveText(/^return$/i);
 
     const box = await back.boundingBox();
     expect(box).not.toBeNull();
@@ -189,25 +192,25 @@ test.describe("Mobile Beta — immersive workspace + regresar", () => {
 
     // Mobile-only control: never on the desktop strip
     await page.setViewportSize(DESKTOP);
-    await expect(page.locator("[data-tn-regresar]")).toHaveCount(0);
+    await expect(page.locator("[data-tn-back]")).toHaveCount(0);
     await page.setViewportSize(MOBILE);
   });
 
-  test("tapping regresar commits edits, saves, closes the workspace and returns — no reload", async ({ page }) => {
+  test("tapping the back button commits edits, saves, closes the workspace and returns — no reload", async ({ page }) => {
     const urlBefore = page.url();
 
     // Close the note waitForAppReady opened, then open one from the list
     await closeActiveNote(page);
     await page.locator(".tab-list__item label").first().click();
-    await expect(page.locator("[data-tn-regresar]")).toBeVisible();
+    await expect(page.locator("[data-tn-back]")).toBeVisible();
 
     // Write something that must survive the close transaction
-    await typeInEditor(page, "regresar debe guardar esto");
+    await typeInEditor(page, "back must save this");
 
-    await page.locator("[data-tn-regresar]").click();
+    await page.locator("[data-tn-back]").click();
 
     // Workspace layer closed, control gone, back on the list
-    await expect(page.locator("[data-tn-regresar]")).toHaveCount(0);
+    await expect(page.locator("[data-tn-back]")).toHaveCount(0);
     await expect(page.locator('.tab-list input[type="radio"]:checked')).toHaveCount(0);
 
     // No page reload
@@ -215,7 +218,7 @@ test.describe("Mobile Beta — immersive workspace + regresar", () => {
 
     // Core persistence workflow ran
     const stored = await getStoredTabs(page);
-    expect(JSON.stringify(stored)).toContain("regresar debe guardar esto");
+    expect(JSON.stringify(stored)).toContain("back must save this");
   });
 });
 
@@ -294,7 +297,7 @@ test.describe("Desktop regression guard (0.5.9.1)", () => {
   });
 
   test("no mobile chrome or row-height stamps leak into the desktop tab strip", async ({ page }) => {
-    await expect(page.locator("[data-tn-regresar]")).toHaveCount(0);
+    await expect(page.locator("[data-tn-back]")).toHaveCount(0);
     await expect(page.locator(".tn-searchMobile__header")).toBeHidden();
 
     const stamps = await page

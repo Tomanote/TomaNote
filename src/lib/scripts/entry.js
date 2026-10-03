@@ -457,7 +457,7 @@ async function loadOptionalModules() {
   }
 }
 
-// ===== VERIFICATIÓN & FALLBACK =====
+// ===== VERIFICATION & FALLBACK =====
 async function verifyFunctionality() {
   // Verify critical elements
   const criticalElements = [".tab-list", "#create-tab", "#context-menu"];

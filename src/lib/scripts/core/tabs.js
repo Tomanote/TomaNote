@@ -33,7 +33,7 @@ export class TabManager {
     this.setupContextMenuIntegration();
   }
 
-  // ===== PUBLIC MÉTHODS =====
+  // ===== PUBLIC METHODS =====
   async init() {
     try {
       // 1. Find elementos in DOM
@@ -112,11 +112,11 @@ export class TabManager {
 
   createTab(name = null, content = "", isPinned = false, emoji = null, format = "markdown") {
     if (!this.options.enableCreation) {
-      this.log("⚠️  Creación de pestañas deshabilitada");
+      this.log("⚠️  Tab creation disabled");
       return null;
     }
 
-    const tabName = name ?? window.i18n?.t("tab.new") ?? "Nueva";
+    const tabName = name ?? window.i18n?.t("tab.new") ?? "New";
     const id = `body-tab-${this.tabIdCounter++}`;
     // Pin metadata migration (0.5.9.1): emojis are plain content and are
     // never persisted as pin metadata. The `emoji` argument stays in the
@@ -132,7 +132,7 @@ export class TabManager {
     // Choose and focus
     tabElement.querySelector("input").checked = true;
 
-    this.log("➕ Pestaña creada:", { id, name });
+    this.log("➕ Tab created:", { id, name });
 
     // Notify change of tabs — this triggers handleMilkdownTabSwitch
     // which mounts the Milkdown editor for markdown tabs
@@ -426,7 +426,7 @@ export class TabManager {
           </svg>
         </button>
       </label>
-      <div class="tab-list__item--content pt-20 md:pt-unset md:ml-10px z-100 md:z-50 md:ml-10px overflow-x-hidden overflow-y-scroll font-thin hidden bg-(--tn-theme-secondary) p-(--tn-padding-base)! border-0 outline-0 absolute top-0 md:top-11! md:left-2.5 md:w-[calc(100%-25px)] first:mr-2.5 border-r border-(--tn-theme-secondary)! rounded-md" ${isMarkdown ? "" : 'contenteditable="true"'}>${isMarkdown ? "" : `<div>${content || ""}</div>`}</div>
+      <div class="tab-list__item--content pt-20 md:pt-unset md:ml-10px z-100 md:z-10 md:ml-10px overflow-x-hidden overflow-y-scroll font-thin hidden bg-(--tn-theme-secondary) p-(--tn-padding-base)! border-0 outline-0 absolute top-0 md:top-11! md:left-2.5 md:w-[calc(100%-25px)] first:mr-2.5 border-r border-(--tn-theme-secondary)! rounded-md" ${isMarkdown ? "" : 'contenteditable="true"'}>${isMarkdown ? "" : `<div>${content || ""}</div>`}</div>
     `;
 
     // Hydration path: a restored or freshly created pinned tab carries its
@@ -614,7 +614,7 @@ export class TabManager {
     // Also handle middle mouse click
     document.addEventListener("auxclick", (e) => {
       if (e.button === 1) {
-        // Botón medio
+        // Middle button
         const isTabLabel = e.target.closest(".tab-list__item label");
         if (isTabLabel) {
           e.preventDefault();
