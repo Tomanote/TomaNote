@@ -45,6 +45,10 @@ class I18nManager {
     if (typeof document === "undefined" || !document.querySelectorAll) {
       return;
     }
+    // The t() helper only exists after init() — nothing to apply before.
+    if (typeof this.t !== "function") {
+      return;
+    }
     const elements = document.querySelectorAll("[data-i18n]");
     elements.forEach((el) => {
       const key = el.getAttribute("data-i18n");
@@ -58,10 +62,28 @@ class I18nManager {
     return this.lang;
   }
 
-  setLang(lang) {
+  setLang(lang, onChange = null) {
     if (this.translations[lang]) {
       this.lang = lang;
       this.applyTranslations();
+      // One-shot notification for the direct caller (optional).
+      if (typeof onChange === "function") {
+        try {
+          onChange();
+        } catch (error) {
+          devLogger.warn("i18n: language-change callback failed:", error);
+        }
+      }
+      // Broadcast to every persistent subscriber that the active language
+      // matrix changed, so UI consumers (buttons, tooltips, panels)
+      // re-render their text without a page reload.
+      try {
+        window.dispatchEvent(
+          new CustomEvent("i18n-changed", { detail: { lang } })
+        );
+      } catch (error) {
+        devLogger.warn("i18n: broadcast failed:", error);
+      }
     }
   }
 

@@ -66,7 +66,7 @@ export class ContextMenu {
   setupContextMenu() {
     // Do not add listener on touch (mobile) devices
     if ("ontouchstart" in window) {
-      this.log("📱 Menú contextual deshabilitado en mobile");
+      this.log("📱 Contextual menu disabled on mobile");
       return;
     }
 
@@ -151,7 +151,7 @@ export class ContextMenu {
       window.i18n.applyTranslations();
     }
 
-    this.log("📝 Menú contextual de texto mostrado");
+    this.log("📝 Textual contextual menu shown");
   }
 
   showTabContextMenu(e, tabLabel) {
@@ -199,7 +199,7 @@ export class ContextMenu {
       window.i18n.applyTranslations();
     }
 
-    this.log("📑 Menú contextual de pestaña mostrado");
+    this.log("📑 Tab contextual menu shown");
   }
 
   showMenuAt(x, y) {
@@ -321,7 +321,7 @@ export class ContextMenu {
         document.execCommand(action, false, null);
     }
 
-    this.log(`📝 Acción de texto ejecutada: ${action}`);
+    this.log(`📝 Text action executed: ${action}`);
   }
 
   handlePinTab(tabElement) {
@@ -331,7 +331,7 @@ export class ContextMenu {
     if (window.tabManager && typeof window.tabManager[method] === "function") {
       window.tabManager[method](tabElement);
     } else {
-      this.log("⚠️ TabManager no disponible para fijar/desfijar pestaña");
+      this.log("⚠️ TabManager unavailable to pin/unpin tab");
     }
   }
 

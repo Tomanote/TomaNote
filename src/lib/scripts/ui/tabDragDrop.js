@@ -148,7 +148,7 @@ export class TabDragDrop {
 
     if (window.tabManager?.saveTabs) {
       window.tabManager.saveTabs();
-      this.log("💾 Orden guardado");
+      this.log("💾 Order saved");
     }
 
     // Notify tab changes

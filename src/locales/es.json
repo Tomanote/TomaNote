@@ -342,5 +342,8 @@
   "support.kofi": "♥ Apoya en Ko-fi",
   "support.close": "Cerrar el diálogo de soporte",
   "_comment-mobile-beta": "Mobile Beta 0.5.9.1",
-  "tab.pin-tab": "Fijar pestaña"
+  "tab.pin-tab": "Fijar pestaña",
+  "mobile-note-nav.back.visible": "Volver",
+  "mobile-note-nav.back.aria": "Volver",
+  "mobile-note-nav.back.emoji": "←"
 }

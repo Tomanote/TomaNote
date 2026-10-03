@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ContextMenu } from "../contextual-menu.js";
 
-// Mock de navigator.language
+// Mock navigator.language
 function mockNavigatorLanguage(lang) {
   Object.defineProperty(global, "navigator", {
     value: { language: lang },
@@ -182,7 +182,7 @@ describe("ContextMenu", () => {
       await contextMenu.init();
     });
 
-    it("Establece activeTabElement y oculta items de texto", () => {
+    it("Sets activeTabElement and hides text items", () => {
       const mockTabLabel = {
         closest: vi.fn().mockReturnValue({
           classList: { contains: vi.fn().mockReturnValue(false) },
@@ -212,7 +212,7 @@ describe("ContextMenu", () => {
       await contextMenu.init();
     });
 
-    it("Posiciona el menú en la posición dada", () => {
+    it("Positions the menu at the given position", () => {
       mockElement.offsetWidth = 200;
       mockElement.offsetHeight = 300;
       window.innerWidth = 1920;
@@ -225,7 +225,7 @@ describe("ContextMenu", () => {
       expect(mockElement.style.top).toBe("200px");
     });
 
-    it("Ajusta posición si el menú se sale por la derecha", () => {
+    it("Adjusts position when the menu overflows to the right", () => {
       mockElement.offsetWidth = 200;
       mockElement.offsetHeight = 100;
       window.innerWidth = 500;
@@ -236,7 +236,7 @@ describe("ContextMenu", () => {
       expect(mockElement.style.left).toBe("290px");
     });
 
-    it("Ajusta posición si el menú se sale por abajo", () => {
+    it("Adjusts position when the menu overflows at the bottom", () => {
       mockElement.offsetWidth = 200;
       mockElement.offsetHeight = 300;
       window.innerWidth = 1920;
@@ -260,7 +260,7 @@ describe("ContextMenu", () => {
       expect(hideSpy).not.toHaveBeenCalled();
     });
 
-    it("Ejecuta acción pin-tab si activeTabElement existe", () => {
+    it("Runs the pin-tab action when activeTabElement exists", () => {
       const mockTabElement = {
         classList: { contains: vi.fn().mockReturnValue(false), add: vi.fn() },
         querySelector: vi.fn().mockReturnValue({ textContent: "test", dataset: {}, setAttribute: vi.fn() }),
@@ -277,7 +277,7 @@ describe("ContextMenu", () => {
       expect(pinTabSpy).toHaveBeenCalledWith(mockTabElement);
     });
 
-    it("Ejecuta acción de texto si activeEditableElement existe", () => {
+    it("Runs the text action when activeEditableElement exists", () => {
       contextMenu.activeEditableElement = { focus: vi.fn() };
       const handleTextActionSpy = vi.spyOn(contextMenu, "handleTextAction");
 
@@ -290,7 +290,7 @@ describe("ContextMenu", () => {
       expect(handleTextActionSpy).toHaveBeenCalledWith("copy");
     });
 
-    it("Oculta el menú después de ejecutar la acción", () => {
+    it("Hides the menu after running the action", () => {
       contextMenu.activeEditableElement = { focus: vi.fn() };
 
       const mockMenuItem = {
@@ -394,7 +394,7 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.bold")).toBe("Negrita");
     });
 
-    it('t("context-menu.italic") must be return "Itálica"', () => {
+    it('t("context-menu.italic") must return the Spanish locale value', () => {
       expect(i18n.t("context-menu.italic")).toBe("Itálica");
     });
 
@@ -410,11 +410,11 @@ describe("ContextualMenu - I18n Translations", () => {
       expect(i18n.t("context-menu.redo")).toBe("Rehacer");
     });
 
-    it('t("context-menu.pin-tab") must be return "Fijar Pestaña"', () => {
+    it('t("context-menu.pin-tab") must return the Spanish locale value', () => {
       expect(i18n.t("context-menu.pin-tab")).toBe("Fijar Pestaña");
     });
 
-    it('t("context-menu.unpin-tab") must be return "Desfijar Pestaña"', () => {
+    it('t("context-menu.unpin-tab") must return the Spanish locale value', () => {
       expect(i18n.t("context-menu.unpin-tab")).toBe("Desfijar Pestaña");
     });
   });

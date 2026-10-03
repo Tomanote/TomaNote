@@ -175,7 +175,7 @@ describe("TabDragDrop", () => {
   });
 
   describe("canPut", () => {
-    it("Permite recibir pestañas en el tabList principal", () => {
+    it("Allows tabs to be received by the main tabList", () => {
       const mockItem = { classList: { contains: vi.fn().mockReturnValue(false) } };
       const mockTo = { el: mockTabList };
 
@@ -184,7 +184,7 @@ describe("TabDragDrop", () => {
       expect(result).toBe(true);
     });
 
-    it("Permite recibir pestañas pinned en pinned-tabs", () => {
+    it("Allows pinned tabs to be received by pinned-tabs", () => {
       const mockItem = { classList: { contains: vi.fn().mockReturnValue(true) } };
       const mockTo = { el: { classList: { contains: vi.fn().mockReturnValue(true) } } };
 
@@ -193,7 +193,7 @@ describe("TabDragDrop", () => {
       expect(result).toBe(true);
     });
 
-    it("Rechaza pestañas no-pinned en pinned-tabs", () => {
+    it("Rejects non-pinned tabs in pinned-tabs", () => {
       const mockItem = { classList: { contains: vi.fn().mockReturnValue(false) } };
       const mockTo = { el: { classList: { contains: vi.fn().mockReturnValue(true) } } };
 
@@ -204,14 +204,14 @@ describe("TabDragDrop", () => {
   });
 
   describe("handleMove", () => {
-    it("Retorna true para permitir el movimiento", () => {
+    it("Returns true to allow the move", () => {
       const result = tabDragDrop.handleMove({});
       expect(result).toBe(true);
     });
   });
 
   describe("reorderPinnedAndNormal", () => {
-    it("Separa pestañas pinned y normales, reinserta con anchor", () => {
+    it("Separates pinned and regular tabs, reinserts with anchor", () => {
       const pinnedTab = { classList: { contains: (c) => c === "pinned" }, remove: vi.fn() };
       const normalTab = { classList: { contains: () => false }, remove: vi.fn() };
       mockTabList.querySelectorAll = vi.fn(() => [normalTab, pinnedTab]);
@@ -228,7 +228,7 @@ describe("TabDragDrop", () => {
       expect(mockTabList.insertBefore.mock.calls[1][0]).toBe(normalTab);
     });
 
-    it("Usa appendChild como fallback si no hay referencia", () => {
+    it("Falls back to appendChild when there is no reference", () => {
       const pinnedTab = { classList: { contains: (c) => c === "pinned" }, remove: vi.fn() };
       const normalTab = { classList: { contains: () => false }, remove: vi.fn() };
       mockTabList.querySelectorAll = vi.fn(() => [pinnedTab, normalTab]);

@@ -44,7 +44,7 @@ function mountWorkspace(heights = [40, 62, 48]) {
   heights.forEach((height, index) => {
     const row = document.createElement("div");
     row.className = "tab-list__item";
-    row.innerHTML = `<input type="radio" name="body-tab" id="body-tab-${index + 1}"><label><span>Nota ${index + 1}</span></label>`;
+    row.innerHTML = `<input type="radio" name="body-tab" id="body-tab-${index + 1}"><label><span>Note ${index + 1}</span></label>`;
     list.appendChild(row);
     stubHeight(row, height);
   });

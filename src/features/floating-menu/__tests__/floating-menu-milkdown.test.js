@@ -365,7 +365,7 @@ describe("FloatingMenu — Milkdown route for codeBlock, blockquote, codeInline"
       floatingMenu.handleTextAction("codeBlock", null);
 
       expect(mockExecuteCommand).not.toHaveBeenCalled();
-      expect(floatingMenu.log).toHaveBeenCalledWith("⚠️ No hay pestaña activa");
+      expect(floatingMenu.log).toHaveBeenCalledWith("⚠️ No active tab");
     });
   });
 

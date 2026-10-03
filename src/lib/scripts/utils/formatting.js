@@ -30,7 +30,7 @@ export class FormattingUtils {
     let element = range.commonAncestorContainer;
     if (element.nodeType === Node.TEXT_NODE) element = element.parentElement;
 
-    // Buscar hacia arriba hasta encontrar un wrapper o el contentEditable
+    // Walk upwards until a wrapper or the contentEditable is found
     while (element && !element.hasAttribute("contenteditable")) {
       if (element.classList.contains("bold-semibold") || element.classList.contains("bold-extrabold")) {
         return element;
@@ -49,7 +49,7 @@ export class FormattingUtils {
       wrapper.classList.add("bold-extrabold");
     } else if (wrapper.classList.contains("bold-extrabold")) {
       wrapper.classList.remove("bold-extrabold");
-      // Vuelve a normal removiendo el wrapper
+      // Back to normal by removing the wrapper
       this.unwrapBold(wrapper);
     }
   }

@@ -60,7 +60,7 @@ function makeTabManager(overrides = {}) {
   return tm;
 }
 
-describe("TabManager - Lógica Básica", () => {
+describe("TabManager - Basic Logic", () => {
   let tabManager;
 
   beforeEach(() => {
@@ -79,7 +79,7 @@ describe("TabManager - Lógica Básica", () => {
     tabManager = makeTabManager();
   });
 
-  it("Crear una pestaña con datos por defecto", () => {
+  it("Create a tab with default data", () => {
     const tab = tabManager.createTab();
     expect(tab.name).toBe("New");
     expect(tab.content).toBe("");
@@ -87,37 +87,37 @@ describe("TabManager - Lógica Básica", () => {
     expect(tab.updatedAt).toEqual(expect.any(Number));
   });
 
-  it("Agregar pestañas al array interno", () => {
+  it("Adds tabs to the internal array", () => {
     tabManager.tabsData.push({ id: "1", name: "Nota 1", content: "", isPinned: false, emoji: null });
     tabManager.tabsData.push({ id: "2", name: "Nota 2", content: "", isPinned: false, emoji: null });
     expect(tabManager.getTabs()).toHaveLength(2);
   });
 
-  it("Encontrar pestaña por ID", () => {
+  it("Finds a tab by ID", () => {
     const tab = { id: "test", name: "Test", content: "", isPinned: false, emoji: null };
     tabManager.tabsData.push(tab);
     expect(tabManager.findTabById("test")).toEqual(tab);
   });
 
-  it("Retorna null si no encuentra pestaña por ID", () => {
+  it("Returns null when no tab matches the ID", () => {
     expect(tabManager.findTabById("nonexistent")).toBeUndefined();
   });
 
-  it("Crear pestaña con nombre personalizado", () => {
+  it("Create tab with custom name", () => {
     const tab = tabManager.createTab("Mi nota");
     expect(tab.name).toBe("Mi nota");
   });
 
-  it("Crear pestaña con contenido y pinned", () => {
+  it("Create tab with content and pinned", () => {
     const tab = tabManager.createTab("Pinned", "<p>contenido</p>", true, "📌");
     expect(tab.content).toBe("<p>contenido</p>");
     expect(tab.isPinned).toBe(true);
-    // 0.5.9.1: el argumento emoji se conserva solo por compatibilidad de
-    // firma y NUNCA se persiste — el ancla de pin es la estrella nativa.
+    // 0.5.9.1: the emoji argument is kept only for signature compatibility
+    // and is NEVER persisted — the pin anchor is the native star.
     expect(tab.emoji).toBeNull();
   });
 
-  it("No crear pestaña si enableCreation es false", () => {
+  it("Does not create a tab when enableCreation is false", () => {
     tabManager.options.enableCreation = false;
     const tab = tabManager.createTab("Test");
     expect(tab).toBeNull();
@@ -165,7 +165,7 @@ describe("TabManager - saveTabs", () => {
     tabManager = makeTabManager();
   });
 
-  it("Guarda datos de las pestañas en localStorage", () => {
+  it("Save tab data to localStorage", () => {
     const mockItem1 = {
       querySelector: vi.fn((sel) => {
         if (sel === ".tab-list__item--content") return { innerHTML: "<p>contenido 1</p>" };
@@ -196,12 +196,12 @@ describe("TabManager - saveTabs", () => {
     expect(saved[0].isPinned).toBe(false);
     expect(saved[0].updatedAt).toEqual(expect.any(Number));
     expect(saved[1].isPinned).toBe(true);
-    // 0.5.9.1: los emojis ya no se serializan como metadato de pin
+    // 0.5.9.1: emojis are no longer serialized as pin metadata
     expect(saved[1]).not.toHaveProperty("emoji");
     expect(saved[1].updatedAt).toEqual(expect.any(Number));
   });
 
-  it("Preserva updatedAt existente de cada pestaña al guardar", () => {
+  it("Preserve existing updatedAt per tab on save", () => {
     tabManager.tabsData = [{ id: "body-tab-1", updatedAt: 111 }, { id: "body-tab-2", updatedAt: 222 }];
 
     const mockItem1 = {
@@ -231,14 +231,14 @@ describe("TabManager - saveTabs", () => {
     expect(saved[1].updatedAt).toBe(222);
   });
 
-  it("No guarda si autoSave y persistence están deshabilitados", () => {
+  it("Do not save if autoSave and persistence are disabled", () => {
     tabManager.options.enableAutoSave = false;
     tabManager.options.enablePersistence = false;
     tabManager.saveTabs();
     expect(localStorageMock.setItem).not.toHaveBeenCalled();
   });
 
-  it("Guarda un array vacío si no hay pestañas", () => {
+  it("Save empty array if there are no tabs", () => {
     tabManager.tabList.querySelectorAll = vi.fn(() => []);
     tabManager.saveTabs();
     expect(localStorageMock.setItem).toHaveBeenCalledWith("tabsData", "[]");
@@ -253,7 +253,7 @@ describe("TabManager - markTabUpdated", () => {
     tabManager = makeTabManager();
   });
 
-  it("Actualiza updatedAt solo de la pestaña editada", () => {
+  it("Updates updatedAt only on the edited tab", () => {
     tabManager.tabsData = [
       { id: "body-tab-1", name: "A", updatedAt: 1000 },
       { id: "body-tab-2", name: "B", updatedAt: 2000 },
@@ -272,12 +272,12 @@ describe("TabManager - markTabUpdated", () => {
     expect(tabManager.tabsData[1].updatedAt).toBe(2000);
   });
 
-  it("No hace nada si el elemento no pertenece a una pestaña", () => {
+  it("Do nothing if the element does not belong to a tab", () => {
     const contentElement = { closest: vi.fn(() => null) };
     expect(() => tabManager.markTabUpdated(contentElement)).not.toThrow();
   });
 
-  it("No actualiza si la pestaña no existe en tabsData", () => {
+  it("Do not update if the tab does not exist in tabsData", () => {
     const contentElement = {
       closest: vi.fn(() => ({
         querySelector: vi.fn(() => ({ id: "body-tab-99" })),
@@ -295,7 +295,7 @@ describe("TabManager - restoreTabs", () => {
     tabManager = makeTabManager();
   });
 
-  it("Restaura pestañas desde localStorage", () => {
+  it("Restore tabs from localStorage", () => {
     const savedTabs = [
       { id: "body-tab-1", name: "Nota 1", content: "<p>hola</p>", isPinned: false, emoji: null },
       { id: "body-tab-2", name: "Nota 2", content: "", isPinned: true, emoji: "📌" },
@@ -309,7 +309,7 @@ describe("TabManager - restoreTabs", () => {
     expect(tabManager.createTabElement).toHaveBeenCalledTimes(2);
   });
 
-  it("Restaura array vacío si no hay datos guardados", () => {
+  it("Restore empty array if no data is saved", () => {
     localStorageMock.getItem.mockReturnValue(null);
     tabManager.tabList.querySelectorAll = vi.fn(() => []);
 
@@ -319,7 +319,7 @@ describe("TabManager - restoreTabs", () => {
     expect(tabManager.createTabElement).not.toHaveBeenCalled();
   });
 
-  it("Restaura array vacío si JSON está corrupto", () => {
+  it("Restore empty array if JSON is corrupt", () => {
     localStorageMock.getItem.mockReturnValue("{invalid json");
     tabManager.tabList.querySelectorAll = vi.fn(() => []);
 
@@ -328,7 +328,7 @@ describe("TabManager - restoreTabs", () => {
     expect(tabManager.tabsData).toEqual([]);
   });
 
-  it("Elimina elementos DOM existentes antes de restaurar", () => {
+  it("Removes existing DOM elements before restoring", () => {
     const removeFn = vi.fn();
     const existingItems = [{ remove: removeFn }, { remove: removeFn }];
     localStorageMock.getItem.mockReturnValue("[]");
@@ -351,7 +351,7 @@ describe("TabManager - createTabElement", () => {
     tabManager.createTabElement = TabManager.prototype.createTabElement;
   });
 
-  it("Crea un elemento con la estructura correcta", () => {
+  it("Creates an element with the correct structure", () => {
     const tabData = { id: "body-tab-1", name: "Mi Nota", content: "<p>contenido</p>", isPinned: false, emoji: null };
     const element = tabManager.createTabElement(tabData);
 
@@ -365,26 +365,26 @@ describe("TabManager - createTabElement", () => {
     expect(content.innerHTML).toBe("<div><p>contenido</p></div>");
   });
 
-  it("Agrega clase pinned si isPinned es true", () => {
+  it("Add pinned class if isPinned is true", () => {
     const tabData = { id: "body-tab-2", name: "Fija", content: "", isPinned: true, emoji: "📌" };
     const element = tabManager.createTabElement(tabData);
 
     expect(element.classList.contains("pinned")).toBe(true);
     const label = element.querySelector("label");
-    // 0.5.9.1: sin data-emoji; la estrella nativa naranja ocupa su lugar
+    // 0.5.9.1: no data-emoji; the native orange star takes its place
     expect(label.getAttribute("data-emoji")).toBeNull();
     expect(label.querySelector(".tn-pinned-star")).not.toBeNull();
   });
 
-  it("No agrega data-emoji si emoji es null", () => {
-    const tabData = { id: "body-tab-3", name: "Sin emoji", content: "", isPinned: false, emoji: null };
+  it("Does not add data-emoji when emoji is null", () => {
+    const tabData = { id: "body-tab-3", name: "No emoji", content: "", isPinned: false, emoji: null };
     const element = tabManager.createTabElement(tabData);
 
     const label = element.querySelector("label");
     expect(label.getAttribute("data-emoji")).toBeNull();
   });
 
-  it("Inserta antes de tabAnchor si existe", () => {
+  it("Inserts before tabAnchor when it exists", () => {
     const mockAnchor = { id: "tab-list-anchor" };
     tabManager.tabAnchor = mockAnchor;
     tabManager.tabList.contains = vi.fn(() => true);
@@ -395,7 +395,7 @@ describe("TabManager - createTabElement", () => {
     expect(tabManager.tabList.insertBefore).toHaveBeenCalledWith(expect.anything(), mockAnchor);
   });
 
-  it("Inserta antes de createTabButton si no hay anchor", () => {
+  it("Inserts before createTabButton when there is no anchor", () => {
     tabManager.tabAnchor = null;
     tabManager.tabList.contains = vi.fn(() => true);
 
@@ -405,7 +405,7 @@ describe("TabManager - createTabElement", () => {
     expect(tabManager.tabList.insertBefore).toHaveBeenCalledWith(expect.anything(), mockCreateTabButton);
   });
 
-  it("Usa appendChild como fallback si no hay referencia válida", () => {
+  it("Falls back to appendChild when there is no valid reference", () => {
     tabManager.tabAnchor = null;
     tabManager.tabList.contains = vi.fn(() => false);
 
@@ -415,7 +415,7 @@ describe("TabManager - createTabElement", () => {
     expect(tabManager.tabList.appendChild).toHaveBeenCalled();
   });
 
-  it("Aplica ajustes guardados (stretch, bg, font-size) a la nueva pestaña", () => {
+  it("Apply saved adjustments (stretch, bg, font-size) to the new tab", () => {
     localStorageMock.getItem.mockImplementation((key) => {
       if (key === "editorWidth") return "stretch";
       if (key === "editorBackground") return "underline";
@@ -433,7 +433,7 @@ describe("TabManager - createTabElement", () => {
     expect(contentDiv.classList.contains("medium-text")).toBe(true);
   });
 
-  it("No aplica clases si localStorage no tiene ajustes", () => {
+  it("Does not apply classes when localStorage has no settings", () => {
     localStorageMock.getItem.mockReturnValue(undefined);
 
     const tabData = { id: "body-tab-1", name: "Nota", content: "", isPinned: false, emoji: null };
@@ -446,7 +446,7 @@ describe("TabManager - createTabElement", () => {
     expect(contentDiv.classList.contains("medium-text")).toBe(false);
   });
 
-  it("Ignora tamaño de fuente inválido", () => {
+  it("Ignores an invalid font size", () => {
     localStorageMock.getItem.mockImplementation((key) => {
       if (key === "fontSize") return "huge";
       return undefined;
@@ -468,7 +468,7 @@ describe("TabManager - reorderTabs", () => {
     tabManager = makeTabManager();
   });
 
-  it("Pone pestañas pinned primero, luego normales", () => {
+  it("Place pinned tabs first, then normal", () => {
     const pinnedTab = { classList: { contains: (c) => c === "pinned" }, remove: vi.fn() };
     const normalTab = { classList: { contains: () => false }, remove: vi.fn() };
     tabManager.tabList.querySelectorAll = vi.fn(() => [normalTab, pinnedTab]);
@@ -484,7 +484,7 @@ describe("TabManager - reorderTabs", () => {
     expect(tabManager.tabList.insertBefore.mock.calls[1][0]).toBe(normalTab);
   });
 
-  it("Usa appendChild como fallback si no hay referencia", () => {
+  it("Falls back to appendChild when there is no reference", () => {
     const pinnedTab = { classList: { contains: (c) => c === "pinned" }, remove: vi.fn() };
     const normalTab = { classList: { contains: () => false }, remove: vi.fn() };
     tabManager.tabList.querySelectorAll = vi.fn(() => [pinnedTab, normalTab]);
@@ -505,7 +505,7 @@ describe("TabManager - updateTabIds", () => {
     tabManager = makeTabManager();
   });
 
-  it("Renombra IDs de pestañas secuencialmente", () => {
+  it("Renames tab IDs sequentially", () => {
     const input1 = { id: "body-tab-5" };
     const input2 = { id: "body-tab-10" };
     const label1 = { setAttribute: vi.fn() };
@@ -533,7 +533,7 @@ describe("TabManager - updateTabIdCounter", () => {
     tabManager = makeTabManager();
   });
 
-  it("Establece counter al número más alto + 1", () => {
+  it("Sets the counter to the highest number + 1", () => {
     const input1 = { id: "body-tab-3" };
     const input2 = { id: "body-tab-7" };
     const item1 = { querySelector: vi.fn(() => input1) };
@@ -547,7 +547,7 @@ describe("TabManager - updateTabIdCounter", () => {
     expect(tabManager.tabIdCounter).toBe(8);
   });
 
-  it("No cambia counter si no hay pestañas", () => {
+  it("Do not change counter if there are no tabs", () => {
     tabManager.tabList.querySelectorAll = vi.fn(() => []);
     tabManager.tabIdCounter = 5;
 
@@ -565,7 +565,7 @@ describe("TabManager - debug", () => {
     tabManager = makeTabManager();
   });
 
-  it("Retorna estructura de debug correcta", () => {
+  it("Returns the correct debug structure", () => {
     tabManager.tabsData = [{ id: "1" }, { id: "2" }];
     tabManager.tabIdCounter = 3;
 
@@ -587,7 +587,7 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager = makeTabManager({ enablePinning: true });
   });
 
-  it("pinTab agrega la clase pinned y estampa la estrella nativa sin tocar emojis", () => {
+  it("pinTab adds the pinned class and stamps the native star without touching emojis", () => {
     const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), appendChild: vi.fn() };
     const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), textContent: "" };
     const tabElement = {
@@ -602,14 +602,14 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.pinTab(tabElement, "🔴");
 
     expect(tabElement.classList.add).toHaveBeenCalledWith("pinned");
-    // 0.5.9.1: el argumento emoji explícito se ignora — cero escrituras
+    // 0.5.9.1: an explicit emoji argument is ignored — zero writes
     expect(label.setAttribute).not.toHaveBeenCalled();
     expect(labelSpan.setAttribute).not.toHaveBeenCalled();
-    // ...y la estrella nativa se estampa en su lugar
+    // ...and the native star is stamped in its place
     expect(label.appendChild).toHaveBeenCalledWith(expect.anything());
   });
 
-  it("pinTab ignora el emoji almacenado en data-emoji (legado desacoplado)", () => {
+  it("pinTab ignores the stored data-emoji (decoupled legacy)", () => {
     const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), removeAttribute: vi.fn(), appendChild: vi.fn() };
     const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => "🌟"), removeAttribute: vi.fn(), textContent: "Nota" };
     const tabElement = {
@@ -628,7 +628,7 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(label.appendChild).toHaveBeenCalledWith(expect.anything());
   });
 
-  it("pinTab NUNCA deriva el estado de pin de un emoji en el nombre", () => {
+  it("pinTab never derives the pin state from an emoji in the name", () => {
     const label = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), appendChild: vi.fn() };
     const labelSpan = { setAttribute: vi.fn(), getAttribute: vi.fn(() => null), removeAttribute: vi.fn(), textContent: "🚀 Proyecto" };
     const tabElement = {
@@ -646,7 +646,7 @@ describe("TabManager - pinTab / unpinTab", () => {
     expect(labelSpan.setAttribute).not.toHaveBeenCalled();
   });
 
-  it("unpinTab remueve la clase pinned y limpia el data-emoji legado", () => {
+  it("unpinTab removes the pinned class and clears the legacy data-emoji", () => {
     const label = { removeAttribute: vi.fn() };
     const labelSpan = { removeAttribute: vi.fn() };
     const tabElement = {
@@ -661,12 +661,12 @@ describe("TabManager - pinTab / unpinTab", () => {
     tabManager.unpinTab(tabElement);
 
     expect(tabElement.classList.remove).toHaveBeenCalledWith("pinned");
-    // 0.5.9.1: el desacoplado elimina cualquier residuo emoji al desfijar
+    // 0.5.9.1: decoupling removes any emoji residue when unpinning
     expect(label.removeAttribute).toHaveBeenCalledWith("data-emoji");
     expect(labelSpan.removeAttribute).toHaveBeenCalledWith("data-emoji");
   });
 
-  it("pinTab no hace nada si enablePinning es false", () => {
+  it("pinTab does nothing when enablePinning is false", () => {
     tabManager.options.enablePinning = false;
     const tabElement = {
       classList: { add: vi.fn() },
@@ -693,9 +693,9 @@ describe("TabManager - startEditingTabName", () => {
     global.window.getSelection = vi.fn(() => selection);
   });
 
-  it("Agrega clase editing y activa contenteditable al iniciar edición", () => {
+  it("Add editing class and activate contenteditable on edit start", () => {
     const span = document.createElement("span");
-    span.textContent = "Nota larga que se recorta";
+    span.textContent = "Long tab name that gets clipped";
     const label = document.createElement("label");
     label.appendChild(span);
     const editButton = document.createElement("button");
@@ -710,7 +710,7 @@ describe("TabManager - startEditingTabName", () => {
     expect(label.getAttribute("contenteditable")).toBe("true");
   });
 
-  it("Inserta texto plano y previene el default al pegar en edición", () => {
+  it("Inserts plain text and prevents the default on paste while editing", () => {
     const span = document.createElement("span");
     const label = document.createElement("label");
     label.appendChild(span);
@@ -735,9 +735,9 @@ describe("TabManager - startEditingTabName", () => {
     expect(execCommandSpy).toHaveBeenCalledWith("insertText", false, "<b>bold</b> text");
   });
 
-  it("Resetea scrollLeft al posicionar el caret al inicio del nombre", () => {
+  it("Resets scrollLeft when placing the caret at the start of the name", () => {
     const span = document.createElement("span");
-    span.textContent = "Nombre de pestaña muy largo que se desplaza";
+    span.textContent = "Very long tab name that scrolls";
     span.scrollLeft = 120;
 
     tabManager.placeCaretAtStart(span);

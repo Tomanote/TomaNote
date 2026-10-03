@@ -79,12 +79,12 @@ describe("SaveIndicator — offline-aware save toast (0.5.8)", () => {
   it("prefers i18n translations when the i18n runtime is available", () => {
     window.connectivity = { isOnline: () => false };
     window.i18n = {
-      t: (key) => (key === "save-indicator.saved-offline" ? "Guardado localmente (modo sin conexión activo)" : key),
+      t: (key) => (key === "save-indicator.saved-offline" ? "Saved locally (offline mode active)" : key),
     };
 
     indicator.show();
 
-    expect(textEl.textContent).toBe("Guardado localmente (modo sin conexión activo)");
+    expect(textEl.textContent).toBe("Saved locally (offline mode active)");
   });
 
   it("uses the literal fallback when i18n.t returns the raw key (missing translation)", () => {

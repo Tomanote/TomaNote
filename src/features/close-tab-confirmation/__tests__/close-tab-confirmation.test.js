@@ -84,25 +84,25 @@ describe("CloseTabConfirmation", () => {
   });
 
   describe("setupEventListeners", () => {
-    it("Registra listener de click en botón delete", () => {
+    it("Registers a click listener on the delete button", () => {
       modal.setupEventListeners();
 
       expect(mockDeleteBtn.addEventListener).toHaveBeenCalledWith("click", expect.any(Function));
     });
 
-    it("Registra listener de click en botón cancel", () => {
+    it("Registers a click listener on the cancel button", () => {
       modal.setupEventListeners();
 
       expect(mockCancelBtn.addEventListener).toHaveBeenCalledWith("click", expect.any(Function));
     });
 
-    it("Registra listener de cancel event en el modal", () => {
+    it("Registers a cancel event listener on the modal", () => {
       modal.setupEventListeners();
 
       expect(mockModal.addEventListener).toHaveBeenCalledWith("cancel", expect.any(Function));
     });
 
-    it("El cancel event llama handleCancel y previene default", () => {
+    it("The cancel event calls handleCancel and prevents default", () => {
       let cancelHandler;
       mockModal.addEventListener = vi.fn((event, handler) => {
         if (event === "cancel") cancelHandler = handler;
@@ -119,7 +119,7 @@ describe("CloseTabConfirmation", () => {
   });
 
   describe("init", () => {
-    it("Llama setupEventListeners cuando el modal existe", async () => {
+    it("Calls setupEventListeners when the modal exists", async () => {
       document.getElementById = vi.fn().mockReturnValue(mockModal);
       const setupSpy = vi.spyOn(modal, "setupEventListeners");
 
@@ -128,7 +128,7 @@ describe("CloseTabConfirmation", () => {
       expect(setupSpy).toHaveBeenCalled();
     });
 
-    it("No llama setupEventListeners si el modal no existe", async () => {
+    it("Does not call setupEventListeners when the modal is missing", async () => {
       document.getElementById = vi.fn().mockReturnValue(null);
       modal.modal = null;
       const setupSpy = vi.spyOn(modal, "setupEventListeners");

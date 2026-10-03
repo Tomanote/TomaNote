@@ -10,7 +10,7 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock;
 
-describe("ThemeManager - Lógica Básica", () => {
+describe("ThemeManager - Basic Logic", () => {
   let themeManager;
 
   beforeEach(() => {
@@ -78,7 +78,7 @@ describe("ThemeManager - init", () => {
     expect(setupAppearanceSpy).toHaveBeenCalled();
   });
 
-  it("Retorna this para chaining", async () => {
+  it("Returns this for chaining", async () => {
     const result = await themeManager.init();
     expect(result).toBe(themeManager);
   });
@@ -94,17 +94,17 @@ describe("ThemeManager - applyTheme", () => {
     document.documentElement.classList.remove("light-mode");
   });
 
-  it("Establece data-theme en el html", () => {
+  it("Sets data-theme on the html element", () => {
     themeManager.applyTheme("dark");
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 
-  it("Agrega clase light-mode para tema light", () => {
+  it("Adds light-mode class for the light theme", () => {
     themeManager.applyTheme("light");
     expect(document.documentElement.classList.contains("light-mode")).toBe(true);
   });
 
-  it("Remueve clase light-mode para otros temas", () => {
+  it("Removes light-mode class for other themes", () => {
     document.documentElement.classList.add("light-mode");
     themeManager.applyTheme("dark");
     expect(document.documentElement.classList.contains("light-mode")).toBe(false);
@@ -136,13 +136,13 @@ describe("ThemeManager - switchTheme", () => {
     };
   });
 
-  it("Cambia el tema y guarda en localStorage", () => {
+  it("Changes the theme and saves to localStorage", () => {
     themeManager.switchTheme("chill-aqua");
     expect(themeManager.currentTheme).toBe("chill-aqua");
     expect(localStorageMock.setItem).toHaveBeenCalledWith("notepadTheme", "chill-aqua");
   });
 
-  it("No cambia tema con ID inválido", () => {
+  it("Do not change theme with invalid ID", () => {
     themeManager.switchTheme("invalid-theme");
     expect(themeManager.currentTheme).toBe("dark");
   });
@@ -174,7 +174,7 @@ describe("ThemeManager - updateMetaThemeColor", () => {
     if (existing) existing.remove();
   });
 
-  it("Crea meta tag si no existe y setea content", () => {
+  it("Creates the meta tag when missing and sets its content", () => {
     themeManager.updateMetaThemeColor("dark");
 
     const meta = document.head.querySelector('meta[name="theme-color"]');
@@ -182,7 +182,7 @@ describe("ThemeManager - updateMetaThemeColor", () => {
     expect(meta.getAttribute("content")).toBe("#181A1B");
   });
 
-  it("Actualiza content del meta tag existente", () => {
+  it("Updates the content of an existing meta tag", () => {
     const meta = document.createElement("meta");
     meta.setAttribute("name", "theme-color");
     meta.setAttribute("content", "old");
@@ -194,7 +194,7 @@ describe("ThemeManager - updateMetaThemeColor", () => {
     meta.remove();
   });
 
-  it("Usa dark como fallback para tema desconocido", () => {
+  it("Falls back to dark for an unknown theme", () => {
     const meta = document.createElement("meta");
     meta.setAttribute("name", "theme-color");
     meta.setAttribute("content", "old");
@@ -236,7 +236,7 @@ describe("ThemeManager - toggleDropdown / closeDropdown", () => {
     vi.useRealTimers();
   });
 
-  it("toggleDropdown abre el dropdown", () => {
+  it("toggleDropdown opens the dropdown", () => {
     themeManager.toggleDropdown();
 
     expect(themeManager.isDropdownOpen).toBe(true);
@@ -244,7 +244,7 @@ describe("ThemeManager - toggleDropdown / closeDropdown", () => {
     expect(mockToggleBtn.setAttribute).toHaveBeenCalledWith("aria-expanded", "true");
   });
 
-  it("toggleDropdown cierra el dropdown después de abrir", () => {
+  it("toggleDropdown closes the dropdown after opening it", () => {
     themeManager.isDropdownOpen = false;
     themeManager.toggleDropdown();
     themeManager.toggleDropdown();
@@ -253,7 +253,7 @@ describe("ThemeManager - toggleDropdown / closeDropdown", () => {
     expect(mockToggleBtn.setAttribute).toHaveBeenCalledWith("aria-expanded", "false");
   });
 
-  it("closeDropdown cierra el dropdown", () => {
+  it("closeDropdown closes the dropdown", () => {
     themeManager.isDropdownOpen = true;
     themeManager.closeDropdown();
 
@@ -261,7 +261,7 @@ describe("ThemeManager - toggleDropdown / closeDropdown", () => {
     expect(mockDropdown.classList.remove).toHaveBeenCalledWith("show");
   });
 
-  it("toggleDropdown no hace nada si no encuentra elementos", () => {
+  it("toggleDropdown does nothing when the elements are missing", () => {
     document.getElementById = vi.fn(() => null);
 
     themeManager.toggleDropdown();
@@ -279,7 +279,7 @@ describe("ThemeManager - setupAppearanceTab", () => {
     themeManager.currentTheme = "dark";
   });
 
-  it("No hace nada si no hay radio buttons", () => {
+  it("Does nothing when there are no radio buttons", () => {
     document.querySelectorAll = vi.fn(() => []);
 
     themeManager.setupAppearanceTab();
@@ -287,7 +287,7 @@ describe("ThemeManager - setupAppearanceTab", () => {
     expect(document.querySelectorAll).toHaveBeenCalledWith('input[name="themeColor"]');
   });
 
-  it("Configura listeners change en los radio buttons", () => {
+  it("Configures change listeners on the radio buttons", () => {
     const mockRadio1 = { id: "theme-color-dark", addEventListener: vi.fn() };
     const mockRadio2 = { id: "theme-color-light", addEventListener: vi.fn() };
     document.querySelectorAll = vi.fn(() => [mockRadio1, mockRadio2]);
@@ -298,7 +298,7 @@ describe("ThemeManager - setupAppearanceTab", () => {
     expect(mockRadio2.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 
-  it("Previene auto-scroll al hacer click en los labels de tema", () => {
+  it("Prevents auto-scroll when clicking theme labels", () => {
     const mockRadio = {
       id: "theme-color-dark",
       checked: false,
@@ -331,7 +331,7 @@ describe("ThemeManager - updateAppearanceTabUI", () => {
     themeManager = new ThemeManager();
   });
 
-  it("Marca el radio correcto según el tema actual", () => {
+  it("Marks the correct radio for the current theme", () => {
     themeManager.currentTheme = "cozy-rose";
     const radio1 = { id: "theme-color-dark", checked: false };
     const radio2 = { id: "theme-color-rose", checked: false };
@@ -362,12 +362,12 @@ describe("ThemeManager - toggleLightMode", () => {
     document.querySelectorAll = vi.fn(() => []);
   });
 
-  it("Cambia a light si isLight es true", () => {
+  it("Switches to light when isLight is true", () => {
     themeManager.toggleLightMode(true);
     expect(themeManager.currentTheme).toBe("light");
   });
 
-  it("Cambia a dark si isLight es false", () => {
+  it("Switches to dark when isLight is false", () => {
     themeManager.toggleLightMode(false);
     expect(themeManager.currentTheme).toBe("dark");
   });
@@ -382,7 +382,7 @@ describe("ThemeManager - debug", () => {
     localStorageMock.getItem.mockReturnValue("dark");
   });
 
-  it("Retorna estructura de debug correcta", () => {
+  it("Returns the correct debug structure", () => {
     const result = themeManager.debug();
 
     expect(result).toHaveProperty("currentTheme");

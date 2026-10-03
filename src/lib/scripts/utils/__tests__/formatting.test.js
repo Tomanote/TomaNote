@@ -59,7 +59,7 @@ describe("FormattingUtils - Ciclo de Negrita", () => {
     mockRange.collapsed = false;
   });
 
-  it("No hace nada si no hay selección", () => {
+  it("Do nothing if there is no selection", () => {
     mockSelection.rangeCount = 0;
     FormattingUtils.cycleBold();
     expect(window.getSelection).toHaveBeenCalled();
@@ -67,13 +67,13 @@ describe("FormattingUtils - Ciclo de Negrita", () => {
     expect(document.createElement).not.toHaveBeenCalled();
   });
 
-  it("No hace nada si la selección está colapsada", () => {
+  it("Do nothing if the selection is collapsed", () => {
     mockSelection.isCollapsed = true;
     FormattingUtils.cycleBold();
     expect(document.createElement).not.toHaveBeenCalled();
   });
 
-  it("Aplica semibold a selección nueva", () => {
+  it("Applies semibold to a new selection", () => {
     mockElement.classList.contains.mockReturnValue(false);
     mockRange.surroundContents.mockImplementation(() => {});
 
@@ -84,7 +84,7 @@ describe("FormattingUtils - Ciclo de Negrita", () => {
     expect(mockRange.surroundContents).toHaveBeenCalledWith(mockElement);
   });
 
-  it("Cicla de semibold a extrabold", () => {
+  it("Cycles from semibold to extrabold", () => {
     const boldElement = {
       ...mockElement,
       classList: {
@@ -103,7 +103,7 @@ describe("FormattingUtils - Ciclo de Negrita", () => {
     expect(boldElement.classList.add).toHaveBeenCalledWith("bold-extrabold");
   });
 
-  it("Cicla de extrabold a normal (remueve wrapper)", () => {
+  it("Cycles from extrabold to normal (removes the wrapper)", () => {
     const boldElement = {
       ...mockElement,
       classList: {
@@ -123,7 +123,7 @@ describe("FormattingUtils - Ciclo de Negrita", () => {
     // Should unwrap
   });
 
-  it("Maneja surroundContents que falla con extractContents+insertNode", () => {
+  it("Handles surroundContents failing with extractContents+insertNode", () => {
     const testRange = {
       commonAncestorContainer: mockTextNode,
       surroundContents: vi.fn(() => {

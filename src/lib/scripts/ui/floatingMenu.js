@@ -90,7 +90,7 @@ export class FloatingMenu {
       if (action === "edit-name-tab" || action === "delete-tab" || action === "pin-tab") {
         const activeTab = this.getActiveTab();
         if (!activeTab) {
-          this.log("⚠️ No hay pestaña activa para:", action);
+          this.log("⚠️ No active tab for:", action);
           return;
         }
 
@@ -129,7 +129,7 @@ export class FloatingMenu {
     const radio = group.querySelector('input[type="radio"]');
     if (radio && radio.checked) {
       radio.checked = false;
-      this.log("🔒 Submenú cerrado");
+      this.log("🔒 Submenu closed");
     }
   }
 
@@ -192,7 +192,7 @@ export class FloatingMenu {
     const editable = this.getActiveEditable();
     this.log(`🔍 [DEBUG] handleTextAction: action=${action}, editable=`, editable?.tagName, editable?.className?.substring(0, 40));
     if (!editable) {
-      this.log("⚠️ No hay editor de contenido activo");
+      this.log("⚠️ No active content editor");
       return;
     }
 
@@ -276,37 +276,37 @@ export class FloatingMenu {
         break;
 
       default:
-        this.log("⚠️ Acción desconocida:", action);
+        this.log("⚠️ Unknown action:", action);
     }
 
     if (button) {
       this.closeParentSubmenu(button);
     }
 
-    this.log(`📝 Acción ejecutada: ${action}`);
+    this.log(`📝 Action executed: ${action}`);
   }
 
   handleEditNameTab(tabElement) {
     const editButton = tabElement.querySelector(".edit-name-tab");
     if (!editButton) {
-      this.log("⚠️ Botón de edición no encontrado en la pestaña");
+      this.log("⚠️ Edit button not found on the tab");
       return;
     }
 
     if (window.tabManager && typeof window.tabManager.startEditingTabName === "function") {
       window.tabManager.startEditingTabName(editButton);
-      this.log("✏️ Editando nombre de pestaña");
+      this.log("✏️ Editing tab name");
     } else {
-      this.log("⚠️ TabManager no disponible para editar nombre");
+      this.log("⚠️ TabManager unavailable to edit name");
     }
   }
 
   handleDeleteTab(tabElement) {
     if (window.tabManager && typeof window.tabManager.deleteTabElement === "function") {
       window.tabManager.deleteTabElement(tabElement);
-      this.log("🗑️ Eliminando pestaña");
+      this.log("🗑️ Deleting tab");
     } else {
-      this.log("⚠️ TabManager no disponible para eliminar pestaña");
+      this.log("⚠️ TabManager unavailable to delete tab");
     }
   }
 
@@ -317,10 +317,10 @@ export class FloatingMenu {
     if (window.tabManager && typeof window.tabManager[method] === "function") {
       window.tabManager[method](tabElement);
     } else {
-      this.log("⚠️ TabManager no disponible para fijar/desfijar pestaña");
+      this.log("⚠️ TabManager unavailable to pin/unpin tab");
     }
 
-    this.log("📍 Pestaña" + (isPinned ? " desfijada" : " fijada"));
+    this.log("📍 Tab" + (isPinned ? " unpinned" : " pinned"));
   }
 
   setupTabChangeListener() {
@@ -413,7 +413,7 @@ export class FloatingMenu {
       if (mainCheckbox) mainCheckbox.checked = false;
     }
 
-    this.log(`🔄 Estados actualizados - Tab activa: ${hasActiveTab}, Selección: ${hasTextSelection}`);
+    this.log(`🔄 States updated - Active tab: ${hasActiveTab}, Selection: ${hasTextSelection}`);
   }
 
   log(...args) {

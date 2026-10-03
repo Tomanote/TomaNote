@@ -17,10 +17,10 @@ export class KeyboardShortcuts {
   }
 
   async init() {
-    this.log("init() llamado. isDesktop =", this.isDesktop, "| matchMedia(pointer:fine) =", window.matchMedia?.("(pointer: fine)").matches);
+    this.log("init() called. isDesktop =", this.isDesktop, "| matchMedia(pointer:fine) =", window.matchMedia?.("(pointer: fine)").matches);
 
     if (!this.isDesktop) {
-      this.log("❌ ABORTANDO init — isDesktop es false. No se registrará keydown.");
+      this.log("❌ ABORTING init — isDesktop is false. Keydown will not be registered.");
       return this;
     }
 
@@ -33,11 +33,11 @@ export class KeyboardShortcuts {
     this.shortcuts = [];
 
     this.registerDefaults();
-    this.log("✅ registerDefaults() ejecutado. Shortcuts registrados:", this.shortcuts.length);
+    this.log("✅ registerDefaults() executed. Registered shortcuts:", this.shortcuts.length);
 
     this.boundHandler = (e) => this.handleKeydown(e);
     document.addEventListener("keydown", this.boundHandler, { capture: true });
-    this.log("✅ addEventListener registrado con capture: true");
+    this.log("✅ addEventListener registered with capture: true");
 
     return this;
   }
@@ -68,7 +68,7 @@ export class KeyboardShortcuts {
     for (const s of this.shortcuts) {
       if (!this.matchesKey(e, s)) {
         if (s.key === e.key) {
-          this.log("⚡ Key coincide pero modifiers NO:", s.label || s.key, "modifiers esperados:", JSON.stringify(s.modifiers), "| estado real:", { ctrlKey: e.ctrlKey, altKey: e.altKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location });
+          this.log("⚡ Key matches but modifiers do not:", s.label || s.key, "expected modifiers:", JSON.stringify(s.modifiers), "| actual state:", { ctrlKey: e.ctrlKey, altKey: e.altKey, shiftKey: e.shiftKey, metaKey: e.metaKey, location: e.location });
         }
         continue;
       }
@@ -524,7 +524,7 @@ export class KeyboardShortcuts {
 
     const editingLabel = document.querySelector('label[contenteditable="true"]');
     if (editingLabel) {
-      this.log("Modo de edición activo - saliendo del modo edición");
+      this.log("Editing mode active — exiting editing mode");
       editingLabel.removeAttribute("contenteditable");
       if (window.tabManager?.saveTabs) {
         window.tabManager.saveTabs();
@@ -534,7 +534,7 @@ export class KeyboardShortcuts {
 
     const activeTab = document.querySelector('.tab-list input[type="radio"]:checked');
     if (activeTab) {
-      this.log("Cerrando pestaña activa");
+      this.log("Closing active tab");
       activeTab.checked = false;
       document.dispatchEvent(new CustomEvent("tabsChanged"));
     }

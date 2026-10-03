@@ -48,15 +48,15 @@ function mountWorkspace() {
       </div>
     </div>
     <div class="tab-list tn-listView">
-      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-1"><label for="body-tab-1"><span>Compras</span></label></div>
-      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-2"><label for="body-tab-2"><span>Vacaciones</span></label></div>
-      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-3"><label for="body-tab-3"><span>Huerfana</span></label></div>
+      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-1"><label for="body-tab-1"><span>Groceries</span></label></div>
+      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-2"><label for="body-tab-2"><span>Vacation</span></label></div>
+      <div class="tab-list__item"><input type="radio" name="body-tab" id="body-tab-3"><label for="body-tab-3"><span>Orphan</span></label></div>
     </div>`;
 
   window.tabManager = {
     tabsData: [
-      { id: "body-tab-1", name: "Compras", content: "<p>leche y <b>pan</b></p>" },
-      { id: "body-tab-2", name: "Vacaciones", content: "<p>playa del caribe</p>" },
+      { id: "body-tab-1", name: "Groceries", content: "<p>milk and <b>bread</b></p>" },
+      { id: "body-tab-2", name: "Vacation", content: "<p>caribbean beach</p>" },
     ],
   };
 }
@@ -108,25 +108,25 @@ describe("MobileSearch — live filtering against the internal layout collection
   });
 
   it("matches by TITLE string and hides the non-matching rows", () => {
-    const result = type("compras");
+    const result = type("groceries");
     expect(result).toBeTruthy();
     expect(rowStates()).toEqual([true, false, false]);
-    expect(search.getQuery()).toBe("compras");
+    expect(search.getQuery()).toBe("groceries");
   });
 
   it("matches by PLAINTEXT BODY content (HTML stripped)", () => {
-    type("leche y pan");
+    type("milk and bread");
     expect(rowStates()).toEqual([true, false, false]);
 
-    type("playa");
+    type("beach");
     expect(rowStates()).toEqual([false, true, false]);
   });
 
   it("is case-insensitive on both axes", () => {
-    type("COMPRAS");
+    type("GROCERIES");
     expect(rowStates()).toEqual([true, false, false]);
 
-    type("PLAYA");
+    type("BEACH");
     expect(rowStates()).toEqual([false, true, false]);
   });
 
@@ -140,13 +140,13 @@ describe("MobileSearch — live filtering against the internal layout collection
 
   it("hides rows whose model entry is missing while a query is active", () => {
     // body-tab-3 has no tabsData entry — must never survive a live query
-    type("compras");
+    type("groceries");
     const third = document.querySelectorAll(".tab-list__item")[2];
     expect(third.style.display).toBe("none");
   });
 
   it("Enter opens the best match and clears the filter (command-palette contract)", () => {
-    const input = type("playa");
+    const input = type("beach");
     const dispatched = vi.fn();
     document.addEventListener("tabsChanged", dispatched);
 
@@ -161,7 +161,7 @@ describe("MobileSearch — live filtering against the internal layout collection
   });
 
   it("re-applies an active filter to rows created while filtering", () => {
-    type("compras");
+    type("groceries");
     expect(rowStates()).toEqual([true, false, false]);
 
     // A new note appears (createTab path) — the filter must cover it too
@@ -171,25 +171,25 @@ describe("MobileSearch — live filtering against the internal layout collection
     fresh.innerHTML =
       '<input type="radio" name="body-tab" id="body-tab-9"><label for="body-tab-9"><span>Fresh</span></label>';
     list.appendChild(fresh);
-    window.tabManager.tabsData.push({ id: "body-tab-9", name: "Recetas de pan", content: "" });
+    window.tabManager.tabsData.push({ id: "body-tab-9", name: "Bread recipes", content: "" });
 
     document.dispatchEvent(new CustomEvent("tabsChanged"));
 
-    expect(fresh.style.display).toBe("none"); // "Recetas de pan" does not contain "compras"
+    expect(fresh.style.display).toBe("none"); // "Bread recipes" does not contain "groceries"
   });
 
   it("emits tn-search-filtered so layout consumers can recompute", () => {
     const listener = vi.fn();
     document.addEventListener("tn-search-filtered", listener);
-    type("compras");
+    type("groceries");
     expect(listener).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: expect.objectContaining({ query: "compras" }) })
+      expect.objectContaining({ detail: expect.objectContaining({ query: "groceries" }) })
     );
     document.removeEventListener("tn-search-filtered", listener);
   });
 
   it("drops the filter the moment the viewport crosses into desktop", () => {
-    type("compras");
+    type("groceries");
     expect(rowStates()).toEqual([true, false, false]);
 
     media.setMatches(true); // ≥768px: header is hidden by md:hidden!
@@ -200,7 +200,7 @@ describe("MobileSearch — live filtering against the internal layout collection
 
   it("destroy() unhooks every listener", () => {
     search.destroy();
-    type("compras");
+    type("groceries");
     expect(rowStates()).toEqual([true, true, true]);
   });
 });
@@ -249,9 +249,9 @@ describe("MobileSearch — List/Grid checkbox beta gate", () => {
     expect(input.closest(".tn-container__buttons")).toBeNull();
     expect(input.disabled).toBe(false);
 
-    const result = type("compras");
+    const result = type("groceries");
     expect(result).toBeTruthy();
-    expect(search.getQuery()).toBe("compras");
+    expect(search.getQuery()).toBe("groceries");
     expect(rowStates()).toEqual([true, false, false]);
   });
 

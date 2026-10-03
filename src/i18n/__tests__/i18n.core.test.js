@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-// Mock de navigator.language
+// Mock navigator.language
 function mockNavigatorLanguage(lang) {
   Object.defineProperty(global, "navigator", {
     value: { language: lang },
@@ -95,7 +95,7 @@ describe("I18nManager - Init", () => {
   });
 });
 
-describe("I18nManager - Functión t()", () => {
+describe("I18nManager - t() function", () => {
   let i18n;
 
   beforeEach(async () => {
@@ -106,17 +106,17 @@ describe("I18nManager - Functión t()", () => {
     i18n = module.i18n;
   });
 
-  describe("Translations to spanish", () => {
+  describe("Translations to Spanish", () => {
     beforeEach(() => {
       mockNavigatorLanguage("es-ES");
       i18n.init();
     });
 
-    it('t("tab.new") must be return "Nueva"', () => {
+    it('t("tab.new") must return the Spanish locale value', () => {
       expect(i18n.t("tab.new")).toBe("Nueva");
     });
 
-    it('t("tab.delete-confirm") must be return text in spanish', () => {
+    it('t("tab.delete-confirm") must return the Spanish locale text', () => {
       expect(i18n.t("tab.delete-confirm")).toBe("¿Eliminar esta pestaña?");
     });
 
@@ -131,11 +131,11 @@ describe("I18nManager - Functión t()", () => {
       i18n.init();
     });
 
-    it('t("tab.new") Must be reutn "New"', () => {
+    it('t("tab.new") must return "New"', () => {
       expect(i18n.t("tab.new")).toBe("New");
     });
 
-    it('t("tab.delete-confirm") must be return text in english', () => {
+    it('t("tab.delete-confirm") must return the English locale text', () => {
       expect(i18n.t("tab.delete-confirm")).toBe("Delete this tab?");
     });
 
@@ -158,7 +158,7 @@ describe("I18nManager - Functión t()", () => {
     it("t() should fallback to Spanish if key does not exist in English", () => {
       mockNavigatorLanguage("en-US");
       i18n.init();
-      // Solo existe en español
+      // Only exists in Spanish
       const result = i18n.t("tab.new");
       expect(result).toBe("New"); // EN tiene "New"
     });
@@ -187,7 +187,7 @@ describe("I18nManager - Functión t()", () => {
     });
 
     it("t() not available before init()", () => {
-      // Sin init(), t() no existe
+      // Without init(), t() does not exist
       expect(i18n.t).toBeNull();
     });
 
@@ -220,7 +220,7 @@ describe("I18nManager - Change the language", () => {
     expect(i18n.t("tab.new")).toBe("Nueva");
   });
 
-  it('setLang("en") must chagne language to english ', () => {
+  it('setLang("en") must change language to English', () => {
     mockNavigatorLanguage("es-ES");
     i18n.init();
 
@@ -240,7 +240,7 @@ describe("I18nManager - Change the language", () => {
     expect(i18n.getLang()).toBe(originalLang);
   });
 
-  it("setLang(null) dont will brake", () => {
+  it("setLang(null) does not break", () => {
     mockNavigatorLanguage("en-US");
     i18n.init();
 
@@ -248,7 +248,7 @@ describe("I18nManager - Change the language", () => {
     expect(i18n.getLang()).toBe("en");
   });
 
-  it("setLang(undefined) dont will brake", () => {
+  it("setLang(undefined) does not break", () => {
     mockNavigatorLanguage("en-US");
     i18n.init();
 
@@ -291,7 +291,7 @@ describe("I18nManager - Aux methods", () => {
     expect(i18n.getAvailableLangs()).toEqual(["es", "en"]);
   });
 
-  it("getAvailableLangs() It must have a length of 2", () => {
+  it("getAvailableLangs() must have a length of 2", () => {
     i18n.init();
     expect(i18n.getAvailableLangs()).toHaveLength(2);
   });
@@ -308,12 +308,10 @@ describe("I18nManager - Edge Cases", () => {
     i18n = module.i18n;
   });
 
-  it("window.i18n It must be globally accessible", () => {
+  it("window.i18n must be globally accessible", () => {
     expect(global.window.i18n).toBeDefined();
-  });
-
-  it("t() no existe sin init()", () => {
-    // Sin init, t es null
+  });    it("t() does not exist without init()", () => {
+    // Without init, t is null
     expect(i18n.t).toBeNull();
   });
 
@@ -405,7 +403,7 @@ describe("I18nManager - Integration with TabManager", () => {
       dispatchEvent: vi.fn(),
     };
 
-    // Importar módulos
+    // Import modules
     const i18nModule = await import("../core.js");
     i18n = i18nModule.i18n;
 
@@ -422,7 +420,7 @@ describe("I18nManager - Integration with TabManager", () => {
       debug: false,
     });
 
-    // Mock completo de tabList
+    // Full tabList mock
     const mockAppendChild = vi.fn();
     tabManager.tabList = {
       insertBefore: vi.fn(),
@@ -445,7 +443,7 @@ describe("I18nManager - Integration with TabManager", () => {
       debug: false,
     });
 
-    // Mock completo de tabList
+    // Full tabList mock
     const mockAppendChild = vi.fn();
     tabManager.tabList = {
       insertBefore: vi.fn(),
@@ -478,7 +476,7 @@ describe("I18nManager - Integration with TabManager", () => {
 
     tabManager.tabsData = [{ id: "body-tab-1", name: "Test", content: "", isPinned: false, emoji: null }];
 
-    // Configurar tabList mock correctamente
+    // Configure the tabList mock correctly
     tabManager.tabList = {
       querySelectorAll: vi.fn().mockReturnValue([]),
     };
@@ -639,7 +637,7 @@ describe("I18nManager - Optional Chaining y null safety", () => {
   it("window.i18n?.getLang() should work when i18n is not init", () => {
     global.window.i18n = i18n;
     const result = window.i18n?.getLang?.();
-    // Sin init, lang es null
+    // Without init, lang is null
     expect(result).toBeNull();
   });
 });

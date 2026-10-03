@@ -63,7 +63,7 @@ describe("Issue #90 — SUPERSEDED: pin status no longer involves emojis", () =>
   });
 
   it("emojis in the tab NAME do not leak into pin metadata", () => {
-    const tab = makeTabElement({ name: "📋 Lista de compras del super" });
+    const tab = makeTabElement({ name: "📋 Grocery list from the supermarket" });
 
     handler.pinTab(tab);
 
@@ -123,7 +123,7 @@ describe("Issue #90 — SUPERSEDED: pin status no longer involves emojis", () =>
   });
 
   it("pinning keeps the tab title text untouched (emoji in name = content)", () => {
-    const name = "😀 Cumpleaños de Ana 🎉";
+    const name = "😀 Ana's Birthday 🎉";
     const tab = makeTabElement({ name });
 
     handler.pinTab(tab);
