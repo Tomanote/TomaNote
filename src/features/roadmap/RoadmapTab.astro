@@ -8,28 +8,28 @@ import RoadmapColumn from "./RoadmapColumn.astro";
 const lang = getLang();
 const t = useTranslations(lang);
 
-// Filtrar versiones que se muestran en el tab (solo prev, current, next)
+// Filter versions shown in the tab (only prev, current, next)
 const visibleVersions = roadmapData.versions.filter((v) => v.showInTab !== false);
 
-// Ordenar: previous, current, next (orden visual: Anterior → Actual → Próximo)
+// Sort: previous, current, next (visual order: Previous → Current → Next)
 const currentV = visibleVersions.find((v) => v.isCurrent);
 const previousV = visibleVersions.find((v) => v.type === "previous");
 const nextV = visibleVersions.find((v) => v.isNext);
 const orderedVersions = [previousV, currentV, nextV].filter((v): v is NonNullable<typeof v> => v !== undefined);
 
-// Todas las versiones antiguas para el historial completo
+// All old versions for the full history
 const oldVersions = roadmapData.versions.filter((v) => v.isOld);
 ---
 
 <div class="settings-tab hidden [&.active]:block" id="roadmap-tab">
-  <div class="settings-header mb-[24px]! text-center">
+  <div class="settings-header mb-6! text-center">
     <h3><u>Roadmap</u></h3>
   </div>
   <hr />
 
   <div class="settings-body">
     <div class="p-4!">
-      {/* Versiones visibles en el tab */}
+      {/* Versions visible in the tab */}
       <div class="grid 2xl:grid-cols-3 gap-4! items-start">
         {orderedVersions.map((version) => <RoadmapColumn version={version} lang={lang} />)}
       </div>

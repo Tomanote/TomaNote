@@ -5,7 +5,7 @@
 .tab-list {
   width: 100%;
 
-  // Mobile: full height para que el contenido pueda hacer scroll
+  // Mobile: full height so the content can scroll
   @include mix.respond-to('md') {
     width: unset;
   }

@@ -22,7 +22,7 @@ export interface Props {
 const { version, lang, isHistorical = false } = Astro.props;
 const items = version.items[lang as keyof typeof version.items];
 
-// Clases adaptadas para versiones históricas
+// Classes adapted for historical versions
 const getColumnClasses = () => {
   if (isHistorical) {
     return "rounded-xl overflow-hidden bg-(--tn-theme-secondary)/50 border border-(--tn-theme-accent)/20 opacity-75";
@@ -55,9 +55,9 @@ const getBadgeClasses = () => {
 
 const getBadgeText = () => {
   if (isHistorical) return `v${version.versionNumber}`;
-  if (version.isCurrent) return "ACTUAL";
-  if (version.isNext) return "PRÓXIMO";
-  return "ANTERIOR";
+  if (version.isCurrent) return "CURRENT";
+  if (version.isNext) return "NEXT";
+  return "PREVIOUS";
 };
 
 const getBadgeI18nKey = () => {

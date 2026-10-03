@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 
-// Read the updated versión from package.json
+// Read the updated version from package.json
 const pkg = require("../package.json");
 const version = pkg.version;
 

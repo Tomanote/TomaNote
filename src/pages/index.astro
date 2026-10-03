@@ -44,12 +44,12 @@ import SupportModal from "../features/support-modal/support-modal.astro";
   import { initNotepad } from "../lib/scripts/entry.js";
   import { devLogger } from "../lib/scripts/utils/devLogger.js";
 
-  // Inicializar de forma segura con timeout
+  // Initialize safely with a timeout
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       initNotepad().catch((error) => {
         devLogger.error("Error en sistema modular:", error);
       });
-    }, 100); // Pequeño delay para asegurar que el DOM está listo
+    }, 100); // Small delay to ensure the DOM is ready
   });
 </script>

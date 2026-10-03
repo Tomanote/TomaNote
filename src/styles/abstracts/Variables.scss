@@ -96,7 +96,7 @@ $tn-themes: (
     text-color: $tn-neutral-tertiary-color )
 );
 
-// Functión helper for get values of the theme
+// Function helper to get the theme values
 @function tn-theme($theme-name, $property) {
   @if map-has-key($tn-themes, $theme-name) {
     $theme: map.get($tn-themes, $theme-name);

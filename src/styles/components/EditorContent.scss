@@ -296,7 +296,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Códe — inline y block
+  // Code — inline and block
   // ---------------------------------------------------------------------------
   code {
     font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Menlo",
@@ -376,7 +376,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Imáges y medias
+  // Images and media
   // ---------------------------------------------------------------------------
   img {
     max-width: 100%;
@@ -386,7 +386,7 @@
     margin-block: 1em;
     object-fit: cover;
 
-    // Imáges inline (e.g. emojis are pasted)
+    // Inline images (e.g. emojis are pasted)
     &[style*="width: 1"],
     &.emoji,
     &[alt*="emoji"] {
