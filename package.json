@@ -26,16 +26,16 @@
     "security:outdated": "npm outdated"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "@milkdown/kit": "^7.22.3",
     "@milkdown/plugin-tooltip": "^7.22.1",
     "@milkdown/theme-nord": "^7.22.3",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.4.0",
-    "sass": "^1.105.2",
+    "astro": "^7.4.2",
+    "sass": "^1.106.1",
     "sortablejs": "^1.15.7",
     "tailwindcss": "^4.0.16",
-    "vite": "^8.3.4"
+    "vite": "^8.3.5"
   },
   "devDependencies": {
     "@emnapi/core": "^1.11.1",
