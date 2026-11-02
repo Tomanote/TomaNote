@@ -26,13 +26,13 @@
     "security:outdated": "npm outdated"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@milkdown/kit": "^7.22.3",
+    "@astrojs/check": "^0.9.12",
+    "@milkdown/kit": "^7.23.0",
     "@milkdown/plugin-tooltip": "^7.22.1",
-    "@milkdown/theme-nord": "^7.22.3",
+    "@milkdown/theme-nord": "^7.23.0",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.4.0",
-    "sass": "^1.105.2",
+    "astro": "^7.4.4",
+    "sass": "^1.107.0",
     "sortablejs": "^1.15.7",
     "tailwindcss": "^4.0.16",
     "vite": "^8.3.4"
