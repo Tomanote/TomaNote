@@ -42,7 +42,7 @@
     "@emnapi/runtime": "^1.11.1",
     "@playwright/test": "^1.65.0",
     "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/jest-dom": "^8.0.0",
     "@vitest/coverage-v8": "^5.1.0",
     "gh-pages": "^6.3.0",
     "jsdom": "^31.0.1",
