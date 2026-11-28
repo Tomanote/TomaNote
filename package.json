@@ -6,7 +6,7 @@
     "sync:roadmap": "node scripts/sync-roadmap-locales.cjs",
     "changelog": "node scripts/generate-changelog.cjs",
     "dev": "npm run sync:roadmap && astro dev",
-    "build": "npm run sync:roadmap && npm run changelog && astro build",
+    "build": "npm run sync:roadmap && npm run changelog && astro build && node scripts/inject-sw.cjs",
     "predev": "npm run sync:roadmap",
     "prebuild": "npm run sync:roadmap && npm run changelog",
     "deploy": "gh-pages -d dist -t",
