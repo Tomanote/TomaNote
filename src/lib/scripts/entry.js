@@ -125,6 +125,12 @@ function setupDarkModeFallback() {
 }
 
 function setupServiceWorker() {
+  // Do not attempt to register the service worker in dev mode. During
+  // development (astro dev) the SW file is not generated — inject-sw.cjs
+  // only runs as part of the production build. Registering /service-worker.js
+  // in dev would fail and produce an uncaught rejection on every reload.
+  if (import.meta.env.DEV) return;
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
