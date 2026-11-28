@@ -1,0 +1,451 @@
+// src/features/mobile-topbar/mobile-topbar.scss
+// Milestone 0.5.9 — Mobile topbar + List/Grid presentation hooks.
+// Phase 3 (Figma): masonry two-column grid for normal cards with exact
+// geometry tokens, full-width pinned cards stacked on the first grid row,
+// and the tn-dragging touch state. The bar renders only at ≤768px (utility
+// classes on the element); all note view rules live inside ≤767px media
+// blocks — desktop (>768px) untouched.
+
+// Bar shell (≤768px only — element carries `flex md:hidden!`)
+.mobile-topbar {
+  z-index: 30;
+}
+
+.mobile-topbar__search-icon {
+  position: absolute;
+  left: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: var(--tn-neutral-tertiary-color, #9ca3af);
+  pointer-events: none;
+}
+
+.mobile-topbar__search {
+  padding: 0.375rem 2rem 0.375rem 2.25rem;
+  border: 1px solid var(--tn-theme-secondary, rgba(255, 255, 255, 0.14));
+  border-radius: 0.5rem;
+  background: var(--tn-theme-primary, transparent);
+  color: var(--tn-color-text, #f5f5f5);
+  font-size: 0.875rem;
+  min-width: 0;
+
+  &::placeholder {
+    color: var(--tn-neutral-tertiary-color, #9ca3af);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tn-theme-contrast, #fff);
+    outline-offset: 1px;
+  }
+
+  // Hide the native WebKit clear button — visual noise on small bars
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+}
+
+.mobile-topbar__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--tn-theme-secondary, rgba(255, 255, 255, 0.08));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tn-theme-contrast, #fff);
+    outline-offset: 2px;
+  }
+
+  &[aria-pressed="true"] {
+    background: var(--tn-theme-secondary, rgba(255, 255, 255, 0.08));
+    border-color: var(--tn-theme-contrast, rgba(255, 255, 255, 0.35));
+  }
+}
+
+.mobile-topbar__toggle-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--tn-theme-contrast, #fff);
+}
+
+// === Mobile note views — Figma masonry architecture (≤768px) ===
+@media (max-width: 767px) {
+  // The bar sits above the tab strip inside main; without this the strip's
+  // h-dvh would push it past main's overflow-hidden bottom edge.
+  main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  main > .tab-list {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  // --- Figma geometry tokens (local to the mobile media context) ---
+  .tab-list.notes-grid-container {
+    // Grid lateral margins: 2 × 8px
+    --tn-grid-side-margin: 8px;
+    // Dual-column gap: 16px
+    --tn-grid-gap: 16px;
+    // Resolved card width = ((viewport − 2·margin) − gap) / 2.
+    // The 1fr tracks + this gap already produce the Figma width; the token
+    // is derived from the same arithmetic so min/max-height scale with it.
+    --tn-card-width: calc((100vw - (var(--tn-grid-side-margin) * 2) - var(--tn-grid-gap)) / 2);
+  }
+
+  // --- GRID VIEW: genuine fluid masonry (CSS multi-column model) ---
+  // The row-locked `display: grid` model is GONE: grid rows were always sized
+  // by their tallest card, flattening the organic Figma rhythm. CSS
+  // multi-column lets each card settle naturally beneath the previous one in
+  // its column, with NO shared row heights (column-fill: balance keeps both
+  // stacks equally loaded on continuous media).
+  .tab-list.notes-grid-container {
+    display: block !important;
+    columns: 2;
+    column-fill: balance;
+    column-gap: var(--tn-grid-gap);
+    padding: 8px 8px 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    // Fallback column-width token (390px viewport) — the decorator measures
+    // the real content box and re-publishes it on every resize/decorate pass
+    // (noteViews.publishCardWidth), so the height formulas below resolve
+    // against MEASURED geometry, never a viewport guess.
+    --tn-card-width: calc((100vw - 16px - 32px - var(--tn-grid-gap, 16px)) / 2);
+  }
+
+  // Pinned notes BYPASS the masonry matrix entirely: `column-span: all`
+  // lifts each one out of the dual-column fragmentation into its own
+  // full-width row. Pinned items are FIRST in DOM order, so their rows stack
+  // at the absolute top of the viewport before any normal card flows.
+  .tab-list.notes-grid-container .tab-list__item.tn-card--pinned {
+    -webkit-column-span: all;
+    column-span: all;
+    width: 100%;
+  }
+
+  // The legacy create-tab button (Createtab.astro `.group` wrapper) is also a
+  // direct child of the container: it must stay visible but OUTSIDE the
+  // column matrix, anchored top-right after the last fragment.
+  .tab-list.notes-grid-container > .group {
+    -webkit-column-span: all;
+    column-span: all;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  // TabManager's createTabElement tags items with `ml-[5px]!` (flex-strip
+  // rhythm) — a Tailwind v4 IMPORTANT utility in @layer utilities, which for
+  // important declarations beats unlayered rules. Join the same layer with a
+  // higher-specificity reset or the masonry columns end up 169px/164px.
+  @layer utilities {
+    .tab-list.notes-grid-container .tab-list__item {
+      width: auto;
+      margin: 0 !important;
+    }
+
+    // Masonry cards span exactly one column; the 16px bottom margin is the
+    // vertical settling space between stacked cards (Figma gap token).
+    .tab-list.notes-grid-container .tab-list__item.tn-card--normal {
+      width: 100%;
+      margin: 0 0 var(--tn-grid-gap, 16px) !important;
+    }
+
+    .tab-list.notes-grid-container .tab-list__item.tn-card--pinned {
+      width: 100%;
+      margin: 0 0 var(--tn-grid-gap, 16px) !important;
+    }
+  }
+
+  // --- Card shell (grid cards, pinned + normal) ---
+  .tab-list .tab-list__item.tn-card {
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    padding: 0.5rem 0.625rem;
+    gap: 0.25rem;
+    // Figma boundary: card content is clipped at the 1:1 height cap
+    border-radius: 0.5rem;
+
+    > label {
+      width: 100%;
+      max-width: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    // Figma: title wrapper above the snippet — full-width, single line
+    .tn-card-heading {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+
+      span {
+        display: block;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  // --- Normal cards: masonry height boundaries + gradient fade ---
+  // Max-height = single-column width (clean 1:1 boundary); min-height =
+  // column width / 2.5. Both resolve against the decorator-measured
+  // --tn-card-width token (see .notes-grid-container above) — NOT % of the
+  // container height, which is unusable inside a fragmentation context.
+  .tab-list .tab-list__item.tn-card--normal {
+    break-inside: avoid; // a card never fragments across two columns
+    min-height: calc(var(--tn-card-width, 179px) / 2.5); // Figma: width / 2.5
+    max-height: var(--tn-card-width, 179px); // Figma: 1:1 ratio boundary
+
+    .tn-note-preview {
+      // Linear-gradient fade over the truncated tail at the height cap —
+      // truncated text dissolves into the card surface instead of hard-cutting.
+      mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    }
+  }
+
+  // --- Pinned rows: action strip anchored to the LOWER-RIGHT quadrant ---
+  // Fix #1.2 realignment: Pin / Edit / Trash never float loose in the center
+  // space of a full-width row — they balance against the text from the
+  // bottom-right corner of the card surface.
+  .tab-list .tab-list__item.tn-card--pinned .tn-card-actions {
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0.25rem 0.625rem 0.25rem 0.5rem;
+  }
+
+  // --- Pinned cards: Figma orange native star + multi-line snippet ---
+  .tab-list .tab-list__item.tn-card--pinned {
+    .tn-pinned-star {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+      // Fixed Figma orange — NOT the theme contrast (it must read as the
+      // "pinned" brand accent in every theme, light or dark).
+      color: rgb(255, 165, 0);
+    }
+
+    > label {
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .tn-note-preview {
+      -webkit-line-clamp: 4; // multi-line content snippet (pinned card)
+      line-clamp: 4;
+      opacity: 0.75;
+    }
+  }
+
+  // --- Snippet preview inside every active card/row ---
+  .tn-note-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.75rem;
+    opacity: 0.65;
+    text-align: left;
+    width: 100%;
+  }
+
+  // --- LIST VIEW: full-width rows, explicit height threshold ---
+  .tab-list .tab-list__item.tn-row {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-height: 150px; // explicit 100–150px threshold (Phase 2 spec)
+    overflow: hidden;
+    margin-left: 0 !important;
+    margin-right: 0;
+    margin-bottom: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    gap: 0.25rem;
+
+    > label {
+      width: 100%;
+      max-width: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .tn-card-heading {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+
+      span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .tn-note-preview {
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+  }
+
+  // Filtered-out tabs collapse entirely (Phase 1 filter integration)
+  .tab-list .tab-list__item.mobile-filtered-out {
+    display: none !important;
+  }
+
+  // --- Touch drag active state modifier (scale + fade) ---
+  .tab-list .tab-list__item.tn-dragging {
+    opacity: 0.55;
+    transform: scale(0.96);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    z-index: 10;
+  }
+
+  // --- Empty state: absolute isolation from the masonry ---
+  // #tn-empty-state is a body-level sibling of <main>: the multi-column
+  // container can never reach it. The isolation seal is its own centering
+  // box: normalized to a full-viewport flex grid (inset-0 within the
+  // relative body) instead of the content-sized Tailwind translate centering
+  // — unlayered rules beat the non-important utilities.
+  #tn-empty-state.tn-empty-state--visible {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 1rem;
+    translate: none;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  // Desktop safety net: presentation classes may linger (e.g. after an
+  // orientation/resize edge), but they must never affect >768px layout.
+  .tab-list__item.mobile-filtered-out {
+    display: revert !important;
+  }
+
+  .tab-list .tab-list__item.tn-row,
+  .tab-list .tab-list__item.tn-card,
+  .tab-list .tab-list__item.tn-card--normal,
+  .tab-list .tab-list__item.tn-card--pinned,
+  .tab-list .tab-list__item.tn-dragging {
+    max-height: none;
+    min-height: 0;
+    opacity: 1;
+    transform: none;
+  }
+
+  .tn-card-heading {
+    display: contents;
+  }
+
+  .tn-card-heading span {
+    display: revert;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .tn-pinned-star {
+    color: var(--tn-theme-contrast);
+  }
+
+  .tn-note-preview {
+    display: none !important;
+  }
+}
+
+// ============================================================================
+// Milestone 0.5.9 — Fix #5: inline card action strip (pin / edit / delete)
+// Discrete semantic utility controls on every responsive note card. Icons
+// are native vectors; actions are delegated in noteViews.js. Mobile-only:
+// desktop keeps the navbar + context menu (Fix #6 moved these off the bar).
+// ============================================================================
+.tn-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  width: 100%;
+  // The ACTIVE editor pane is absolutely positioned over the cards at mobile
+  // widths and would swallow every tap — the strip must paint above it.
+  position: relative;
+  z-index: 30;
+
+  @media (min-width: 769px) {
+    // Desktop renders the classic tab strip (no cards): the strip must not
+    // paint — and must never intercept the inline editor's pointer events.
+    display: none;
+  }
+}
+
+.tn-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--tn-theme-contrast);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+
+  svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: scale(0.9);
+    background-color: var(--tn-theme-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tn-theme-contrast);
+    outline-offset: 1px;
+  }
+
+  &--delete {
+    color: #e5484d;
+  }
+}
